@@ -283,6 +283,8 @@ label{font-size:.8rem;color:var(--text-dim);display:block;text-align:left;margin
 </div>
 <div class="hint">M — консоль</div>
 
+<audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+
 <div id="toast"></div>
 </div>
 
@@ -331,24 +333,30 @@ function toggleConsole() {
 document.getElementById('console-close').onclick = () => devConsole.classList.remove('open');
 document.getElementById('console-clear').onclick = () => { customLogs.length = 0; consoleLogsEl.innerHTML = ''; };
 
-// Block F12 and DevTools hotkeys
-document.addEventListener('keydown', (e) => {
+// Block F12 and DevTools hotkeys, handle M with capture phase
+window.addEventListener('keydown', (e) => {
   const tag = (document.activeElement?.tagName || '').toUpperCase();
   const typing = tag === 'INPUT' || tag === 'TEXTAREA';
 
+  // Блокировка F12 и инструментов разработчика
   if (e.key === 'F12' ||
       (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'K')) ||
       (e.ctrlKey && e.key === 'u') ||
       (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'j' || e.key === 'c'))) {
     e.preventDefault();
+    e.stopImmediatePropagation();
     logWarn('Попытка открыть DevTools заблокирована');
     return false;
   }
-  if ((e.key === 'm' || e.key === 'M') && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) {
+
+  // Открытие кастомной консоли на "M"
+  if ((e.key === 'm' || e.key === 'M') && !typing && !e.ctrlKey && !e.metaKey && !e.altKey && !e.repeat) {
     e.preventDefault();
+    e.stopImmediatePropagation();
     toggleConsole();
+    log('Консоль переключена');
   }
-});
+}, true); // true = фаза захвата, чтобы перехватить раньше других
 
 // ============ FIREBASE ============
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -405,7 +413,6 @@ const RANKS = [
 ];
 function rankOf(elo) { let r = RANKS[0]; for (const x of RANKS) if (elo >= x.min) r = x; return r; }
 function rankBadge(elo) { const r = rankOf(elo); return `<span class="rank-badge" style="background:${r.color}">${r.name}</span>`; }
-function rankColor(elo) { return rankOf(elo).color; }
 
 // ============ AUDIO (MUSIC + SFX) ============
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -413,43 +420,9 @@ const masterGain = audioCtx.createGain();
 masterGain.gain.value = 0.5;
 masterGain.connect(audioCtx.destination);
 
-let musicPlaying = false, musicTimer = null, musicEnabled = true;
-function startMusic() {
-  if (musicPlaying || !musicEnabled) return;
-  musicPlaying = true;
-  const progression = [
-    [220.00, 261.63, 329.63],  // Am
-    [174.61, 220.00, 261.63],  // F
-    [261.63, 329.63, 392.00],  // C
-    [196.00, 246.94, 293.66],  // G
-  ];
-  let ci = 0;
-  function playChord() {
-    if (!musicPlaying) return;
-    const chord = progression[ci % progression.length];
-    const now = audioCtx.currentTime;
-    chord.forEach(freq => {
-      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.type = 'sine'; o.frequency.value = freq;
-      o.connect(g); g.connect(masterGain);
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(0.05, now + 1);
-      g.gain.linearRampToValueAtTime(0, now + 4);
-      o.start(now); o.stop(now + 4);
-    });
-    ci++;
-    musicTimer = setTimeout(playChord, 4000);
-  }
-  playChord();
-  log('Music started');
-}
-function stopMusic() { musicPlaying = false; clearTimeout(musicTimer); log('Music stopped'); }
-
-$("#btn-music-toggle").onclick = () => {
-  musicEnabled = !musicEnabled;
-  if (musicEnabled) { startMusic(); $("#btn-music-toggle").textContent = "🎵 Музыка: вкл"; }
-  else { stopMusic(); $("#btn-music-toggle").textContent = "🎵 Музыка: выкл"; }
-};
+let musicEnabled = true;
+const bgMusic = document.getElementById('bg-music');
+bgMusic.volume = 0.4;
 
 function playSound(type) {
   if (audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
@@ -464,15 +437,20 @@ function playSound(type) {
   else if (type === 'lose') { o.frequency.value = 400; o.frequency.linearRampToValueAtTime(150, now + 0.4); g.gain.setValueAtTime(0.15, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.45); o.start(now); o.stop(now + 0.45); }
 }
 
-// init music on first interaction
 let audioInitDone = false;
 function initAudioOnce() {
   if (audioInitDone) return; audioInitDone = true;
   if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-  startMusic();
+  if (musicEnabled) bgMusic.play().catch(e => logWarn('Music autoplay blocked:', e.message));
 }
 document.addEventListener('click', initAudioOnce, { once: true });
 document.addEventListener('keydown', initAudioOnce, { once: true });
+
+$("#btn-music-toggle").onclick = () => {
+  musicEnabled = !musicEnabled;
+  if (musicEnabled) { bgMusic.play().catch(e=>logWarn(e)); $("#btn-music-toggle").textContent = "🎵 Музыка: вкл"; }
+  else { bgMusic.pause(); $("#btn-music-toggle").textContent = "🎵 Музыка: выкл"; }
+};
 
 // ============ AUTH STATE ============
 let currentUser = null;
@@ -883,8 +861,6 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
       showScreen("#game-area"); $("#game-area").classList.add("active");
       startTurnTimer();
     } else {
-      // Обновление от сервера
-      const prevTurn = game.turn;
       game.board = JSON.parse(data.board);
       game.turn = data.turn;
       game.timers = data.timers || game.timers;
