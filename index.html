@@ -212,12 +212,19 @@ label{font-size:.8rem;color:var(--text-dim);display:block;text-align:left;margin
 <div id="screen-leaderboard" class="screen">
   <div class="menu-box" style="max-width: 800px; width: 100%;">
     <h2>🏆 Рейтинг (Топ 50)</h2>
-    <div class="tab-buttons">
+    <div class="tab-buttons" id="main-tabs">
       <button class="tab-btn active" data-lb="elo">Elo</button>
       <button class="tab-btn" data-lb="wins">Победы</button>
       <button class="tab-btn" data-lb="losses">Поражения</button>
-      <button class="tab-btn" data-lb="botElo">BotElo</button>
+      <button class="tab-btn" data-lb="bot">BotElo</button>
       <button class="tab-btn" data-lb="playtime">Плейтайм</button>
+    </div>
+    <div id="bot-tabs" class="tab-buttons" style="display:none; margin-top:-10px; margin-bottom:16px;">
+      <button class="tab-btn active" data-lb="botElo">Любая сложность</button>
+      <button class="tab-btn" data-lb="botElo_easy">Легкий</button>
+      <button class="tab-btn" data-lb="botElo_normal">Средний</button>
+      <button class="tab-btn" data-lb="botElo_hard">Сложный</button>
+      <button class="tab-btn" data-lb="botElo_impossible">Невозможный</button>
     </div>
     <div id="lb-loading" style="text-align:center; padding:20px;">Загрузка...</div>
     <div id="lb-list" class="lb-list"></div>
@@ -553,7 +560,6 @@ $("#theme-color").oninput = (e) => applyTheme(e.target.value);
 // ============ AUTH ============
 let currentUser = null;
 
-// Heartbeat & Playtime
 setInterval(() => {
   if (currentUser) {
     update(ref(db, "users/" + currentUser.uid), { lastSeen: Date.now() }).catch(() => {});
@@ -572,10 +578,18 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await get(ref(db, "users/" + user.uid));
     if (snap.exists()) {
       currentUser = { uid: user.uid, ...snap.val() };
-      if (!currentUser.botElo) currentUser.botElo = 1000;
-      if (!currentUser.onlineGames) currentUser.onlineGames = 0;
-      if (!currentUser.botGames) currentUser.botGames = 0;
-      if (!currentUser.playtime) currentUser.playtime = 0;
+      // Инициализация новых полей, если их нет
+      const defaults = {
+        botElo: 1000, botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
+        botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
+        onlineGames: 0, botGames: 0, playtime: 0, lastNickChange: 0
+      };
+      let needsUpdate = false;
+      for (const [k, v] of Object.entries(defaults)) {
+        if (currentUser[k] === undefined) { currentUser[k] = v; needsUpdate = true; }
+      }
+      if (needsUpdate) update(ref(db, "users/" + user.uid), defaults).catch(()=>{});
+      
       update(ref(db, "users/" + user.uid), { lastSeen: Date.now() }).catch(()=>{});
       log('User logged in:', currentUser.nick);
     }
@@ -623,7 +637,10 @@ $("#btn-do-auth").onclick = async () => {
       const uid = cred.user.uid;
       const profile = {
         nick, tag: "", avatar: "", bio: "",
-        elo: 1000, maxElo: 1000, botElo: 1000,
+        elo: 1000, maxElo: 1000,
+        botElo: 4000, 
+        botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
+        botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
         wins: 0, losses: 0, winStreak: 0, maxWinStreak: 0,
         onlineGames: 0, botGames: 0, playtime: 0,
         lastSeen: Date.now(), lastNickChange: 0,
@@ -655,15 +672,22 @@ function profileCardHTML(u, uid, compact = false) {
   const statsHtml = `
     <div class="stat-grid" style="margin-top:12px;">
       <div class="stat-item"><span>Elo</span><span>${u.elo || 1000} (${u.maxElo || 1000})</span></div>
-      <div class="stat-item"><span>BotElo</span><span>${u.botElo || 1000}</span></div>
-      <div class="stat-item"><span>Победы</span><span>${u.wins || 0}</span></div>
+      <div class="stat-item"><span>Победы (онлайн)</span><span>${u.wins || 0}</span></div>
       <div class="stat-item"><span>Поражения</span><span>${u.losses || 0}</span></div>
       <div class="stat-item"><span>K/D</span><span>${kd}</span></div>
       <div class="stat-item"><span>Винстрик</span><span>${u.winStreak || 0} (${u.maxWinStreak || 0})</span></div>
       <div class="stat-item"><span>Игр (онлайн)</span><span>${u.onlineGames || 0}</span></div>
-      <div class="stat-item"><span>Игр (с ботом)</span><span>${u.botGames || 0}</span></div>
       <div class="stat-item"><span>Плейтайм</span><span>${formatTime(u.playtime || 0)}</span></div>
       <div class="stat-item"><span>Был в сети</span><span>${formatTimeAgo(u.lastSeen)}</span></div>
+    </div>
+    <h3 style="margin-top:16px; margin-bottom:8px; font-size:1rem; color:var(--accent2);">🤖 Боты</h3>
+    <div class="stat-grid">
+      <div class="stat-item"><span>Общий BotElo</span><span>${u.botElo || 4000}</span></div>
+      <div class="stat-item"><span>Игр (с ботом)</span><span>${u.botGames || 0}</span></div>
+      <div class="stat-item"><span>Легкий</span><span>${u.botElo_easy || 1000} (${u.botWins_easy || 0} П)</span></div>
+      <div class="stat-item"><span>Средний</span><span>${u.botElo_normal || 1000} (${u.botWins_normal || 0} П)</span></div>
+      <div class="stat-item"><span>Сложный</span><span>${u.botElo_hard || 1000} (${u.botWins_hard || 0} П)</span></div>
+      <div class="stat-item"><span>Невозможный</span><span>${u.botElo_impossible || 1000} (${u.botWins_impossible || 0} П)</span></div>
     </div>
   `;
 
@@ -766,9 +790,7 @@ $("#btn-change-nick").onclick = async () => {
 };
 
 // ============ LEADERBOARD ============
-let lbCurrentField = 'elo';
 async function loadLeaderboard(field) {
-  lbCurrentField = field;
   $("#lb-list").innerHTML = '';
   $("#lb-loading").style.display = 'block';
   try {
@@ -790,7 +812,7 @@ async function loadLeaderboard(field) {
     sorted.forEach(([uid, u], idx) => {
       const div = document.createElement('div');
       div.className = 'lb-item';
-      const val = field === 'playtime' ? formatTime(u[field]) : u[field];
+      const val = field === 'playtime' ? formatTime(u[field]) : (u[field] || 0);
       div.innerHTML = `
         <div class="lb-rank">#${idx + 1}</div>
         <div class="avatar" style="width:32px;height:32px;font-size:1rem;">${u.avatar ? `<img src="${escapeHtml(u.avatar)}"/>` : (u.nick ? u.nick[0].toUpperCase() : '?')}</div>
@@ -806,16 +828,40 @@ async function loadLeaderboard(field) {
   }
 }
 
-$$('.tab-btn').forEach(btn => {
+$$('#main-tabs .tab-btn').forEach(btn => {
   btn.onclick = () => {
-    $$('.tab-btn').forEach(b => b.classList.remove('active'));
+    $$('#main-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (btn.dataset.lb === 'bot') {
+      $("#bot-tabs").style.display = 'flex';
+      // Если открыли боты, но не выбран подраздел, выбираем "Любая сложность"
+      let activeBot = document.querySelector('#bot-tabs .tab-btn.active');
+      if (!activeBot) {
+        activeBot = document.querySelector('#bot-tabs .tab-btn[data-lb="botElo"]');
+        activeBot.classList.add('active');
+      }
+      loadLeaderboard(activeBot.dataset.lb);
+    } else {
+      $("#bot-tabs").style.display = 'none';
+      loadLeaderboard(btn.dataset.lb);
+    }
+  };
+});
+
+$$('#bot-tabs .tab-btn').forEach(btn => {
+  btn.onclick = () => {
+    $$('#bot-tabs .tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     loadLeaderboard(btn.dataset.lb);
   };
 });
+
 $("#btn-leaderboard").onclick = () => {
   if (!currentUser) return toast("Войдите в аккаунт", "error");
   showScreen("#screen-leaderboard");
+  $("#bot-tabs").style.display = 'none';
+  $$('#main-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('#main-tabs .tab-btn[data-lb="elo"]').classList.add('active');
   loadLeaderboard('elo');
 };
 $("#btn-lb-back").onclick = () => showScreen("#screen-menu");
@@ -1016,13 +1062,14 @@ function setPlayerCard(prefix, data) {
 function startBotGame(diff) {
   if (!currentUser) return toast("Войдите в аккаунт", "error");
   const depths = { easy: 1, normal: 2, hard: 3, impossible: 5 };
+  const names = { easy: 'Легкий', normal: 'Средний', hard: 'Сложный', impossible: 'Невозможный' };
   botDepth = depths[diff];
   game = {
     mode: 'bot', board: initBoard(), turn: 'w', myColor: 'w', botColor: 'b',
     timers: { w: 20, b: 20 }, timerInterval: null, gameOver: false,
     botLevel: diff
   };
-  setPlayerCard('p-top', { nick: 'Бот', tag: diff, elo: 1000, maxElo: 1000, winStreak: 0, avatar: '', uid: '' });
+  setPlayerCard('p-top', { nick: `Бот (${names[diff]})`, tag: '', elo: 1000, maxElo: 1000, winStreak: 0, avatar: '', uid: '' });
   setPlayerCard('p-bottom', { uid: currentUser.uid, nick: currentUser.nick, tag: currentUser.tag, elo: currentUser.elo, maxElo: currentUser.maxElo, winStreak: currentUser.winStreak, avatar: currentUser.avatar });
   $("#chat-box").innerHTML = '';
   showScreen("#game-area"); $("#game-area").classList.add("active");
@@ -1031,12 +1078,14 @@ function startBotGame(diff) {
   update(ref(db, "users/" + currentUser.uid), { lastSeen: Date.now() }).catch(()=>{});
 }
 
-// ============ ONLINE SEARCH ============
-let searchTimeout = null, searchStart = 0, searchListener = null;
+// ============ ONLINE SEARCH (MATCHMAKING FIX) ============
+let searchTimeout = null, searchStart = 0, searchListener = null, matchListener = null;
 
 async function startOnlineSearch() {
   if (!currentUser) return;
   const uid = currentUser.uid;
+  
+  // 1. Встаем в очередь
   await set(ref(db, "queue/" + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: Date.now() });
   searchStart = Date.now();
   $("#search-overlay").classList.add("active");
@@ -1045,58 +1094,90 @@ async function startOnlineSearch() {
   $("#search-text").className = "";
   log('Search started');
 
+  // 2. Слушаем приглашения (если нас выбрал кто-то с меньшим UID)
+  matchListener = onValue(ref(db, "match/" + uid), async (snap) => {
+    const m = snap.val();
+    if (!m) return;
+    
+    // Нас пригласили в игру
+    log('Received match invite from', m.fromUid);
+    matchListener(); matchListener = null;
+    if (searchListener) { searchListener(); searchListener = null; }
+    clearTimeout(searchTimeout);
+    
+    await set(ref(db, "match/" + uid), null); // удаляем приглашение
+    await set(ref(db, "queue/" + uid), null); // выходим из очереди
+    $("#search-overlay").classList.remove("active");
+    
+    const oppProfileSnap = await get(ref(db, "users/" + m.fromUid));
+    const oppProfile = oppProfileSnap.exists() ? oppProfileSnap.val() : { nick: 'Opponent', elo: 1000 };
+    oppProfile.uid = m.fromUid;
+    
+    showMatchFound(m.roomId, m.myColor, oppProfile);
+  });
+
+  // 3. Ищем в очереди, чтобы самим стать хостом
   searchListener = onValue(ref(db, "queue"), async (snap) => {
     const q = snap.val() || {};
     const candidates = Object.entries(q).filter(([id]) => id !== uid);
     if (candidates.length === 0) return;
-    const elapsed = Date.now() - searchStart;
-    let opp = null;
-    if (elapsed < 60000) opp = candidates.find(([, v]) => Math.abs(v.elo - currentUser.elo) <= 200);
-    if (!opp) opp = candidates[0];
-    const [oppUid, oppData] = opp;
     
-    // ВАЖНО: Одинаковый roomId для обоих!
-    const roomId = "room_" + [uid, oppUid].sort().join("_"); 
-    const isWhite = parseInt(roomId.slice(-3), 36) % 2 === 0; 
-    const whiteUid = isWhite ? uid : oppUid;
-    const blackUid = isWhite ? oppUid : uid;
-
-    await update(ref(db), { ["queue/" + uid]: null, ["queue/" + oppUid]: null });
+    // Ищем тех, кто "младше" нас (их UID больше нашего)
+    const oppEntry = candidates.find(([id]) => id > uid);
+    if (!oppEntry) return; 
+    
+    const [oppUid, oppData] = oppEntry;
+    log('Found opponent to host:', oppData.nick);
+    
+    // Мы хост. Создаем комнату.
+    const roomId = "room_" + [uid, oppUid].sort().join("_");
+    
+    // Определяем цвета. Мы (uid) - белые.
+    const myColor = 'w';
+    const oppColor = 'b';
+    
+    // Создаем комнату (транзакция для надежности)
     const roomRef = ref(db, "rooms/" + roomId);
-    const roomSnap = await get(roomRef);
-    if (!roomSnap.exists()) {
-      await set(roomRef, {
-        white: whiteUid, black: blackUid,
-        board: JSON.stringify(initBoard()), turn: "w",
-        timers: { w: 20, b: 20 }, status: "playing",
-        createdAt: serverTimestamp(), moves: [], chat: {}
-      });
-    }
-
+    await runTransaction(roomRef, (currentData) => {
+      if (currentData === null) {
+        return {
+          white: uid, black: oppUid,
+          board: JSON.stringify(initBoard()), turn: "w",
+          timers: { w: 20, b: 20 }, status: "playing",
+          createdAt: Date.now(), moves: [], chat: {}
+        };
+      }
+      return; // Комната уже создана
+    });
+    
+    // Отправляем приглашение
+    await set(ref(db, "match/" + oppUid), {
+      roomId: roomId,
+      fromUid: uid,
+      myColor: oppColor
+    });
+    
+    // Отписываемся от поиска
+    matchListener(); matchListener = null;
     if (searchListener) { searchListener(); searchListener = null; }
     clearTimeout(searchTimeout);
+    
+    // Выходим из очереди
+    await set(ref(db, "queue/" + uid), null);
+    await set(ref(db, "queue/" + oppUid), null);
+    
     $("#search-overlay").classList.remove("active");
-
-    const myColor = whiteUid === uid ? "w" : "b";
+    
     const oppProfileSnap = await get(ref(db, "users/" + oppUid));
-    const oppProfile = oppProfileSnap.exists() ? oppProfileSnap.val() : { nick: oppData.nick, elo: oppData.elo, maxElo: oppData.elo, winStreak: 0, avatar: '', tag: '' };
+    const oppProfile = oppProfileSnap.exists() ? oppProfileSnap.val() : { nick: oppData.nick, elo: oppData.elo };
     oppProfile.uid = oppUid;
-
-    $("#toast").className = "success show";
-    $("#toast").innerHTML = `<span class="found-anim">🎯 Противник найден!</span><br/>${escapeHtml(oppProfile.nick)} · ${rankOf(oppProfile.elo || 1000).name} ${oppProfile.elo || 1000} Elo<br/>Вы играете за <b>${myColor === 'w' ? 'белых' : 'чёрных'}</b>`;
-    log('Opponent found:', oppProfile.nick, 'myColor=', myColor);
     
-    update(ref(db, "users/" + currentUser.uid), { lastSeen: Date.now() }).catch(()=>{});
-
-    setTimeout(() => { $("#toast").classList.remove("show"); joinOnlineGame(roomId, myColor, oppProfile); }, 2500);
-    
-  }, (error) => {
-    logError("Search error:", error.message);
-    toast("Ошибка поиска: " + error.message, "error");
-    $("#search-overlay").classList.remove("active");
+    showMatchFound(roomId, myColor, oppProfile);
   });
 
+  // 4. Таймаут поиска
   searchTimeout = setTimeout(async () => {
+    if (matchListener) { matchListener(); matchListener = null; }
     if (searchListener) { searchListener(); searchListener = null; }
     await set(ref(db, "queue/" + uid), null);
     $("#search-overlay").classList.remove("active");
@@ -1104,7 +1185,18 @@ async function startOnlineSearch() {
   }, 5 * 60 * 1000);
 }
 
+function showMatchFound(roomId, myColor, oppProfile) {
+  $("#toast").className = "success show";
+  $("#toast").innerHTML = `<span class="found-anim">🎯 Противник найден!</span><br/>${escapeHtml(oppProfile.nick)} · ${rankOf(oppProfile.elo || 1000).name} ${oppProfile.elo || 1000} Elo<br/>Вы играете за <b>${myColor === 'w' ? 'белых' : 'чёрных'}</b>`;
+  log('Match found:', roomId, 'myColor=', myColor);
+  
+  update(ref(db, "users/" + currentUser.uid), { lastSeen: Date.now() }).catch(()=>{});
+
+  setTimeout(() => { $("#toast").classList.remove("show"); joinOnlineGame(roomId, myColor, oppProfile); }, 2500);
+}
+
 $("#btn-cancel-search").onclick = async () => {
+  if (matchListener) { matchListener(); matchListener = null; }
   if (searchListener) { searchListener(); searchListener = null; }
   clearTimeout(searchTimeout);
   if (currentUser) await set(ref(db, "queue/" + currentUser.uid), null);
@@ -1279,12 +1371,33 @@ async function updateBotElo(won, diff) {
   const depths = { easy: 1, normal: 2, hard: 3, impossible: 5 };
   const depth = depths[diff] || 1;
   let delta = won ? (10 + depth * 5) : -(5 + depth * 2);
-  let newBotElo = Math.max(100, (u.botElo || 1000) + delta);
-  let newBotGames = (u.botGames || 0) + 1;
-  await update(userRef, { botElo: newBotElo, botGames: newBotGames });
-  currentUser.botElo = newBotElo;
-  currentUser.botGames = newBotGames;
-  toast(`BotElo: ${delta > 0 ? '+' : ''}${delta} → ${newBotElo}`, delta > 0 ? "success" : "error");
+  
+  const fieldElo = `botElo_${diff}`;
+  const fieldWins = `botWins_${diff}`;
+  
+  const oldElo = u[fieldElo] || 1000;
+  const newElo = Math.max(100, oldElo + delta);
+  const newWins = (u[fieldWins] || 0) + (won ? 1 : 0);
+  
+  // Считаем общий BotElo как сумму всех четырех
+  const totalBotElo = (diff === 'easy' ? newElo : (u.botElo_easy || 1000)) +
+                      (diff === 'normal' ? newElo : (u.botElo_normal || 1000)) +
+                      (diff === 'hard' ? newElo : (u.botElo_hard || 1000)) +
+                      (diff === 'impossible' ? newElo : (u.botElo_impossible || 1000));
+
+  await update(userRef, { 
+    [fieldElo]: newElo, 
+    [fieldWins]: newWins,
+    botElo: totalBotElo,
+    botGames: (u.botGames || 0) + 1
+  });
+  
+  currentUser[fieldElo] = newElo;
+  currentUser[fieldWins] = newWins;
+  currentUser.botElo = totalBotElo;
+  currentUser.botGames = (u.botGames || 0) + 1;
+  
+  toast(`BotElo (${diff}): ${delta > 0 ? '+' : ''}${delta} → ${newElo}`, delta > 0 ? "success" : "error");
 }
 
 async function updateEloAfterGame(won) {
