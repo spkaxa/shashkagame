@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Шашки Онлайн v1.0 — xxspk (@spkaxa)</title>
+  <style>
+    /* ===== БАЗОВЫЙ ДИЗАЙН ===== */
+    :root {
+      --bg: #1e1e2f;
+      --panel: #2a2a40;
+      --accent: #6c5ce7;
+      --white-piece: #f5f5f5;
+      --black-piece: #2d2d2d;
+      --board-light: #f0d9b5;
+      --board-dark: #b58863;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+      --text: #ecf0f1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
+    #app { width: 100%; max-width: 1100px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+
+    /* Экраны */
+    .screen { display: none; width: 100%; }
+    .screen.active { display: block; }
+
+    /* Меню */
+    .menu-box { background: var(--panel); border-radius: 16px; padding: 32px; max-width: 500px; margin: 0 auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+    .menu-box h1 { font-size: 2rem; margin-bottom: 8px; color: var(--accent); }
+    .menu-box p.sub { font-size: .85rem; color: #888; margin-bottom: 24px; }
+    .btn { display: block; width: 100%; padding: 14px; margin: 8px 0; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: .2s; }
+    .btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
+    .btn.secondary { background: #3d3d5c; }
+    .btn.danger { background: var(--danger); }
+    .btn.small { padding: 8px 14px; width: auto; display: inline-block; font-size: .85rem; }
+
+    /* Формы */
+    input, textarea { width: 100%; padding: 12px; margin: 6px 0; border-radius: 8px; border: 1px solid #444; background: #1a1a2e; color: var(--text); font-size: .95rem; }
+    textarea { resize: vertical; min-height: 60px; }
+    label { font-size: .8rem; color: #aaa; display: block; text-align: left; margin-top: 8px; }
+
+    /* Доска */
+    #game-area { display: none; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; }
+    #game-area.active { display: flex; }
+    .board-wrap { position: relative; }
+    #board { display: grid; grid-template-columns: repeat(8, 1fr); width: min(80vw, 560px); height: min(80vw, 560px); border: 4px solid #5a3e2b; border-radius: 8px; overflow: hidden; user-select: none; }
+    .cell { display: flex; justify-content: center; align-items: center; font-size: 2rem; cursor: pointer; transition: background .15s; }
+    .cell.light { background: var(--board-light); }
+    .cell.dark { background: var(--board-dark); }
+    .cell.selected { outline: 3px solid var(--accent); outline-offset: -3px; }
+    .cell.possible { background: #7bed9f !important; }
+    .cell.capture-possible { background: #ff7675 !important; }
+
+    .piece { width: 75%; height: 75%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: .9rem; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,.4); transition: transform .15s; }
+    .piece.white { background: var(--white-piece); color: #333; border: 2px solid #ccc; }
+    .piece.black { background: var(--black-piece); color: #eee; border: 2px solid #555; }
+    .piece.king::after { content: "♔"; font-size: 1.1rem; }
+    .piece.king.white::after { color: #b8860b; }
+    .piece.king.black::after { color: #f1c40f; }
+
+    /* Панель информации */
+    .side-panel { background: var(--panel); border-radius: 14px; padding: 16px; width: 280px; display: flex; flex-direction: column; gap: 10px; }
+    .player-card { background: #35354d; border-radius: 10px; padding: 10px; display: flex; align-items: center; gap: 10px; }
+    .player-card.active { border: 2px solid var(--accent); }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #555; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; overflow: hidden; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .player-info { flex: 1; }
+    .player-info .nick { font-weight: 700; font-size: .95rem; }
+    .player-info .rank { font-size: .75rem; opacity: .8; }
+    .timer { font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .timer.low { color: var(--danger); animation: pulse 1s infinite; }
+    @keyframes pulse { 50% { opacity: .4; } }
+
+    /* Чат */
+    #chat-box { background: #1a1a2e; border-radius: 10px; height: 160px; overflow-y: auto; padding: 8px; font-size: .82rem; display: flex; flex-direction: column; gap: 4px; }
+    .chat-msg { padding: 4px 8px; border-radius: 6px; background: #2a2a40; word-break: break-word; }
+    .chat-msg.own { background: #4a3f8a; align-self: flex-end; }
+    .chat-msg .author { font-weight: 700; color: var(--accent); margin-right: 4px; }
+    #chat-input-row { display: flex; gap: 6px; }
+    #chat-input-row input { margin: 0; flex: 1; padding: 8px; }
+    #chat-input-row button { width: auto; padding: 8px 14px; margin: 0; }
+
+    /* Уведомления */
+    #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s; z-index: 999; box-shadow: 0 6px 20px rgba(0,0,0,.5); }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.success { background: var(--success); }
+    #toast.error { background: var(--danger); }
+
+    /* Поиск противника */
+    #search-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none; justify-content: center; align-items: center; flex-direction: column; gap: 20px; z-index: 100; text-align: center; }
+    #search-overlay.active { display: flex; }
+    .spinner { width: 60px; height: 60px; border: 6px solid #444; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .found-anim { font-size: 2rem; font-weight: 800; color: var(--success); animation: pop .6s ease-out; }
+    @keyframes pop { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.3); } 100% { transform: scale(1); opacity: 1; } }
+
+    /* Профиль */
+    .profile-card { background: var(--panel); border-radius: 16px; padding: 24px; max-width: 600px; margin: 0 auto; }
+    .profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .profile-header .avatar { width: 80px; height: 80px; font-size: 2rem; }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-item { background: #35354d; border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; font-size: .85rem; }
+    .stat-item span:last-child { font-weight: 700; }
+    .rank-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: .75rem; font-weight: 700; color: #1e1e2f; }
+
+    /* Общий чат */
+    #global-chat-box { background: var(--panel); border-radius: 14px; padding: 16px; max-width: 700px; margin: 0 auto; }
+    #global-chat-messages { height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ЭКРАН: МЕНЮ -->
+  <div id="screen-menu" class="screen active">
+    <div class="menu-box">
+      <h1>Шашки Онлайн</h1>
+      <p class="sub">v1.0 · создатель xxspk (@spkaxa)</p>
+      <button class="btn" id="btn-login-screen">Вход / Регистрация</button>
+      <button class="btn secondary" id="btn-profile-screen" style="display:none;">Мой профиль</button>
+      <button class="btn secondary" id="btn-global-chat">Общий чат</button>
+      <button class="btn secondary" id="btn-rules">Правила игры</button>
+      <button class="btn danger" id="btn-logout" style="display:none;">Выйти</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: ВХОД / РЕГИСТРАЦИЯ -->
+  <div id="screen-auth" class="screen">
+    <div class="menu-box">
+      <h2 id="auth-title">Вход</h2>
+      <label>Имя</label><input id="auth-nick" placeholder="Ваш ник" maxlength="20" />
+      <label>Пароль</label><input id="auth-pass" type="password" placeholder="Пароль" maxlength="40" />
+      <button class="btn" id="btn-do-auth">Войти</button>
+      <button class="btn secondary" id="btn-switch-auth">Нет аккаунта? Зарегистрироваться</button>
+      <button class="btn secondary" id="btn-back-menu">Назад</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: ПРОФИЛЬ -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-card" id="profile-card">
+      <!-- заполняется JS -->
+    </div>
+    <div style="text-align:center; margin-top:12px;">
+      <button class="btn secondary small" id="btn-edit-profile">Редактировать профиль</button>
+      <button class="btn secondary small" id="btn-profile-back">В меню</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: РЕДАКТИРОВАНИЕ ПРОФИЛЯ -->
+  <div id="screen-edit" class="screen">
+    <div class="menu-box">
+      <h2>Редактировать профиль</h2>
+      <label>Аватар (URL или загрузите файл)</label>
+      <input id="edit-avatar-url" placeholder="https://..." />
+      <input type="file" id="edit-avatar-file" accept="image/*" />
+      <label>Описание</label>
+      <textarea id="edit-bio" maxlength="200" placeholder="О себе..."></textarea>
+      <button class="btn" id="btn-save-profile">Сохранить</button>
+      <button class="btn secondary" id="btn-edit-back">Назад</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: ВЫБОР РЕЖИМА -->
+  <div id="screen-mode" class="screen">
+    <div class="menu-box">
+      <h2>Выберите режим</h2>
+      <button class="btn" id="btn-play-bot">Игра с ботом</button>
+      <div id="bot-difficulty" style="display:none; margin-top:8px;">
+        <button class="btn secondary small" data-diff="easy">Лёгкая</button>
+        <button class="btn secondary small" data-diff="normal">Обычная</button>
+        <button class="btn secondary small" data-diff="hard">Сложная</button>
+        <button class="btn secondary small" data-diff="impossible">Невозможная</button>
+      </div>
+      <button class="btn secondary" id="btn-play-online">Играть онлайн</button>
+      <button class="btn secondary" id="btn-back-menu2">Назад</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: ИГРА -->
+  <div id="game-area" class="screen">
+    <div class="board-wrap">
+      <div id="board"></div>
+    </div>
+    <div class="side-panel">
+      <div class="player-card" id="p-top">
+        <div class="avatar" id="p-top-avatar">?</div>
+        <div class="player-info">
+          <div class="nick" id="p-top-nick">Противник</div>
+          <div class="rank" id="p-top-rank">Новичок · 1000</div>
+        </div>
+        <div class="timer" id="p-top-timer">20</div>
+      </div>
+      <div class="player-card" id="p-bottom">
+        <div class="avatar" id="p-bottom-avatar">?</div>
+        <div class="player-info">
+          <div class="nick" id="p-bottom-nick">Вы</div>
+          <div class="rank" id="p-bottom-rank">Новичок · 1000</div>
+        </div>
+        <div class="timer" id="p-bottom-timer">20</div>
+      </div>
+      <div id="chat-box"></div>
+      <div id="chat-input-row">
+        <input id="chat-input" placeholder="Сообщение..." maxlength="120" />
+        <button class="btn small" id="btn-send-chat">→</button>
+      </div>
+      <button class="btn danger small" id="btn-surrender">Сдаться</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: ОБЩИЙ ЧАТ -->
+  <div id="screen-global-chat" class="screen">
+    <div id="global-chat-box">
+      <h2 style="margin-bottom:12px;">Общий чат шашистов</h2>
+      <div id="global-chat-messages"></div>
+      <div id="chat-input-row">
+        <input id="global-chat-input" placeholder="Сообщение..." maxlength="200" />
+        <button class="btn small" id="btn-global-send">→</button>
+      </div>
+      <button class="btn secondary" id="btn-global-back" style="margin-top:10px;">Назад</button>
+    </div>
+  </div>
+
+  <!-- ЭКРАН: ПРАВИЛА -->
+  <div id="screen-rules" class="screen">
+    <div class="menu-box" style="text-align:left; max-width:700px;">
+      <h2>Правила русских шашек</h2>
+      <ul style="line-height:1.7; font-size:.9rem; padding-left:20px;">
+        <li>Игра на тёмных полях доски 8×8, по 12 шашек.</li>
+        <li>Простая шашка ходит по диагонали вперёд на одну клетку.</li>
+        <li>Дамка ходит по диагонали на любое свободное поле вперёд и назад.</li>
+        <li><b>Взятие обязательно</b>. Если есть возможность бить — нужно бить.</li>
+        <li>Простая шашка бьёт вперёд и назад, дамка — по любым диагоналям.</li>
+        <li>При достижении последнего ряда простая шашка становится дамкой.</li>
+        <li>Правило «турецкого удара»: одну шашку нельзя бить дважды за ход.</li>
+        <li>Победа: у соперника не осталось шашек / нет ходов / просрочено время / сдача.</li>
+        <li>Ничья: 20 минут игры / повторение позиции 3 раза / 3 дамки против 1.</li>
+      </ul>
+      <button class="btn secondary" id="btn-rules-back" style="margin-top:16px;">Назад</button>
+    </div>
+  </div>
+
+  <!-- ОВЕРЛЕЙ ПОИСКА -->
+  <div id="search-overlay">
+    <div class="spinner" id="search-spinner"></div>
+    <div id="search-text">Ищем противника...</div>
+    <div style="font-size:.85rem; color:#aaa;">Если не найдёт за 5 минут — поиск отменится</div>
+    <button class="btn danger small" id="btn-cancel-search">Отменить поиск</button>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script type="module">
+// ======================== FIREBASE ========================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, update, onValue, onDisconnect, push, serverTimestamp, query, orderByChild, limitToLast, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCk7Y-HHntq-tZMkJbDpk5WEct1IJ06RRs",
+  authDomain: "shashkagame.firebaseapp.com",
+  projectId: "shashkagame",
+  storageBucket: "shashkagame.firebasestorage.app",
+  messagingSenderId: "1040996681768",
+  appId: "1:1040996681768:web:a079692548af7431fe8d1d"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+// ======================== УТИЛИТЫ ========================
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+function toast(msg, type = "") {
+  const t = $("#toast");
+  t.textContent = msg; t.className = type; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+async function hashPass(pass) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pass));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function showScreen(id) {
+  $$(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+function uidFromNick(nick) {
+  // Firebase Auth не поддерживает произвольные логины, поэтому используем синтетический email
+  return nick.toLowerCase().replace(/[^a-z0-9]/g, "") + "@shashki.local";
+}
+
+// ======================== РАНГИ / ELO ========================
+const RANKS = [
+  { min: 0,    name: "Новичок",       color: "#74b9ff", minWin: 25, minLoss: -15 },
+  { min: 1100, name: "Ученик",        color: "#ffffff", minWin: 25, minLoss: -15 },
+  { min: 1400, name: "Любитель",      color: "#a8e6cf", minWin: 24, minLoss: -16 },
+  { min: 1700, name: "Стратег",       color: "#2ecc71", minWin: 22, minLoss: -18 },
+  { min: 2000, name: "Эксперт",       color: "#3498db", minWin: 20, minLoss: -20 },
+  { min: 2300, name: "Мастер",        color: "#f1c40f", minWin: 16, minLoss: -22 },
+  { min: 2500, name: "Гроссмейстер",  color: "#e67e22", minWin: 15, minLoss: -24 },
+  { min: 2750, name: "Чемпион",       color: "#e74c3c", minWin: 15, minLoss: -25 },
+  { min: 3000, name: "Легенда",       color: "#9b59b6", minWin: 12, minLoss: -25 },
+];
+function rankOf(elo) {
+  let r = RANKS[0];
+  for (const x of RANKS) if (elo >= x.min) r = x;
+  return r;
+}
+function rankBadge(elo) {
+  const r = rankOf(elo);
+  return `<span class="rank-badge" style="background:${r.color}">${r.name}</span>`;
+}
+
+// ======================== АККАУНТЫ ========================
+let currentUser = null; // { uid, nick, elo, ... }
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const snap = await get(ref(db, "users/" + user.uid));
+    if (snap.exists()) {
+      currentUser = { uid: user.uid, ...snap.val() };
+      updateMenuAuth();
+    }
+  } else {
+    currentUser = null;
+    updateMenuAuth();
+  }
+});
+
+function updateMenuAuth() {
+  const logged = !!currentUser;
+  $("#btn-login-screen").style.display = logged ? "none" : "block";
+  $("#btn-profile-screen").style.display = logged ? "block" : "none";
+  $("#btn-logout").style.display = logged ? "block" : "none";
+  if (logged) {
+    $("#btn-profile-screen").textContent = `Профиль (${currentUser.nick})`;
+  }
+}
+
+// Регистрация / вход
+let authMode = "login"; // "login" | "register"
+$("#btn-switch-auth").onclick = () => {
+  authMode = authMode === "login" ? "register" : "login";
+  $("#auth-title").textContent = authMode === "login" ? "Вход" : "Регистрация";
+  $("#btn-do-auth").textContent = authMode === "login" ? "Войти" : "Зарегистрироваться";
+  $("#btn-switch-auth").textContent = authMode === "login" ? "Нет аккаунта? Зарегистрироваться" : "Уже есть аккаунт? Войти";
+};
+$("#btn-login-screen").onclick = () => { authMode = "login"; $("#auth-title").textContent = "Вход"; $("#btn-do-auth").textContent = "Войти"; showScreen("#screen-auth"); };
+$("#btn-back-menu").onclick = () => showScreen("#screen-menu");
+
+$("#btn-do-auth").onclick = async () => {
+  const nick = $("#auth-nick").value.trim();
+  const pass = $("#auth-pass").value;
+  if (nick.length < 2) return toast("Ник минимум 2 символа", "error");
+  if (pass.length < 4) return toast("Пароль минимум 4 символа", "error");
+  const email = uidFromNick(nick);
+  try {
+    if (authMode === "register") {
+      // проверка уникальности ника через отдельный индекс
+      const nickSnap = await get(ref(db, "nicknames/" + nick.toLowerCase()));
+      if (nickSnap.exists()) return toast("Этот ник уже занят", "error");
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      const uid = cred.user.uid;
+      const profile = {
+        nick, passHash: await hashPass(pass),
+        elo: 1000, maxElo: 1000,
+        wins: 0, losses: 0,
+        winStreak: 0, maxWinStreak: 0,
+        avatar: "", bio: "",
+        createdAt: Date.now()
+      };
+      await set(ref(db, "users/" + uid), profile);
+      await set(ref(db, "nicknames/" + nick.toLowerCase()), uid);
+      currentUser = { uid, ...profile };
+      toast("Аккаунт создан!", "success");
+      showScreen("#screen-menu"); updateMenuAuth();
+    } else {
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      const snap = await get(ref(db, "users/" + cred.user.uid));
+      currentUser = { uid: cred.user.uid, ...snap.val() };
+      toast("Добро пожаловать!", "success");
+      showScreen("#screen-menu"); updateMenuAuth();
+    }
+  } catch (e) {
+    toast(e.message || "Ошибка входа", "error");
+  }
+};
+
+$("#btn-logout").onclick = async () => { await signOut(auth); currentUser = null; updateMenuAuth(); toast("Вы вышли"); };
+
+// ======================== ПРОФИЛЬ ========================
+$("#btn-profile-screen").onclick = async () => {
+  if (!currentUser) return;
+  const s = await get(ref(db, "users/" + currentUser.uid));
+  const u = s.val(); currentUser = { uid: currentUser.uid, ...u };
+  const kd = u.losses === 0 ? u.wins : (u.wins / u.losses).toFixed(2);
+  const r = rankOf(u.elo);
+  $("#profile-card").innerHTML = `
+    <div class="profile-header">
+      <div class="avatar">${u.avatar ? `<img src="${u.avatar}"/>` : u.nick[0].toUpperCase()}</div>
+      <div>
+        <h2>${u.nick}</h2>
+        <div style="font-size:.8rem;color:#aaa;">ID: ${currentUser.uid.slice(0,8)}</div>
+        <div style="margin-top:4px;">${rankBadge(u.elo)} <b>${u.elo}</b> Elo</div>
+      </div>
+    </div>
+    <p style="font-size:.85rem;color:#ccc;margin-bottom:12px;">${u.bio || "Нет описания"}</p>
+    <div class="stat-grid">
+      <div class="stat-item"><span>Макс. Elo</span><span>${u.maxElo}</span></div>
+      <div class="stat-item"><span>Победы</span><span>${u.wins}</span></div>
+      <div class="stat-item"><span>Поражения</span><span>${u.losses}</span></div>
+      <div class="stat-item"><span>K/D</span><span>${kd}</span></div>
+      <div class="stat-item"><span>Винстрик</span><span>${u.winStreak}</span></div>
+      <div class="stat-item"><span>Макс. винстрик</span><span>${u.maxWinStreak}</span></div>
+    </div>`;
+  showScreen("#screen-profile");
+};
+$("#btn-profile-back").onclick = () => showScreen("#screen-menu");
+$("#btn-edit-profile").onclick = () => {
+  if (!currentUser) return;
+  $("#edit-avatar-url").value = currentUser.avatar || "";
+  $("#edit-bio").value = currentUser.bio || "";
+  showScreen("#screen-edit");
+};
+$("#btn-edit-back").onclick = () => showScreen("#screen-profile");
+
+$("#edit-avatar-file").onchange = (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { $("#edit-avatar-url").value = reader.result; };
+  reader.readAsDataURL(file);
+};
+$("#btn-save-profile").onclick = async () => {
+  if (!currentUser) return;
+  const avatar = $("#edit-avatar-url").value.trim();
+  const bio = $("#edit-bio").value.trim();
+  await update(ref(db, "users/" + currentUser.uid), { avatar, bio });
+  currentUser.avatar = avatar; currentUser.bio = bio;
+  toast("Профиль обновлён", "success");
+  showScreen("#screen-profile");
+};
+
+// ======================== ВЫБОР РЕЖИМА ========================
+$("#btn-play-bot").onclick = () => $("#bot-difficulty").style.display = "block";
+$$("#bot-difficulty button").forEach(b => b.onclick = () => startBotGame(b.dataset.diff));
+$("#btn-play-online").onclick = () => { if (!currentUser) return toast("Войдите в аккаунт", "error"); startOnlineSearch(); };
+$("#btn-back-menu2").onclick = () => showScreen("#screen-menu");
+
+// ======================== ЛОГИКА ШАШЕК (РУССКИЕ) ========================
+// Доска: 8x8, индексы 0..63. Тёмные клетки: (row+col)%2===1. Белые внизу (rows 5-7), чёрные сверху (rows 0-2).
+// Представление: массив 64, null | { color:'w'|'b', king:false|true }
+function initBoard() {
+  const b = new Array(64).fill(null);
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) b[r*8+c] = { color: 'b', king: false };
+  for (let r = 5; r < 8; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) b[r*8+c] = { color: 'w', king: false };
+  return b;
+}
+function cloneBoard(b) { return b.map(p => p ? { ...p } : null); }
+function idx(r, c) { return r * 8 + c; }
+function rc(i) { return [Math.floor(i / 8), i % 8]; }
+function inside(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+// Все возможные ходы для стороны color. Возвращает массив { from, to, captures: [indices], promote }
+function getMoves(board, color) {
+  const moves = [];
+  const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
+  for (let i = 0; i < 64; i++) {
+    const p = board[i]; if (!p || p.color !== color) continue;
+    const [r, c] = rc(i);
+    if (!p.king) {
+      // простая: ход вперёд на 1
+      const fwd = color === 'w' ? -1 : 1;
+      for (const dc of [-1, 1]) {
+        const nr = r + fwd, nc = c + dc;
+        if (inside(nr, nc) && !board[idx(nr,nc)]) moves.push({ from: i, to: idx(nr,nc), captures: [], promote: (color==='w'&&nr===0)||(color==='b'&&nr===7) });
+      }
+    } else {
+      // дамка: скольжение по диагоналям
+      for (const [dr, dc] of dirs) {
+        let nr = r + dr, nc = c + dc;
+        while (inside(nr, nc) && !board[idx(nr,nc)]) { moves.push({ from: i, to: idx(nr,nc), captures: [], promote: false }); nr += dr; nc += dc; }
+      }
+    }
+    // взятия (и для простых, и для дамок)
+    if (p.king) {
+      for (const [dr, dc] of dirs) {
+        let nr = r + dr, nc = c + dc;
+        while (inside(nr, nc) && !board[idx(nr,nc)]) { nr += dr; nc += dc; }
+        if (inside(nr, nc) && board[idx(nr,nc)].color !== color) {
+          let er = nr + dr, ec = nc + dc;
+          while (inside(er, ec) && !board[idx(er,ec)]) {
+            moves.push({ from: i, to: idx(er,ec), captures: [idx(nr,nc)], promote: false });
+            er += dr; ec += dc;
+          }
+        }
+      }
+    } else {
+      // простая бьёт вперёд и назад
+      for (const [dr, dc] of dirs) {
+        const mr = r + dr, mc = c + dc, tr = r + 2*dr, tc = c + 2*dc;
+        if (inside(tr, tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)]) {
+          moves.push({ from: i, to: idx(tr,tc), captures: [idx(mr,mc)], promote: (color==='w'&&tr===0)||(color==='b'&&tr===7) });
+        }
+      }
+    }
+  }
+  // Обязательное взятие: если есть взятия, оставляем только их
+  const captures = moves.filter(m => m.captures.length > 0);
+  if (captures.length > 0) return captures;
+  return moves;
+}
+
+// Применение хода (возвращает новый board)
+function applyMove(board, move) {
+  const nb = cloneBoard(board);
+  const p = nb[move.from];
+  nb[move.from] = null;
+  for (const cap of move.captures) nb[cap] = null;
+  nb[move.to] = { color: p.color, king: p.king || move.promote };
+  return nb;
+}
+
+// Проверка: есть ли у стороны хотя бы один ход
+function hasMoves(board, color) { return getMoves(board, color).length > 0; }
+
+// Оценка позиции для бота (material + дамки)
+function evaluate(board, botColor) {
+  let score = 0;
+  for (const p of board) {
+    if (!p) continue;
+    const v = p.king ? 5 : 1;
+    score += (p.color === botColor ? v : -v);
+  }
+  return score;
+}
+
+// ======================== БОТ ========================
+let botDepth = 1; // 1=easy, 2=normal, 3=hard, 5=impossible
+let botColor = 'b';
+function botChooseMove(board, color, depth) {
+  const moves = getMoves(board, color);
+  if (moves.length === 0) return null;
+  if (depth <= 0) {
+    // оценка без рекурсии
+    let best = moves[0], bestScore = -Infinity;
+    for (const m of moves) {
+      const nb = applyMove(board, m);
+      const sc = evaluate(nb, color);
+      if (sc > bestScore) { bestScore = sc; best = m; }
+    }
+    return best;
+  }
+  let best = null, bestScore = -Infinity;
+  for (const m of moves) {
+    const nb = applyMove(board, m);
+    const opponent = color === 'w' ? 'b' : 'w';
+    const oppMoves = getMoves(nb, opponent);
+    let sc;
+    if (oppMoves.length === 0) sc = 1000; // победа
+    else {
+      // минимакс: противник выберет худший для нас
+      let worst = Infinity;
+      for (const om of oppMoves) {
+        const nb2 = applyMove(nb, om);
+        const val = evaluate(nb2, color);
+        if (val < worst) worst = val;
+      }
+      sc = worst;
+    }
+    if (sc > bestScore) { bestScore = sc; best = m; }
+  }
+  return best;
+}
+
+// ======================== ИГРОВОЕ СОСТОЯНИЕ ========================
+let game = null; // { board, turn, mode:'bot'|'online', botColor, roomId, myColor, timers, ... }
+
+function startBotGame(diff) {
+  const depths = { easy: 1, normal: 2, hard: 3, impossible: 5 };
+  botDepth = depths[diff];
+  botColor = 'b'; // бот всегда чёрный, игрок белый
+  game = {
+    mode: 'bot',
+    board: initBoard(),
+    turn: 'w',
+    myColor: 'w',
+    botColor: 'b',
+    timers: { w: 20, b: 20 },
+    timerInterval: null,
+    moveHistory: [],
+    gameOver: false
+  };
+  $("#p-top-nick").textContent = "Бот (" + diff + ")";
+  $("#p-top-rank").innerHTML = "Бот";
+  $("#p-bottom-nick").textContent = currentUser?.nick || "Вы";
+  $("#p-bottom-rank").innerHTML = currentUser ? rankBadge(currentUser.elo) + " " + currentUser.elo : "Гость";
+  showScreen("#game-area"); $("#game-area").classList.add("active");
+  renderBoard(); startTurnTimer();
+}
+
+// ======================== ОНЛАЙН-ПОИСК ========================
+let searchTimeout = null;
+let searchStart = 0;
+let searchListener = null;
+
+async function startOnlineSearch() {
+  if (!currentUser) return;
+  const uid = currentUser.uid;
+  // Добавляем себя в очередь
+  await set(ref(db, "queue/" + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: Date.now() });
+  searchStart = Date.now();
+
+  $("#search-overlay").classList.add("active");
+  $("#search-spinner").style.display = "block";
+  $("#search-text").textContent = "Ищем противника...";
+  $("#search-text").className = "";
+
+  // Слушаем очередь
+  const qRef = ref(db, "queue");
+  searchListener = onValue(qRef, async (snap) => {
+    const q = snap.val() || {};
+    const candidates = Object.entries(q).filter(([id]) => id !== uid);
+    if (candidates.length === 0) return;
+
+    // Сначала ищем по Elo (±100), если прошло >60 сек — берём любого
+    const elapsed = Date.now() - searchStart;
+    let opponent = null;
+    if (elapsed < 60000) {
+      opponent = candidates.find(([, v]) => Math.abs(v.elo - currentUser.elo) <= 200);
+    }
+    if (!opponent) opponent = candidates[0]; // fallback: любой
+    const [oppUid, oppData] = opponent;
+
+    // Создаём комнату
+    const roomId = "room_" + Math.min(uid, oppUid) + "_" + Math.max(uid, oppUid) + "_" + Date.now();
+    // Случайно определяем сторону
+    const whiteUid = Math.random() < 0.5 ? uid : oppUid;
+    const blackUid = whiteUid === uid ? oppUid : uid;
+
+    // Удаляем обоих из очереди
+    await update(ref(db), { ["queue/" + uid]: null, ["queue/" + oppUid]: null });
+
+    const roomData = {
+      white: whiteUid, black: blackUid,
+      board: JSON.stringify(initBoard()),
+      turn: "w",
+      timers: { w: 20, b: 20 },
+      status: "playing",
+      createdAt: serverTimestamp(),
+      moves: [],
+      chat: {}
+    };
+    await set(ref(db, "rooms/" + roomId), roomData);
+
+    // Отписываемся от поиска
+    if (searchListener) { searchListener(); searchListener = null; }
+    clearTimeout(searchTimeout);
+    $("#search-overlay").classList.remove("active");
+
+    // Анимация "противник найден"
+    const myColor = whiteUid === uid ? "w" : "b";
+    const oppNick = oppData.nick;
+    const oppElo = oppData.elo;
+    $("#toast").className = "success show";
+    $("#toast").innerHTML = `<span class="found-anim">Противник найден!</span><br/>${oppNick} · ${rankOf(oppElo).name} ${oppElo} Elo<br/>Вы играете за <b>${myColor === 'w' ? 'белых' : 'чёрных'}</b>`;
+    setTimeout(() => { $("#toast").classList.remove("show"); joinOnlineGame(roomId, myColor, oppNick, oppElo); }, 2500);
+  });
+
+  // Таймаут 5 минут
+  searchTimeout = setTimeout(async () => {
+    if (searchListener) { searchListener(); searchListener = null; }
+    await set(ref(db, "queue/" + uid), null);
+    $("#search-overlay").classList.remove("active");
+    toast("Поиск отменён (5 минут)", "error");
+  }, 5 * 60 * 1000);
+}
+
+$("#btn-cancel-search").onclick = async () => {
+  if (searchListener) { searchListener(); searchListener = null; }
+  clearTimeout(searchTimeout);
+  if (currentUser) await set(ref(db, "queue/" + currentUser.uid), null);
+  $("#search-overlay").classList.remove("active");
+  toast("Поиск отменён");
+};
+
+// ======================== ОНЛАЙН-ИГРА ========================
+let roomUnsub = null;
+let onlineGame = null;
+
+async function joinOnlineGame(roomId, myColor, oppNick, oppElo) {
+  const roomRef = ref(db, "rooms/" + roomId);
+  roomUnsub = onValue(roomRef, (snap) => {
+    const data = snap.val(); if (!data) return;
+    onlineGame = { roomId, ...data, myColor };
+    game = {
+      mode: 'online',
+      board: JSON.parse(data.board),
+      turn: data.turn,
+      myColor,
+      timers: data.timers,
+      gameOver: data.status !== 'playing',
+      roomId,
+      oppNick, oppElo
+    };
+    // Обновляем панели
+    $("#p-top-nick").textContent = oppNick;
+    $("#p-top-rank").innerHTML = rankBadge(oppElo) + " " + oppElo;
+    $("#p-bottom-nick").textContent = currentUser.nick;
+    $("#p-bottom-rank").innerHTML = rankBadge(currentUser.elo) + " " + currentUser.elo;
+
+    if (data.status === "finished") {
+      game.gameOver = true;
+      clearInterval(game.timerInterval);
+      const res = data.result;
+      if (res === myColor) toast("Вы победили! 🎉", "success");
+      else if (res === "draw") toast("Ничья", "");
+      else toast("Вы проиграли", "error");
+      renderBoard();
+      return;
+    }
+    renderBoard();
+    if (!game.timerInterval) startTurnTimer();
+    // синхронизация чата
+    renderChat(data.chat || {});
+  });
+}
+
+function renderChat(chatObj) {
+  const box = $("#chat-box"); box.innerHTML = "";
+  Object.values(chatObj).sort((a,b) => a.ts - b.ts).forEach(m => {
+    const d = document.createElement("div");
+    d.className = "chat-msg" + (m.uid === currentUser.uid ? " own" : "");
+    d.innerHTML = `<span class="author">${m.nick}:</span>${m.text}`;
+    box.appendChild(d);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+// ======================== ОТРИСОВКА ДОСКИ ========================
+let selected = null;
+let possibleMoves = [];
+
+function renderBoard() {
+  const boardEl = $("#board");
+  if (!game || !boardEl) return;
+  boardEl.innerHTML = "";
+  for (let i = 0; i < 64; i++) {
+    const [r, c] = rc(i);
+    const cell = document.createElement("div");
+    cell.className = "cell " + ((r + c) % 2 === 0 ? "light" : "dark");
+    cell.dataset.idx = i;
+    if (selected === i) cell.classList.add("selected");
+    if (possibleMoves.some(m => m.to === i)) {
+      cell.classList.add(possibleMoves.find(m => m.to === i).captures.length ? "capture-possible" : "possible");
+    }
+    const p = game.board[i];
+    if (p) {
+      const piece = document.createElement("div");
+      piece.className = "piece " + (p.color === 'w' ? "white" : "black") + (p.king ? " king" : "");
+      piece.textContent = p.king ? "" : "";
+      cell.appendChild(piece);
+    }
+    cell.onclick = () => onCellClick(i);
+    boardEl.appendChild(cell);
+  }
+  // Таймеры
+  $("#p-top-timer").textContent = game.timers[game.myColor === 'w' ? 'b' : 'w'] ?? 20;
+  $("#p-bottom-timer").textContent = game.timers[game.myColor] ?? 20;
+  $("#p-top-timer").classList.toggle("low", (game.timers[game.myColor === 'w' ? 'b' : 'w'] ?? 20) <= 5);
+  $("#p-bottom-timer").classList.toggle("low", (game.timers[game.myColor] ?? 20) <= 5);
+  // Активная карточка
+  $("#p-top").classList.toggle("active", game.turn !== game.myColor);
+  $("#p-bottom").classList.toggle("active", game.turn === game.myColor);
+}
+
+function onCellClick(i) {
+  if (!game || game.gameOver) return;
+  // Если игра с ботом и сейчас ход бота — игнорируем
+  if (game.mode === 'bot' && game.turn !== game.myColor) return;
+  // Если онлайн и не наш ход — игнорируем
+  if (game.mode === 'online' && game.turn !== game.myColor) return;
+
+  const p = game.board[i];
+  if (selected !== null) {
+    const move = possibleMoves.find(m => m.to === i);
+    if (move) { executeMove(move); return; }
+  }
+  if (p && p.color === (game.mode === 'bot' ? game.myColor : game.myColor)) {
+    selected = i;
+    possibleMoves = getMoves(game.board, p.color).filter(m => m.from === i);
+    if (possibleMoves.length === 0) { selected = null; possibleMoves = []; }
+    renderBoard();
+  } else {
+    selected = null; possibleMoves = []; renderBoard();
+  }
+}
+
+async function executeMove(move) {
+  const newBoard = applyMove(game.board, move);
+  const moverColor = game.turn;
+  const nextTurn = moverColor === 'w' ? 'b' : 'w';
+  selected = null; possibleMoves = [];
+
+  // Проверка на победу/ничью
+  const nextMoves = getMoves(newBoard, nextTurn);
+  let result = null;
+  if (nextMoves.length === 0) result = moverColor; // победа
+  else if (!newBoard.some(p => p && p.color === nextTurn)) result = moverColor;
+
+  if (game.mode === 'bot') {
+    game.board = newBoard; game.turn = nextTurn;
+    game.timers[moverColor] = 20;
+    renderBoard();
+    if (result) { endGame(result, 'bot'); return; }
+    // Ход бота
+    setTimeout(() => {
+      const bm = botChooseMove(game.board, game.botColor, botDepth);
+      if (!bm) { endGame(moverColor, 'bot'); return; }
+      const nb = applyMove(game.board, bm);
+      game.board = nb; game.turn = moverColor;
+      game.timers[game.botColor] = 20;
+      const oppMoves = getMoves(nb, moverColor);
+      renderBoard();
+      if (oppMoves.length === 0) endGame(game.botColor, 'bot');
+    }, 400);
+  } else {
+    // Онлайн: отправляем ход в Firebase
+    game.timers[moverColor] = 20;
+    const roomRef = ref(db, "rooms/" + game.roomId);
+    const updateData = {
+      board: JSON.stringify(newBoard),
+      turn: nextTurn,
+      [`timers/${moverColor}`]: 20,
+      [`timers/${nextTurn}`]: 20,
+    };
+    if (result) {
+      updateData.status = "finished";
+      updateData.result = result;
+    }
+    await update(roomRef, updateData);
+    if (result) endGame(result, 'online');
+  }
+}
+
+function endGame(result, mode) {
+  game.gameOver = true;
+  clearInterval(game.timerInterval);
+  if (mode === 'bot') {
+    if (result === game.myColor) toast("Вы победили! 🎉", "success");
+    else toast("Вы проиграли", "error");
+    renderBoard();
+  }
+  // Обновление Elo и статистики (только для онлайн)
+  if (mode === 'online' && currentUser && result !== 'draw') {
+    updateEloAfterGame(result === game.myColor, game.roomId);
+  }
+}
+
+// ======================== ELO / СТАТИСТИКА ========================
+async function updateEloAfterGame(won, roomId) {
+  const userRef = ref(db, "users/" + currentUser.uid);
+  const snap = await get(userRef);
+  if (!snap.exists()) return;
+  const u = snap.val();
+  const r = rankOf(u.elo);
+  const baseWin = r.minWin;
+  const baseLoss = r.minLoss;
+
+  let delta = 0;
+  if (won) {
+    delta = baseWin;
+    // бонусы: убитые шашки, дамки, разница Elo (упрощённо)
+    delta += Math.min(10, u.winStreak); // винстрик-бонус
+    delta = Math.min(50, delta);
+  } else {
+    delta = baseLoss; // отрицательный
+    delta = Math.max(-25, delta);
+  }
+
+  let newElo = Math.max(100, u.elo + delta);
+  let newStreak = won ? u.winStreak + 1 : 0;
+  let newMaxStreak = Math.max(u.maxWinStreak, newStreak);
+  let newWins = u.wins + (won ? 1 : 0);
+  let newLosses = u.losses + (won ? 0 : 1);
+  let newMaxElo = Math.max(u.maxElo, newElo);
+
+  // Ранг не сбрасывается (остаётся максимальный достигнутый)
+  await update(userRef, {
+    elo: newElo, maxElo: newMaxElo,
+    wins: newWins, losses: newLosses,
+    winStreak: newStreak, maxWinStreak: newMaxStreak
+  });
+  currentUser.elo = newElo;
+}
+
+// ======================== ТАЙМЕР ХОДА ========================
+function startTurnTimer() {
+  if (game.timerInterval) clearInterval(game.timerInterval);
+  game.timerInterval = setInterval(async () => {
+    if (!game || game.gameOver) { clearInterval(game.timerInterval); return; }
+    const color = game.turn;
+    if (game.timers[color] > 0) game.timers[color]--;
+    renderBoard();
+    // Звук на исходе (от 5 сек)
+    if (game.timers[color] <= 5 && game.timers[color] > 0) playSound('tick');
+    if (game.timers[color] <= 0) {
+      clearInterval(game.timerInterval);
+      // Просрочка: шашка "пропадает" и ход переходит
+      handleTimeout(color);
+    }
+  }, 1000);
+}
+
+async function handleTimeout(color) {
+  // Удаляем случайную шашку просрочившего (кроме дамки, если возможно)
+  const pieces = [];
+  game.board.forEach((p, i) => { if (p && p.color === color) pieces.push(i); });
+  if (pieces.length === 0) { endGame(color === 'w' ? 'b' : 'w', game.mode); return; }
+  // Убираем простую шашку, если есть
+  const simple = pieces.filter(i => !game.board[i].king);
+  const removeIdx = (simple.length ? simple : pieces)[Math.floor(Math.random() * (simple.length || pieces.length))];
+  game.board[removeIdx] = null;
+  const next = color === 'w' ? 'b' : 'w';
+  game.turn = next;
+  game.timers[color] = 20;
+  game.timers[next] = 20;
+  renderBoard();
+  if (game.mode === 'online') {
+    await update(ref(db, "rooms/" + game.roomId), {
+      board: JSON.stringify(game.board),
+      turn: next,
+      [`timers/${color}`]: 20,
+      [`timers/${next}`]: 20
+    });
+  }
+  toast(`Время вышло! Шашка удалена. Ход ${next === 'w' ? 'белых' : 'чёрных'}`, "error");
+}
+
+// ======================== ЧАТ В ИГРЕ ========================
+$("#btn-send-chat").onclick = async () => {
+  const text = $("#chat-input").value.trim(); if (!text || !currentUser) return;
+  if (game.mode === 'online' && game.roomId) {
+    const msgRef = push(ref(db, "rooms/" + game.roomId + "/chat"));
+    await set(msgRef, { uid: currentUser.uid, nick: currentUser.nick, text, ts: Date.now() });
+    $("#chat-input").value = "";
+  } else {
+    // В игре с ботом чат локальный (просто эхо)
+    const box = $("#chat-box");
+    const d = document.createElement("div");
+    d.className = "chat-msg own";
+    d.innerHTML = `<span class="author">${currentUser.nick}:</span>${text}`;
+    box.appendChild(d); box.scrollTop = box.scrollHeight;
+    $("#chat-input").value = "";
+  }
+};
+$("#chat-input").addEventListener("keydown", e => { if (e.key === "Enter") $("#btn-send-chat").click(); });
+
+// ======================== СДАТЬСЯ ========================
+$("#btn-surrender").onclick = async () => {
+  if (!game || game.gameOver) return;
+  if (game.mode === 'bot') endGame(game.botColor, 'bot');
+  else if (game.roomId) {
+    const winner = game.myColor === 'w' ? 'b' : 'w';
+    await update(ref(db, "rooms/" + game.roomId), { status: "finished", result: winner });
+    endGame(winner, 'online');
+  }
+};
+
+// ======================== ОБЩИЙ ЧАТ ========================
+$("#btn-global-chat").onclick = () => { showScreen("#screen-global-chat"); loadGlobalChat(); };
+$("#btn-global-back").onclick = () => showScreen("#screen-menu");
+
+function loadGlobalChat() {
+  const q = query(ref(db, "globalChat"), orderByChild("ts"), limitToLast(100));
+  onValue(q, (snap) => {
+    const box = $("#global-chat-messages"); box.innerHTML = "";
+    const msgs = snap.val() || {};
+    Object.values(msgs).sort((a,b) => a.ts - b.ts).forEach(m => {
+      const d = document.createElement("div");
+      d.className = "chat-msg" + (m.uid === currentUser?.uid ? " own" : "");
+      d.innerHTML = `<span class="author">${m.nick}:</span>${m.text}`;
+      box.appendChild(d);
+    });
+    box.scrollTop = box.scrollHeight;
+  });
+}
+$("#btn-global-send").onclick = async () => {
+  const text = $("#global-chat-input").value.trim();
+  if (!text || !currentUser) return;
+  const msgRef = push(ref(db, "globalChat"));
+  await set(msgRef, { uid: currentUser.uid, nick: currentUser.nick, text, ts: Date.now() });
+  $("#global-chat-input").value = "";
+};
+$("#global-chat-input").addEventListener("keydown", e => { if (e.key === "Enter") $("#btn-global-send").click(); });
+
+// ======================== ПРАВИЛА ========================
+$("#btn-rules").onclick = () => showScreen("#screen-rules");
+$("#btn-rules-back").onclick = () => showScreen("#screen-menu");
+
+// ======================== ЗВУКИ ========================
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSound(type) {
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  const now = audioCtx.currentTime;
+  if (type === 'click') { o.frequency.value = 600; g.gain.setValueAtTime(0.1, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.1); o.start(now); o.stop(now + 0.1); }
+  if (type === 'move') { o.frequency.value = 400; o.frequency.linearRampToValueAtTime(800, now + 0.1); g.gain.setValueAtTime(0.15, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.15); o.start(now); o.stop(now + 0.15); }
+  if (type === 'tick') { o.frequency.value = 1000; g.gain.setValueAtTime(0.1, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.08); o.start(now); o.stop(now + 0.08); }
+  if (type === 'capture') { o.frequency.value = 200; o.frequency.linearRampToValueAtTime(100, now + 0.2); g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.25); o.start(now); o.stop(now + 0.25); }
+}
+// При клике на клетку — звук
+document.addEventListener("click", (e) => { if (e.target.closest(".cell")) playSound('click'); });
+
+// ======================== НАВИГАЦИЯ ========================
+$("#btn-global-chat").onclick = () => { showScreen("#screen-global-chat"); loadGlobalChat(); };
+</script>
+</body>
+</html>
