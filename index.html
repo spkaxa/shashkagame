@@ -991,6 +991,7 @@ function applyStep(board, step) {
 
 // ============ BOT ============
 let botDepth = 1;
+
 function getBotSequences(board, color) {
   let sequences = [];
   function findCaptures(currBoard, startSquare, currentPath) {
@@ -1023,32 +1024,90 @@ function getBotSequences(board, color) {
   return sequences;
 }
 
-function botChooseMove(board, color, depth) {
-  const sequences = getBotSequences(board, color);
-  if (sequences.length === 0) return null;
-  
-  let bestSeq = sequences[0];
-  let bestScore = -Infinity;
-  
-  for (const seq of sequences) {
-    let nb = board;
-    for (const step of seq) nb = applyStep(nb, step);
-    const sc = evalFor(nb, color);
-    if (sc > bestScore) { bestScore = sc; bestSeq = seq; }
-  }
-  return bestSeq[0];
-}
-
 function evalFor(board, color) {
   let s = 0;
   for (let i = 0; i < 64; i++) {
     const p = board[i]; if (!p) continue;
-    const [r] = rc(i);
-    let v = p.king ? 5 : 1;
-    if (!p.king) v += p.color === 'w' ? (7 - r) * 0.1 : r * 0.1;
+    const [r, c] = rc(i);
+    
+    let v = p.king ? 4.5 : 1;
+    
+    if (!p.king) {
+      if (p.color === 'w') v += (7 - r) * 0.15;
+      else v += r * 0.15;
+      if (c === 0 || c === 7) v -= 0.1;
+    } else {
+      if (r > 0 && r < 7 && c > 0 && c < 7) v += 0.5;
+    }
+    
     if (p.color === color) s += v; else s -= v;
   }
   return s;
+}
+
+function minimax(board, depth, alpha, beta, isMaximizing, botColor) {
+  const currentColor = isMaximizing ? botColor : (botColor === 'w' ? 'b' : 'w');
+  const sequences = getBotSequences(board, currentColor);
+  
+  if (sequences.length === 0) {
+    return isMaximizing ? -100000 - depth * 100 : 100000 + depth * 100; 
+  }
+  
+  if (depth === 0) {
+    return evalFor(board, botColor);
+  }
+  
+  if (isMaximizing) {
+    let maxEval = -Infinity;
+    for (const seq of sequences) {
+      let nb = board;
+      for (const step of seq) nb = applyStep(nb, step);
+      const evalScore = minimax(nb, depth - 1, alpha, beta, false, botColor);
+      maxEval = Math.max(maxEval, evalScore);
+      alpha = Math.max(alpha, evalScore);
+      if (beta <= alpha) break;
+    }
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+    for (const seq of sequences) {
+      let nb = board;
+      for (const step of seq) nb = applyStep(nb, step);
+      const evalScore = minimax(nb, depth - 1, alpha, beta, true, botColor);
+      minEval = Math.min(minEval, evalScore);
+      beta = Math.min(beta, evalScore);
+      if (beta <= alpha) break;
+    }
+    return minEval;
+  }
+}
+
+function botChooseMove(board, color, depth) {
+  const sequences = getBotSequences(board, color);
+  if (sequences.length === 0) return null;
+  
+  if (depth === 1 && Math.random() < 0.35) {
+    return sequences[Math.floor(Math.random() * sequences.length)][0];
+  }
+  
+  let bestSeq = sequences[0];
+  let bestScore = -Infinity;
+  let alpha = -Infinity;
+  const beta = Infinity;
+  
+  const shuffledSeqs = [...sequences].sort(() => Math.random() - 0.5);
+  
+  for (const seq of shuffledSeqs) {
+    let nb = board;
+    for (const step of seq) nb = applyStep(nb, step);
+    const sc = minimax(nb, depth - 1, alpha, beta, false, color);
+    if (sc > bestScore) {
+      bestScore = sc;
+      bestSeq = seq;
+    }
+    alpha = Math.max(alpha, sc);
+  }
+  return bestSeq[0];
 }
 
 // ============ GAME STATE & RENDER ============
@@ -1073,7 +1132,7 @@ function setPlayerCard(prefix, data) {
 
 function startBotGame(diff) {
   if (!currentUser) return toast("Войдите в аккаунт", "error");
-  const depths = { easy: 1, normal: 2, hard: 3, impossible: 5 };
+  const depths = { easy: 1, normal: 3, hard: 4, impossible: 6 };
   const names = { easy: 'Легкий', normal: 'Средний', hard: 'Сложный', impossible: 'Невозможный' };
   botDepth = depths[diff];
   game = {
@@ -1566,7 +1625,6 @@ async function updateEloAfterGame(won, stats) {
       if (eloDiff > 0) {
         delta += Math.min(20, Math.floor(eloDiff / 50));
       } else if (eloDiff < 0) {
-        // Чем выше твой ранг по сравнению с врагом, тем меньше дадут (но не меньше +5 за победу)
         delta -= Math.min(10, Math.floor(Math.abs(eloDiff) / 200));
       }
       
@@ -1577,7 +1635,7 @@ async function updateEloAfterGame(won, stats) {
       else if (u.winStreak >= 3) delta += 2;
       else if (u.winStreak >= 2) delta += 1;
       
-      delta = Math.max(5, Math.min(50, delta)); // Минимум +5 за победу
+      delta = Math.max(5, Math.min(50, delta));
 
     } else {
       delta = r.l;
@@ -1586,14 +1644,12 @@ async function updateEloAfterGame(won, stats) {
       if (stats.isTotalWipe) delta -= 5;
       
       if (eloDiff > 0) {
-        // Враг сильнее — теряешь меньше
         delta += Math.min(15, Math.floor(eloDiff / 100));
       } else if (eloDiff < 0) {
-        // Враг слабее — теряешь больше
         delta -= Math.min(15, Math.floor(Math.abs(eloDiff) / 100));
       }
       
-      delta = Math.max(-50, Math.min(-1, delta)); // Максимум -50, минимум -1
+      delta = Math.max(-50, Math.min(-1, delta));
     }
 
     const newElo = Math.max(100, u.elo + delta);
