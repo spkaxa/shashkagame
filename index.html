@@ -1078,7 +1078,7 @@ function startBotGame(diff) {
   botDepth = depths[diff];
   game = {
     mode: 'bot', board: initBoard(), turn: 'w', myColor: 'w', botColor: 'b',
-    timers: { w: 20, b: 20 }, timerInterval: null, gameOver: false,
+    timers: { w: 20, b: 20 }, timerInterval: null, gameOver: false, eloUpdated: false,
     botLevel: diff
   };
   setPlayerCard('p-top', { nick: `Бот (${names[diff]})`, tag: '', elo: 1000, maxElo: 1000, winStreak: 0, avatar: '', uid: '' });
@@ -1089,7 +1089,7 @@ function startBotGame(diff) {
   log('Bot game started, difficulty:', diff);
 }
 
-// ============ ONLINE MATCHMAKING (FIXED) ============
+// ============ ONLINE MATCHMAKING ============
 let searchTimeout = null;
 let matchListener = null;
 let queueListener = null;
@@ -1113,7 +1113,6 @@ async function startOnlineSearch() {
   $("#search-text").textContent = "Ищем противника...";
   log('Search started');
 
-  // Слушаем приглашения
   matchListener = onValue(ref(db, "match_request/" + uid), async (snap) => {
     const req = snap.val();
     if (!req) return;
@@ -1136,13 +1135,11 @@ async function startOnlineSearch() {
     showMatchFound(req.roomId, req.myColor, oppProfile);
   });
 
-  // Сканируем очередь
   queueListener = onValue(ref(db, "matchmaking"), async (snap) => {
     const q = snap.val() || {};
     const candidates = Object.entries(q).filter(([id]) => id !== uid);
     if (candidates.length === 0) return;
     
-    // Хост - это тот, у кого UID меньше
     const oppEntry = candidates.find(([id]) => id > uid);
     if (!oppEntry) return; 
     
@@ -1165,7 +1162,7 @@ async function startOnlineSearch() {
       white: uid, black: oppUid,
       board: JSON.stringify(initBoard()), turn: "w",
       timers: { w: 20, b: 20 }, status: "playing",
-      createdAt: Date.now(), moves: [], chat: {}
+      createdAt: Date.now(), moves: [], chat: {}, moveCount: 0
     });
     
     await set(ref(db, "match_request/" + oppUid), { roomId, fromUid: uid, myColor: oppColor });
@@ -1221,7 +1218,8 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
         mode: 'online', roomId, myColor,
         board: JSON.parse(data.board), turn: data.turn,
         timers: data.timers || { w: 20, b: 20 },
-        gameOver: false, timerInterval: null, oppUid, oppProfile, eloUpdated: false
+        gameOver: false, timerInterval: null, oppUid, oppProfile, eloUpdated: false,
+        moveCount: data.moveCount || 0
       };
       setPlayerCard('p-top', { uid: oppUid, ...oppProfile });
       setPlayerCard('p-bottom', { uid: currentUser.uid, nick: currentUser.nick, tag: currentUser.tag, elo: currentUser.elo, maxElo: currentUser.maxElo, winStreak: currentUser.winStreak, avatar: currentUser.avatar });
@@ -1231,6 +1229,7 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
       game.board = JSON.parse(data.board);
       game.turn = data.turn;
       game.timers = data.timers || game.timers;
+      game.moveCount = data.moveCount || game.moveCount;
     }
     
     if (data.status === "finished") {
@@ -1243,7 +1242,7 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
   });
 }
 
-async function handleGameOver(result) {
+async function handleGameOver(result, finalBoard = null) {
   if (!game || game.eloUpdated) return;
   game.eloUpdated = true;
   game.gameOver = true;
@@ -1255,8 +1254,37 @@ async function handleGameOver(result) {
   
   renderBoard();
   
-  if (result !== "draw" && currentUser) {
-     updateEloAfterGame(result === game.myColor);
+  if (result !== "draw" && currentUser && game.mode === 'online') {
+     const boardToEval = finalBoard || game.board;
+     
+     let myPieces = 0, myKings = 0;
+     let oppPieces = 0, oppKings = 0;
+     const oppColor = game.myColor === 'w' ? 'b' : 'w';
+     
+     for (let i = 0; i < 64; i++) {
+       const p = boardToEval[i];
+       if (!p) continue;
+       if (p.color === game.myColor) {
+         myPieces++;
+         if (p.king) myKings++;
+       } else if (p.color === oppColor) {
+         oppPieces++;
+         if (p.king) oppKings++;
+       }
+     }
+     
+     const myLost = 12 - myPieces;
+     const oppLost = 12 - oppPieces;
+     
+     updateEloAfterGame(result === game.myColor, {
+       myLost: myLost,
+       oppLost: oppLost,
+       myKings: myKings,
+       oppKings: oppKings,
+       oppElo: game.oppProfile ? (game.oppProfile.elo || 1000) : 1000,
+       isTotalWipe: (result === game.myColor ? oppPieces === 0 : myPieces === 0),
+       moveCount: game.moveCount || 0
+     });
   }
 }
 
@@ -1416,6 +1444,8 @@ async function executeFullMove(singleMove = null) {
   
   selected = null; possibleMoves = [];
   midMoveBoard = null; midMovePiece = null; midMovePath = [];
+  
+  game.moveCount = (game.moveCount || 0) + 1;
 
   const nextHasMoves = Array.from({length: 64}, (_, i) => getStepsForPiece(newBoard, i, nextTurn)).some(s => s.length > 0);
   let result = null;
@@ -1425,21 +1455,22 @@ async function executeFullMove(singleMove = null) {
     game.board = newBoard; game.turn = nextTurn;
     game.timers[moverColor] = 20;
     renderBoard();
-    if (result) { endGame(result, 'bot'); return; }
+    if (result) { endGame(result, 'bot', newBoard); return; }
     
     setTimeout(() => {
       if (game.gameOver) return;
       const bm = botChooseMove(game.board, game.botColor, botDepth);
-      if (!bm) { endGame(moverColor, 'bot'); return; }
+      if (!bm) { endGame(moverColor, 'bot', game.board); return; }
       
       const nb = applyStep(game.board, bm);
       game.board = nb; game.turn = moverColor;
       game.timers[game.botColor] = 20;
+      game.moveCount++;
       playSound(bm.captures.length ? 'capture' : 'move');
       renderBoard();
       
       const myHasMoves = Array.from({length: 64}, (_, i) => getStepsForPiece(nb, i, moverColor)).some(s => s.length > 0);
-      if (!myHasMoves) endGame(game.botColor, 'bot');
+      if (!myHasMoves) endGame(game.botColor, 'bot', nb);
     }, 400);
   } else {
     game.timers[moverColor] = 20;
@@ -1448,14 +1479,15 @@ async function executeFullMove(singleMove = null) {
       turn: nextTurn,
       [`timers/${moverColor}`]: 20,
       [`timers/${nextTurn}`]: 20,
+      moveCount: game.moveCount
     };
     if (result) { upd.status = "finished"; upd.result = result; }
     await update(ref(db, "rooms/" + game.roomId), upd);
-    if (result) handleGameOver(result);
+    if (result) handleGameOver(result, newBoard);
   }
 }
 
-function endGame(result, mode) {
+function endGame(result, mode, finalBoard = null) {
   if (mode === 'bot') {
     if (game.eloUpdated) return;
     game.eloUpdated = true;
@@ -1466,7 +1498,7 @@ function endGame(result, mode) {
     renderBoard();
     updateBotElo(result === game.myColor, game.botLevel);
   } else if (mode === 'online') {
-    handleGameOver(result);
+    handleGameOver(result, finalBoard);
   }
 }
 
@@ -1507,28 +1539,63 @@ async function updateBotElo(won, diff) {
   toast(`BotElo (${diff}): ${delta > 0 ? '+' : ''}${delta} → ${newElo}`, delta > 0 ? "success" : "error");
 }
 
-async function updateEloAfterGame(won) {
+async function updateEloAfterGame(won, stats) {
   if (updateEloAfterGame._running) return;
   updateEloAfterGame._running = true;
+  
+  if (stats.moveCount < 5) {
+    toast("Игра была слишком короткой. Elo не начислен.", "error");
+    updateEloAfterGame._running = false;
+    return;
+  }
+
   try {
     const userRef = ref(db, "users/" + currentUser.uid);
     const snap = await get(userRef); if (!snap.exists()) return;
     const u = snap.val();
     const r = rankOf(u.elo);
-    let delta;
+    
+    let delta = 0;
+    const eloDiff = stats.oppElo - u.elo;
+    
     if (won) {
       delta = r.w;
+      delta += stats.oppLost; 
+      delta += stats.myKings * 2; 
+      
+      if (eloDiff > 0) {
+        delta += Math.min(20, Math.floor(eloDiff / 50));
+      } else if (eloDiff < 0) {
+        // Чем выше твой ранг по сравнению с врагом, тем меньше дадут (но не меньше +5 за победу)
+        delta -= Math.min(10, Math.floor(Math.abs(eloDiff) / 200));
+      }
+      
       if (u.winStreak >= 20) delta += 7;
       else if (u.winStreak >= 10) delta += 6;
       else if (u.winStreak >= 5) delta += 5;
       else if (u.winStreak >= 4) delta += 3;
       else if (u.winStreak >= 3) delta += 2;
       else if (u.winStreak >= 2) delta += 1;
-      delta = Math.min(50, delta);
+      
+      delta = Math.max(5, Math.min(50, delta)); // Минимум +5 за победу
+
     } else {
       delta = r.l;
-      delta = Math.max(-25, delta);
+      delta -= stats.myLost;
+      delta -= stats.oppKings * 2;
+      if (stats.isTotalWipe) delta -= 5;
+      
+      if (eloDiff > 0) {
+        // Враг сильнее — теряешь меньше
+        delta += Math.min(15, Math.floor(eloDiff / 100));
+      } else if (eloDiff < 0) {
+        // Враг слабее — теряешь больше
+        delta -= Math.min(15, Math.floor(Math.abs(eloDiff) / 100));
+      }
+      
+      delta = Math.max(-50, Math.min(-1, delta)); // Максимум -50, минимум -1
     }
+
     const newElo = Math.max(100, u.elo + delta);
     const newStreak = won ? u.winStreak + 1 : 0;
     const newMaxStreak = Math.max(u.maxWinStreak, newStreak);
@@ -1554,7 +1621,9 @@ async function updateEloAfterGame(won) {
     
     log('Elo updated:', delta, '→', newElo);
     toast(`Elo: ${delta > 0 ? '+' : ''}${delta} → ${newElo}`, delta > 0 ? "success" : "error");
-  } finally { setTimeout(() => { updateEloAfterGame._running = false; }, 5000); }
+  } finally { 
+    setTimeout(() => { updateEloAfterGame._running = false; }, 5000); 
+  }
 }
 
 // ============ TIMER ============
@@ -1576,7 +1645,7 @@ function startTurnTimer() {
 async function handleTimeout(color) {
   const pieces = [];
   game.board.forEach((p, i) => { if (p && p.color === color) pieces.push(i); });
-  if (pieces.length === 0) { endGame(color === 'w' ? 'b' : 'w', game.mode); return; }
+  if (pieces.length === 0) { endGame(color === 'w' ? 'b' : 'w', game.mode, game.board); return; }
   const simple = pieces.filter(i => !game.board[i].king);
   const pool = simple.length ? simple : pieces;
   const removeIdx = pool[Math.floor(Math.random() * pool.length)];
@@ -1584,11 +1653,13 @@ async function handleTimeout(color) {
   const next = color === 'w' ? 'b' : 'w';
   game.turn = next;
   game.timers[color] = 20; game.timers[next] = 20;
+  game.moveCount = (game.moveCount || 0) + 1;
   renderBoard();
   if (game.mode === 'online' && game.roomId) {
     await update(ref(db, "rooms/" + game.roomId), {
       board: JSON.stringify(game.board), turn: next,
-      [`timers/${color}`]: 20, [`timers/${next}`]: 20
+      [`timers/${color}`]: 20, [`timers/${next}`]: 20,
+      moveCount: game.moveCount
     });
   }
   toast(`⏱ Время вышло! Удалена шашка.`, "error");
@@ -1614,11 +1685,11 @@ $("#chat-input").addEventListener("keydown", e => { if (e.key === "Enter") $("#b
 $("#btn-surrender").onclick = async () => {
   if (!game || game.gameOver) return;
   if (game.mode === 'bot') {
-    endGame(game.botColor, 'bot');
+    endGame(game.botColor, 'bot', game.board);
   } else if (game.roomId) {
     const winner = game.myColor === 'w' ? 'b' : 'w';
     await update(ref(db, "rooms/" + game.roomId), { status: "finished", result: winner });
-    handleGameOver(winner);
+    handleGameOver(winner, game.board);
   }
 };
 $("#btn-leave-game").onclick = () => {
