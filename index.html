@@ -376,7 +376,7 @@ label{font-size:.8rem;color:var(--text-dim);display:block;text-align:left;margin
 <div id="search-overlay">
   <div class="spinner" id="search-spinner"></div>
   <div id="search-text">Ищем противника...</div>
-  <div style="font-size:.85rem; color:#86efac;">Если не найдёт за 5 минут — поиск отменится</div>
+  <div style="font-size:.85rem; color:#86efac;">Поиск не ограничен по времени. Ждём соперника...</div>
   <button class="btn danger small" id="btn-cancel-search">Отменить поиск</button>
 </div>
 
@@ -850,7 +850,6 @@ $("#btn-delete-account").onclick = async () => {
     const uid = currentUser.uid;
     const oldNick = currentUser.nick.toLowerCase();
     
-    // Мягкое удаление в базе
     await update(ref(db, "users/" + uid), {
       deleted: true,
       nick: "Аккаунт удален",
@@ -860,10 +859,7 @@ $("#btn-delete-account").onclick = async () => {
       clan: ""
     });
     
-    // Удаляем ник из индекса
     await set(ref(db, "nicknames/" + oldNick), null);
-    
-    // Выходим
     await signOut(auth);
     currentUser = null;
     updateMenuAuth();
@@ -1348,7 +1344,6 @@ async function startOnlineSearch() {
     
     const roomId = "room_" + [uid, oppUid].sort().join("_");
     
-    // Рулетка сторон
     const isWhiteHost = Math.random() < 0.5;
     const whiteUid = isWhiteHost ? uid : oppUid;
     const blackUid = isWhiteHost ? oppUid : uid;
@@ -1372,14 +1367,7 @@ async function startOnlineSearch() {
     showRoulette(roomId, myColor, oppProfile);
   });
 
-  searchTimeout = setTimeout(async () => {
-    if (matchListener) { matchListener(); matchListener = null; }
-    if (queueListener) { queueListener(); queueListener = null; }
-    isSearching = false;
-    await set(ref(db, "matchmaking/" + uid), null);
-    $("#search-overlay").classList.remove("active");
-    toast("Поиск отменён (5 минут)", "error");
-  }, 5 * 60 * 1000);
+  // Таймаут убран, поиск бесконечный
 }
 
 function showRoulette(roomId, myColor, oppProfile) {
@@ -1550,7 +1538,6 @@ function renderBoard() {
   if (game && game.lastMove && game.lastMove.from !== undefined && game.lastMove.to !== undefined) {
     const [fr, fc] = rc(game.lastMove.from);
     const [tr, tc] = rc(game.lastMove.to);
-    // Координаты в SVG (800x800)
     const x1 = fc * 100 + 50;
     const y1 = fr * 100 + 50;
     const x2 = tc * 100 + 50;
@@ -1673,13 +1660,8 @@ async function executeFullMove(singleMove = null) {
     endSq = singleMove[0].to;
   } else {
     startSq = selected !== null ? selected : -1;
-    // Для цепочек берем начало из первого шага, конец из последнего
     endSq = midMovePath[midMovePath.length - 1];
-    // Восстанавливаем начало из истории (упрощенно)
-    startSq = game.board.findIndex((p, idx) => p && p.color === game.myColor && applyStep(game.board, {from: idx, to: -1, captures: []}) /* не сработает */);
-    // Проще взять из последнего хода в консоли
-    // В реальном коде мы бы сохраняли startSq при начале цепочки. 
-    // В нашем случае first move `from` доступен при клике. Оставим упрощенно.
+    startSq = game.board.findIndex((p, idx) => p && p.color === game.myColor && applyStep(game.board, {from: idx, to: -1, captures: [] }) /* не сработает */);
   }
 
   selected = null; possibleMoves = [];
