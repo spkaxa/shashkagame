@@ -333,9 +333,11 @@ label{font-size:.8rem;color:var(--text-dim);display:block;text-align:left;margin
 </div>
 
 <div id="screen-rules" class="screen">
-  <div class="menu-box" style="text-align:left; max-width:700px;">
-    <h2>📜 Правила русских шашек</h2>
-    <ul style="line-height:1.8; font-size:.9rem; padding-left:20px;">
+  <div class="menu-box" style="text-align:left; max-width:700px; max-height: 85vh; overflow-y: auto;">
+    <h2 style="text-align:center; margin-bottom:16px;">📜 Правила и Рейтинг</h2>
+    
+    <h3 style="color:var(--accent2); margin-bottom:8px;">Правила русских шашек</h3>
+    <ul style="line-height:1.6; font-size:.9rem; padding-left:20px; margin-bottom:24px;">
       <li>Игра на тёмных полях доски 8×8, по 12 шашек.</li>
       <li>Простая шашка ходит по диагонали вперёд на одну клетку.</li>
       <li>Дамка ходит по диагонали на любое свободное поле вперёд и назад.</li>
@@ -345,6 +347,28 @@ label{font-size:.8rem;color:var(--text-dim);display:block;text-align:left;margin
       <li>Победа: у соперника нет шашек / нет ходов / просрочено время / сдача.</li>
       <li>Ничья: 20 минут игры / повторение позиции 3 раза / 3 дамки против 1.</li>
     </ul>
+
+    <h3 style="color:var(--accent2); margin-bottom:8px;">🏆 Система рангов</h3>
+    <div style="font-size:.9rem; margin-bottom:24px; background:var(--panel2); padding:12px; border-radius:8px;">
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:4px 0;"><span style="color:#74b9ff; font-weight:bold;">Новичок</span> <span>0 - 1199 Elo</span></div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:4px 0;"><span style="color:#ffffff; font-weight:bold;">Ученик</span> <span>1200 - 1499 Elo</span></div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:4px 0;"><span style="color:#a8e6cf; font-weight:bold;">Любитель</span> <span>1500 - 1999 Elo</span></div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:4px 0;"><span style="color:#2ecc71; font-weight:bold;">Стратег</span> <span>2000 - 2499 Elo</span></div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:4px 0;"><span style="color:#f1c40f; font-weight:bold;">Мастер</span> <span>2500 - 2999 Elo</span></div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:4px 0;"><span style="color:#e67e22; font-weight:bold;">Гроссмейстер</span> <span>3000 - 3999 Elo</span></div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding:4px 0;"><span style="color:#e74c3c; font-weight:bold;">Чемпион</span> <span>4000 - 4999 Elo</span></div>
+      <div style="display:flex; justify-content:space-between; padding:4px 0;"><span style="color:#9b59b6; font-weight:bold;">Легенда</span> <span>5000+ Elo</span></div>
+    </div>
+
+    <h3 style="color:var(--accent2); margin-bottom:8px;">🧮 Как начисляется Elo</h3>
+    <ul style="line-height:1.6; font-size:.9rem; padding-left:20px; margin-bottom:16px;">
+      <li>За победу дается базовый рейтинг (зависит от ранга) + бонусы за убитые шашки, твои дамки, винстрик и разницу в Elo.</li>
+      <li>Если ты побеждаешь соперника с <b>большим</b> рейтингом, ты получаешь значительно больше очков (до +50).</li>
+      <li>За поражение отнимается базовый рейтинг + штрафы за потерянные шашки, дамки врага и полное уничтожение.</li>
+      <li>Если ты проигрываешь сопернику с <b>низким</b> рейтингом, ты теряешь много очков (до -50).</li>
+      <li><b>Защита от накрутки:</b> если игра длится меньше 5 ходов (сдача на старте), рейтинг не начисляется и не отнимается.</li>
+    </ul>
+
     <button class="btn secondary" id="btn-rules-back" style="margin-top:16px;">Назад</button>
   </div>
 </div>
