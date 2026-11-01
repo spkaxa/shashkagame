@@ -70,12 +70,16 @@ h2.ptitle{font-size:20px;margin-bottom:16px;display:flex;align-items:center;gap:
 .pclan{background:var(--main);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
 .pabout{color:var(--txt2);font-size:13px;margin-top:4px;max-width:400px}
 .rank-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:linear-gradient(90deg,var(--main),#2e7d32);color:#fff}
+.top1-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;background:linear-gradient(90deg,#ffd54f,#ff9800);color:#3e2a1a;box-shadow:0 0 12px rgba(255,213,79,.5)}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
 .stat-card{background:var(--bg2);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center}
 .stat-card .v{font-size:20px;font-weight:700;color:var(--gold)}
 .stat-card .l{font-size:11px;color:var(--txt2);margin-top:2px}
 .elo-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border-radius:10px;padding:10px 14px;margin-top:8px;border:1px solid rgba(255,255,255,.06);font-size:14px}
 .elo-row .lab{display:flex;gap:8px;align-items:center;color:var(--txt2)}
+.ach-grid{display:flex;flex-wrap:wrap;gap:6px}
+.ach-chip{padding:6px 10px;border-radius:10px;font-size:11px;font-weight:600;background:var(--bg2);border:1px solid var(--gold);color:var(--txt);cursor:default}
+.ach-chip.locked{opacity:.4;filter:grayscale(1);border-color:rgba(255,255,255,.15)}
 
 input[type=range]{width:100%;accent-color:var(--main)}
 input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);border-radius:8px;border:1px solid rgba(255,255,255,.15);cursor:pointer}
@@ -217,6 +221,7 @@ body.ui-mobile .modal{padding:18px;max-width:95vw}
 body.ui-mobile #game-chat-box{height:140px}
 body.ui-mobile #turn-banner{padding:8px;font-size:13px}
 body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
+body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
 @media(max-width:760px){#header-nav{width:100%;margin-left:0}#game-wrap{flex-direction:column;align-items:center}.gside{width:100%;max-width:560px}}
 </style>
 </head>
@@ -226,7 +231,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
   <div class="logo">
     <div class="logo-row">
       <span class="leaf">🌿</span><span>Шашки Онлайн</span>
-      <span class="ver">v1.1.2</span>
+      <span class="ver">v1.1</span>
       <span class="author" id="creator-link">создатель xxspk (@spkaxa)</span>
     </div>
     <div class="credit">кодил qwen &lt;3</div>
@@ -252,7 +257,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
   <div class="panel auth-card">
     <div class="auth-logo">🌿</div>
     <div class="auth-title" id="auth-title">Вход</div>
-    <div class="auth-sub">v1.1.2 · создатель xxspk · кодил qwen &lt;3</div>
+    <div class="auth-sub">v1.1 · создатель xxspk · кодил qwen &lt;3</div>
     <div class="field"><label>Имя</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
     <div class="field"><label>Пароль (мин. 6 символов)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
     <button class="btn big" id="auth-submit">Войти</button>
@@ -337,7 +342,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
       <div style="height:8px"></div>
       <label class="checkbox-row">
         <input type="checkbox" id="chk-king-rules">
-        <span>👑 Изменение правил дамки<span class="hint-text">Дамка бьёт только через 1 клетку (не летает по диагонали)</span></span>
+        <span>👑 Изменение правил дамки (ребаланс)<span class="hint-text">Дамка бьёт только через 1 клетку. Подбор соперников отдельно от классических правил!</span></span>
       </label>
       <button class="btn big" id="play-online-btn">🌐 Играть онлайн <span id="search-count" style="font-size:12px;opacity:.8"></span></button>
     </div>
@@ -356,21 +361,21 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
       <div class="pcard" id="opp-card">
         <div class="avatar sm" id="opp-av">🤖</div>
         <div class="info">
-          <div class="nm"><span id="opp-name">Противник</span> <span class="fire" id="opp-streak">🔥0</span></div>
+          <div class="nm"><span id="opp-name">Противник</span><span id="opp-top1"></span> <span class="fire" id="opp-streak">🔥0</span></div>
           <div class="sub" id="opp-sub">1000</div>
           <div id="opp-rank" style="font-size:11px;color:var(--gold)"></div>
         </div>
-        <div class="timer" id="opp-timer">20</div>
+        <div class="timer" id="opp-timer">30</div>
       </div>
       <div id="turn-banner">Ваш ход</div>
       <div class="pcard" id="me-card">
         <div class="avatar sm" id="me-av">🙂</div>
         <div class="info">
-          <div class="nm"><span id="me-name">Вы</span> <span class="fire" id="me-streak">🔥0</span></div>
+          <div class="nm"><span id="me-name">Вы</span><span id="me-top1"></span> <span class="fire" id="me-streak">🔥0</span></div>
           <div class="sub" id="me-sub">1000</div>
           <div id="me-rank" style="font-size:11px;color:var(--gold)"></div>
         </div>
-        <div class="timer" id="me-timer">20</div>
+        <div class="timer" id="me-timer">30</div>
       </div>
       <div class="match-code-box hidden" id="match-code-box">Код матча: <b id="match-code-val">0000</b></div>
       <div id="game-chat-box"></div>
@@ -413,7 +418,8 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
       <li>При достижении последнего ряда простая шашка становится дамкой.</li>
       <li>Победа: у соперника нет шашек / нет ходов / сдача.</li>
       <li>Ничья: 20 минут игры / повторение позиции 3 раза.</li>
-      <li>⚙️ <b>Режим "короткой дамки"</b>: дамка ходит и бьёт только через 1 клетку.</li>
+      <li>⏱ Время на ход: <b>30 секунд</b>, иначе удаляется шашка.</li>
+      <li>⚙️ <b>Режим "короткой дамки" (ребаланс):</b> дамка ходит и бьёт только через 1 клетку. Подбор соперников отдельный!</li>
     </ul>
     <h3 style="font-size:15px;margin:16px 0 8px">🏆 Система рангов</h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px" id="ranks-box"></div>
@@ -424,6 +430,11 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
       <li>Проигрыш слабому — до <b style="color:var(--red)">-50</b>.</li>
       <li>Защита от накрутки: меньше 5 ходов — рейтинг не меняется.</li>
       <li><b>Общий Elo = easy + normal + hard + impossible - 3000</b></li>
+    </ul>
+    <h3 style="font-size:15px;margin:16px 0 8px">🏅 Достижения</h3>
+    <ul style="font-size:13px;color:var(--txt2);line-height:1.9;padding-left:18px">
+      <li>40 достижений: победы онлайн, ранги, победы над ботами, чат, клан и другое.</li>
+      <li>Смотри свои и чужие достижения в профиле.</li>
     </ul>
     <div class="row" style="margin-top:16px"><button class="btn secondary" id="rules-back-btn">← Назад</button></div>
   </div>
@@ -437,7 +448,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
     <div class="spinner"></div>
     <div style="font-size:17px;font-weight:700">Ищем противника...</div>
     <div id="modal-search-count" style="font-size:13px;color:var(--gold);margin-top:6px">Ищут игру: ...</div>
-    <div style="font-size:12px;color:var(--txt2);margin-top:8px">Поиск не ограничен по времени</div>
+    <div style="font-size:12px;color:var(--txt2);margin-top:8px">Подбор только с таким же режимом дамки</div>
     <button class="btn secondary small" id="cancel-search-btn" style="margin-top:16px">Отменить</button>
   </div>
 </div>
@@ -468,6 +479,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+
+const TURN_SECONDS = 30;
 
 // ================= УТИЛИТЫ =================
 const $ = (id) => document.getElementById(id);
@@ -516,12 +529,83 @@ const RANKS = [
   { n:'Легенда', min:5000, max:Infinity, c:'#ffd54f', icon:'👑', w:12, l:-25 }
 ];
 function getRank(e) { return RANKS.find(r => e >= r.min && e <= r.max) || RANKS[0]; }
+function rankIndex(e) { let idx = 0; RANKS.forEach((r, i) => { if (e >= r.min) idx = i; }); return idx; }
 function calcTotalBotElo(u) {
   return (u.botElo_easy||1000) + (u.botElo_normal||1000) + (u.botElo_hard||1000) + (u.botElo_impossible||1000) - 3000;
 }
 function avatarHtml(u, c) {
   if (u.avatar) return '<div class="avatar ' + c + '"><img src="' + esc(u.avatar) + '" onerror="this.parentNode.innerHTML=\'🙂\'"></div>';
   return '<div class="avatar ' + c + '">🙂</div>';
+}
+
+// ================= ДОСТИЖЕНИЯ (40 штук, навсегда) =================
+const BOT_DIFF_NAMES = { easy:'Лёгкий', normal:'Обычный', hard:'Сложный', impossible:'Невозможный' };
+function buildAchievements() {
+  const list = [];
+  const ow = [
+    [1,'🌐','Онлайн-победа I','Выиграть 1 онлайн игру'],
+    [5,'🌐','Онлайн-победа II','Выиграть 5 онлайн игр'],
+    [10,'🌐','Онлайн-победа III','Выиграть 10 онлайн игр'],
+    [25,'🌐','Онлайн-победа IV','Выиграть 25 онлайн игр'],
+    [50,'🌐','Онлайн-победа V','Выиграть 50 онлайн игр'],
+    [100,'🌐','Онлайн-победа VI','Выиграть 100 онлайн игр']
+  ];
+  for (const [n, ic, nm, ds] of ow) list.push({ id:'ow'+n, icon:ic, name:nm, desc:ds, check:u=>(u.wins||0)>=n });
+  RANKS.forEach((r, i) => list.push({ id:'rank'+i, icon:r.icon, name:'Ранг: '+r.n, desc:'Достичь ранга "'+r.n+'"', check:u=>rankIndex(u.maxElo||1000)>=i }));
+  list.push({ id:'first', icon:'🎮', name:'Первая игра', desc:'Сыграть игру с ботом или онлайн', check:u=>((u.onlineGames||0)+(u.botGames||0))>=1 });
+  for (const d of ['easy','normal','hard','impossible']) {
+    const dn = BOT_DIFF_NAMES[d];
+    list.push({ id:'bw1_'+d, icon:'🤖', name:'Победить бота "'+dn+'"', desc:'Выиграть 1 раз у бота '+dn, check:u=>(u['botWins_'+d]||0)>=1 });
+    for (const n of [5,10,25,50]) {
+      list.push({ id:'bw'+n+'_'+d, icon:'🤖', name:dn+' ×'+n, desc:'Выиграть '+n+' раз у бота '+dn, check:u=>(u['botWins_'+d]||0)>=n });
+    }
+  }
+  list.push({ id:'chat1', icon:'💬', name:'Собеседник', desc:'Написать сообщение в чат', check:u=>(u.chatMsgs||0)>=1 });
+  list.push({ id:'chat10', icon:'💬', name:'Болтун', desc:'Написать 10 сообщений в чат', check:u=>(u.chatMsgs||0)>=10 });
+  list.push({ id:'chat100', icon:'💬', name:'Мастер чата', desc:'Написать 100 сообщений в чат', check:u=>(u.chatMsgs||0)>=100 });
+  list.push({ id:'clan', icon:'⚔', name:'Клановец', desc:'Поставить клан в профиле', check:u=>!!(u.clan && u.clan.trim()) });
+  list.push({ id:'all', icon:'👑', name:'Выполнить все достижения', desc:'Получить все остальные достижения', check:u=>list.every(a => a.id === 'all' || a.check(u)) });
+  return list;
+}
+const ACH_LIST = buildAchievements();
+function achievementsHTML(u) {
+  const unlocked = ACH_LIST.filter(a => a.check(u)).length;
+  const chips = ACH_LIST.map(a => {
+    const ok = a.check(u);
+    return '<div class="ach-chip' + (ok ? '' : ' locked') + '" title="' + esc(a.desc) + '">' + (ok ? a.icon : '🔒') + ' ' + esc(a.name) + '</div>';
+  }).join('');
+  return '<h3 style="margin:16px 0 8px;font-size:15px">🏅 Достижения (' + unlocked + '/' + ACH_LIST.length + ')</h3><div class="ach-grid">' + chips + '</div>';
+}
+
+// ================= TOP 1 ELO =================
+let top1Cache = { ts: 0, uid: null, elo: 0 };
+async function getTop1() {
+  if (Date.now() - top1Cache.ts < 30000) return top1Cache;
+  try {
+    const snap = await get(ref(db, 'users'));
+    let best = null;
+    for (const [uid, u] of Object.entries(snap.val() || {})) {
+      if (u.deleted) continue;
+      if (!best || (u.elo || 1000) > best.elo) best = { uid, elo: u.elo || 1000 };
+    }
+    top1Cache = { ts: Date.now(), uid: best ? best.uid : null, elo: best ? best.elo : 0 };
+  } catch (e) {}
+  return top1Cache;
+}
+function top1BadgeHTML(t, uid) {
+  return (t.uid === uid && t.elo > 1000) ? '<span class="top1-badge">👑 TOP 1 ELO</span>' : '';
+}
+async function fillProfileTop1(uid, slotId) {
+  const t = await getTop1();
+  const el = $(slotId);
+  if (el) el.innerHTML = top1BadgeHTML(t, uid);
+}
+async function fillGameTop1() {
+  const t = await getTop1();
+  const oppUid = G ? G.oppUid : null;
+  const meUid = G ? (G.spectator ? G.whiteUid : (currentUser ? currentUser.uid : null)) : null;
+  $('opp-top1').innerHTML = oppUid ? top1BadgeHTML(t, oppUid) : '';
+  $('me-top1').innerHTML = meUid ? top1BadgeHTML(t, meUid) : '';
 }
 
 // ================= ЭКРАНЫ =================
@@ -617,7 +701,7 @@ on('auth-submit', async () => {
         botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
         botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
         wins: 0, losses: 0, winStreak: 0, maxWinStreak: 0,
-        onlineGames: 0, botGames: 0, playtime: 0,
+        onlineGames: 0, botGames: 0, playtime: 0, chatMsgs: 0,
         lastSeen: Date.now(), lastNickChange: 0, createdAt: Date.now(), deleted: false
       };
       await set(ref(db, 'users/' + uid), profile);
@@ -653,7 +737,7 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await get(ref(db, 'users/' + user.uid));
     if (snap.exists()) {
       currentUser = Object.assign({ uid: user.uid }, snap.val());
-      const defs = { botElo_easy:1000, botElo_normal:1000, botElo_hard:1000, botElo_impossible:1000, botWins_easy:0, botWins_normal:0, botWins_hard:0, botWins_impossible:0, wins:0, losses:0, winStreak:0, maxWinStreak:0, onlineGames:0, botGames:0, playtime:0, lastNickChange:0, clan:'', deleted:false, elo:1000, maxElo:1000 };
+      const defs = { botElo_easy:1000, botElo_normal:1000, botElo_hard:1000, botElo_impossible:1000, botWins_easy:0, botWins_normal:0, botWins_hard:0, botWins_impossible:0, wins:0, losses:0, winStreak:0, maxWinStreak:0, onlineGames:0, botGames:0, playtime:0, chatMsgs:0, lastNickChange:0, clan:'', deleted:false, elo:1000, maxElo:1000 };
       const up = {};
       for (const k in defs) { if (currentUser[k] === undefined) { currentUser[k] = defs[k]; up[k] = defs[k]; } }
       if (!currentUser.displayId || currentUser.displayId === '00000') {
@@ -737,14 +821,14 @@ on('nick-btn', async () => {
 function eloLine(l, u, d) {
   return '<div class="elo-row"><span class="lab">' + l + '</span><span><b style="color:var(--gold)">' + (u['botElo_'+d]||1000) + '</b> · <span style="color:var(--green)">' + (u['botWins_'+d]||0) + 'W</span></span></div>';
 }
-function renderProfileInto(u, isMe) {
+function renderProfileInto(u, isMe, slotId) {
   const tot = calcTotalBotElo(u), rk = getRank(u.elo || 1000);
   const bw = (u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
   const kd = u.losses === 0 ? (u.wins||0) : ((u.wins||0)/u.losses).toFixed(2);
   $('my-profile-box').innerHTML =
     '<div class="profile-head">' + avatarHtml(u, '') +
     '<div style="flex:1;min-width:200px">' +
-    '<div class="pname">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + (u.clan ? ' <span class="pclan">⚔ ' + esc(u.clan) + '</span>' : '') + ' <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ' + (u.displayId||'00000') + '</span></div>' +
+    '<div class="pname">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + (u.clan ? ' <span class="pclan">⚔ ' + esc(u.clan) + '</span>' : '') + ' <span id="' + slotId + '"></span> <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ' + (u.displayId||'00000') + '</span></div>' +
     '<div style="margin:6px 0"><span class="rank-badge">' + rk.icon + ' ' + rk.n + ' · ' + (u.elo||1000) + ' Elo</span></div>' +
     '<div style="margin:6px 0;font-size:13px">🤖 Общий BotElo: <b style="color:var(--gold);font-size:16px">' + tot + '</b></div>' +
     '<div class="pabout">' + (u.bio ? esc(u.bio) : '<i style="opacity:.5">Нет описания</i>') + '</div></div>' +
@@ -760,7 +844,9 @@ function renderProfileInto(u, isMe) {
     '<div class="stat-card"><div class="v">' + fmtTime(u.playtime||0) + '</div><div class="l">Плейтайм</div></div>' +
     '<div class="stat-card"><div class="v">' + ((u.onlineGames||0)+(u.botGames||0)) + '</div><div class="l">Всего игр</div></div>' +
     '</div>' +
-    '<div style="margin-top:14px">' + eloLine('🟢 Лёгкий бот', u, 'easy') + eloLine('🔵 Обычный бот', u, 'normal') + eloLine('🟠 Сложный бот', u, 'hard') + eloLine('🔥 Невозможный бот', u, 'impossible') + '</div>';
+    '<div style="margin-top:14px">' + eloLine('🟢 Лёгкий бот', u, 'easy') + eloLine('🔵 Обычный бот', u, 'normal') + eloLine('🟠 Сложный бот', u, 'hard') + eloLine('🔥 Невозможный бот', u, 'impossible') + '</div>' +
+    achievementsHTML(u);
+  fillProfileTop1(u.uid, slotId);
   if (isMe) {
     on('open-edit-btn', () => {
       $('edit-tag').value = u.tag || '';
@@ -771,7 +857,7 @@ function renderProfileInto(u, isMe) {
     });
   }
 }
-function renderMyProfile() { if (currentUser) renderProfileInto(currentUser, true); }
+function renderMyProfile() { if (currentUser) renderProfileInto(currentUser, true, 'top1-slot-main'); }
 
 $('edit-avatar-file').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return;
@@ -819,7 +905,7 @@ async function showProfile(uid) {
   openModal(
     '<div style="text-align:center;margin-bottom:14px">' + avatarHtml(u, 'md') + '</div>' +
     '<div style="text-align:center">' +
-    '<div class="pname" style="justify-content:center">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + '</div>' +
+    '<div class="pname" style="justify-content:center">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + ' <span id="top1-slot-modal"></span></div>' +
     (u.clan ? '<div style="margin-top:4px"><span class="pclan">⚔ ' + esc(u.clan) + '</span></div>' : '') +
     '<div style="font-size:11px;color:var(--txt2);margin-top:4px">ID: ' + (u.displayId||'00000') + '</div>' +
     '<div style="margin:8px 0"><span class="rank-badge">' + rk.icon + ' ' + rk.n + ' · ' + (u.elo||1000) + ' Elo</span></div>' +
@@ -835,8 +921,10 @@ async function showProfile(uid) {
     '<div class="stat-card"><div class="v">' + fmtTime(u.playtime||0) + '</div><div class="l">Плейтайм</div></div>' +
     '<div class="stat-card"><div class="v">' + (u.onlineGames||0) + '</div><div class="l">Игр онлайн</div></div>' +
     '</div>' +
-    '<div style="margin-top:12px">' + eloLine('🟢 Лёгкий', u, 'easy') + eloLine('🔵 Обычный', u, 'normal') + eloLine('🟠 Сложный', u, 'hard') + eloLine('🔥 Невозможный', u, 'impossible') + '</div>'
+    '<div style="margin-top:12px">' + eloLine('🟢 Лёгкий', u, 'easy') + eloLine('🔵 Обычный', u, 'normal') + eloLine('🟠 Сложный', u, 'hard') + eloLine('🔥 Невозможный', u, 'impossible') + '</div>' +
+    achievementsHTML(u)
   );
+  fillProfileTop1(uid, 'top1-slot-modal');
 }
 function openProfileModal(uid) { showProfile(uid); }
 
@@ -848,7 +936,7 @@ function bindChatClicks(container, isGlobal) {
     if (delEl) {
       const key = delEl.dataset.key;
       if (isGlobal) update(ref(db, 'globalChat/' + key), { deleted: true });
-      else if (game && game.roomId) update(ref(db, 'rooms/' + game.roomId + '/chat/' + key), { deleted: true });
+      else if (G && G.roomId) update(ref(db, 'rooms/' + G.roomId + '/chat/' + key), { deleted: true });
     }
   });
 }
@@ -877,10 +965,14 @@ function renderGlobalChat() {
     box.scrollTop = box.scrollHeight;
   });
 }
+function bumpChatCounter() {
+  if (currentUser) runTransaction(ref(db, 'users/' + currentUser.uid + '/chatMsgs'), c => (c || 0) + 1).catch(() => {});
+}
 async function sendGlobalChat() {
   const t = $('global-chat-input').value.trim();
   if (!t || !currentUser) return;
   await push(ref(db, 'globalChat'), { uid: currentUser.uid, nick: currentUser.nick, text: t, ts: Date.now(), deleted: false });
+  bumpChatCounter();
   $('global-chat-input').value = '';
 }
 on('global-chat-send', sendGlobalChat);
@@ -1183,7 +1275,7 @@ function setCard(prefix, data) {
 function startBotGame(diff) {
   if (!currentUser) { toast('Войдите', 'error'); return; }
   currentKingRules = 'flying';
-  G = { mode:'bot', diff, board:initBoard(), turn:'w', myColor:'w', botColor:'b', timers:{w:20,b:20}, timerInt:null, over:false, eloUp:false, moveCount:0, startTime:Date.now(), oppUid:null, roomId:null, spectator:false, matchCode:null };
+  G = { mode:'bot', diff, board:initBoard(), turn:'w', myColor:'w', botColor:'b', timers:{w:TURN_SECONDS,b:TURN_SECONDS}, timerInt:null, over:false, eloUp:false, moveCount:0, startTime:Date.now(), oppUid:null, roomId:null, spectator:false, matchCode:null, whiteUid:null };
   setCard('me', { nick: currentUser.nick, elo: currentUser.elo, winStreak: currentUser.winStreak, avatar: currentUser.avatar });
   $('me-av').innerHTML = currentUser.avatar ? '<img src="' + esc(currentUser.avatar) + '">' : '🙂';
   setCard('opp', { nick: BOT_META[diff].n, elo: BOT_META[diff].elo, winStreak: 0 });
@@ -1193,6 +1285,7 @@ function startBotGame(diff) {
   $('spectator-badge').classList.add('hidden');
   showScreen('game');
   renderBoard();
+  fillGameTop1();
   startTurnTimer();
   devLog('Bot game: ' + diff, 'ok');
 }
@@ -1201,16 +1294,20 @@ on('diff-normal', () => startBotGame('normal'));
 on('diff-hard', () => startBotGame('hard'));
 on('diff-impossible', () => startBotGame('impossible'));
 
-// ================= МАТЧМЕЙКИНГ v1.1.2 =================
-// Защита от "призраков": heartbeat каждые 4 сек, чистка мёртвых,
-// watchdog у гостя (сам возвращается в очередь, если приглашение потерялось)
-let isSearching = false, queueListener = null, matchListener = null, searchPoll = null;
-let heartbeatInt = null, guestWatchdog = null;
+// ================= МАТЧМЕЙКИНГ v1.1 =================
+let isSearching = false, queueListener = null, matchListener = null;
+let heartbeatInt = null, guestWatchdog = null, myKingRules = 'flying';
 
 function isAlive(entry, now) {
   if (!entry) return false;
   if (entry.heartbeat) return (now - entry.heartbeat) < 20000;
   return entry.joinedAt ? (now - entry.joinedAt) < 30000 : false;
+}
+function queueCounts(q) {
+  const now = Date.now();
+  const alive = Object.entries(q).filter(([id, e]) => isAlive(e, now));
+  const short = alive.filter(([_, e]) => e.kingRules === 'short').length;
+  return { total: alive.length, short, classic: alive.length - short };
 }
 
 on('play-online-btn', () => {
@@ -1222,27 +1319,22 @@ async function startOnlineSearch() {
   if (!currentUser || isSearching) return;
   isSearching = true;
   const uid = currentUser.uid;
-  const kingRules = $('chk-king-rules').checked ? 'short' : 'flying';
+  myKingRules = $('chk-king-rules').checked ? 'short' : 'flying';
   const myJoinedAt = Date.now();
 
   $('search-overlay').classList.remove('hidden');
 
-  // 0) Чистим мёртвые записи очереди перед входом
+  // 0) чистим мёртвых
   try {
     const qSnap = await get(ref(db, 'matchmaking'));
     const q0 = qSnap.val() || {};
     const now0 = Date.now();
     const sweep = {};
-    for (const id of Object.keys(q0)) {
-      if (id !== uid && !isAlive(q0[id], now0)) sweep['matchmaking/' + id] = null;
-    }
-    if (Object.keys(sweep).length) {
-      await update(ref(db, sweep));
-      devLog('Вычищено мёртвых записей очереди: ' + Object.keys(sweep).length, 'warn');
-    }
-  } catch (e) { devLog('sweep: ' + e.message, 'err'); }
+    for (const id of Object.keys(q0)) if (id !== uid && !isAlive(q0[id], now0)) sweep['matchmaking/' + id] = null;
+    if (Object.keys(sweep).length) await update(ref(db, sweep));
+  } catch (e) {}
 
-  // 1) Слушатель приглашений — ДО входа в очередь
+  // 1) слушатель приглашений ДО очереди
   matchListener = onValue(ref(db, 'match_request/' + uid), async snap => {
     const req = snap.val();
     if (!req || !isSearching) return;
@@ -1259,31 +1351,36 @@ async function startOnlineSearch() {
     showRoulette(req.roomId, req.myColor, oppProfile);
   });
 
-  // 2) Вход в очередь + heartbeat
-  await set(ref(db, 'matchmaking/' + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: myJoinedAt, kingRules, heartbeat: Date.now() });
+  // 2) вход в очередь
+  await set(ref(db, 'matchmaking/' + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: myJoinedAt, kingRules: myKingRules, heartbeat: Date.now() });
   onDisconnect(ref(db, 'matchmaking/' + uid)).remove();
   heartbeatInt = setInterval(() => {
-    if (isSearching) update(ref(db, 'matchmaking/' + uid + '/heartbeat'), Date.now()).catch(() => {});
+    if (!isSearching) return;
+    // транзакция: не воскрешает удалённую запись
+    runTransaction(ref(db, 'matchmaking/' + uid), cur => {
+      if (!cur) return;
+      cur.heartbeat = Date.now();
+      return cur;
+    }).catch(() => {});
   }, 4000);
 
-  // 3) Слушатель очереди
+  // 3) слушатель очереди (только своя группа правил дамки!)
   queueListener = onValue(ref(db, 'matchmaking'), async snap => {
     const q = snap.val() || {};
-    const now = Date.now();
-    const aliveCount = Object.entries(q).filter(([id, e]) => isAlive(e, now)).length;
-    $('modal-search-count').textContent = 'Ищут игру: ' + aliveCount;
-    $('search-count').textContent = aliveCount > 0 ? '(' + aliveCount + ' ищет)' : '';
+    const cnt = queueCounts(q);
+    $('modal-search-count').innerHTML = 'Ищут: ' + cnt.total + ' · 👑 ребаланс: ' + cnt.short + ' · классика: ' + cnt.classic;
+    $('search-count').textContent = cnt.total > 0 ? '(' + cnt.total + ' ищет)' : '';
     if (!isSearching) return;
     const me = q[uid];
-    if (!me) { startWatchdog(kingRules); return; } // меня забрал хост — жду приглашение, watchdog страхует
+    if (!me) { startWatchdog(); return; }
     stopWatchdog();
-    const candidates = Object.entries(q).filter(([id, e]) => id !== uid && isAlive(e, now));
+    const candidates = Object.entries(q).filter(([id, e]) => id !== uid && isAlive(e, Date.now()) && (e.kingRules || 'flying') === myKingRules);
     if (!candidates.length) return;
     candidates.sort((a, b) => (a[1].joinedAt || 0) - (b[1].joinedAt || 0));
     const [oppUid, oppData] = candidates[0];
     const iAmHost = (me.joinedAt < oppData.joinedAt) || (me.joinedAt === oppData.joinedAt && uid < oppUid);
-    if (!iAmHost) return; // я гость — жду приглашение
-    devLog('Я хост, создаю матч с ' + oppData.nick, 'ok');
+    if (!iAmHost) return;
+    devLog('Я хост, создаю матч с ' + oppData.nick + ' (rules=' + myKingRules + ')', 'ok');
     isSearching = false;
     stopWatchdog();
     cleanupSearch();
@@ -1292,16 +1389,15 @@ async function startOnlineSearch() {
     const iAmWhite = Math.random() < 0.5;
     const myColor = iAmWhite ? 'w' : 'b';
     const oppColor = iAmWhite ? 'b' : 'w';
-    // СНАЧАЛА приглашение гостю
     await set(ref(db, 'match_request/' + oppUid), { roomId, fromUid: uid, myColor: oppColor });
     await set(ref(db, 'rooms/' + roomId), {
       white: iAmWhite ? uid : oppUid, black: iAmWhite ? oppUid : uid,
-      board: JSON.stringify(initBoard()), turn: 'w', timers: { w:20, b:20 },
+      board: JSON.stringify(initBoard()), turn: 'w',
+      timers: { w: TURN_SECONDS, b: TURN_SECONDS },
       status: 'playing', createdAt: Date.now(), chat: {}, moveCount: 0,
-      kingRules, matchCode
+      kingRules: myKingRules, matchCode
     });
     await set(ref(db, 'matchCodes/' + matchCode), roomId);
-    // ПОТОМ очистка очереди
     await set(ref(db, 'matchmaking/' + uid), null);
     await set(ref(db, 'matchmaking/' + oppUid), null);
     const oppSnap = await get(ref(db, 'users/' + oppUid));
@@ -1310,49 +1406,27 @@ async function startOnlineSearch() {
     $('search-overlay').classList.add('hidden');
     showRoulette(roomId, myColor, oppProfile);
   });
-
-  // 4) Фоновая чистка мёртвых + счётчик
-  searchPoll = setInterval(async () => {
-    try {
-      const s = await get(ref(db, 'matchmaking'));
-      const q = s.val() || {};
-      const now = Date.now();
-      const sweep = {};
-      for (const id of Object.keys(q)) if (id !== uid && !isAlive(q[id], now)) sweep['matchmaking/' + id] = null;
-      if (Object.keys(sweep).length) update(ref(db, sweep)).catch(() => {});
-      const count = Object.keys(q).length - Object.keys(sweep).length;
-      $('search-count').textContent = count > 0 ? '(' + count + ' ищет)' : '';
-      if (isSearching) $('modal-search-count').textContent = 'Ищут игру: ' + count;
-    } catch (e) {}
-  }, 5000);
 }
 
-// Watchdog гостя: если меня убрали из очереди, а приглашение не пришло за 8 сек —
-// возвращаюсь в очередь сам, чтобы не висеть в поиске вечно
-function startWatchdog(kingRules) {
+function startWatchdog() {
   if (guestWatchdog) return;
   guestWatchdog = setTimeout(async () => {
     guestWatchdog = null;
     if (!isSearching || !currentUser) return;
     try {
       const reqSnap = await get(ref(db, 'match_request/' + currentUser.uid));
-      if (reqSnap.exists()) return; // приглашение пришло — matchListener обработает
+      if (reqSnap.exists()) return;
       devLog('Watchdog: приглашение не пришло, возвращаюсь в очередь', 'warn');
-      await set(ref(db, 'matchmaking/' + currentUser.uid), {
-        nick: currentUser.nick, elo: currentUser.elo,
-        joinedAt: Date.now(), kingRules, heartbeat: Date.now()
-      });
-    } catch (e) { devLog('watchdog: ' + e.message, 'err'); }
+      await set(ref(db, 'matchmaking/' + currentUser.uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: Date.now(), kingRules: myKingRules, heartbeat: Date.now() });
+    } catch (e) {}
   }, 8000);
 }
 function stopWatchdog() {
   if (guestWatchdog) { clearTimeout(guestWatchdog); guestWatchdog = null; }
 }
-
 function cleanupSearch() {
   if (queueListener) { queueListener(); queueListener = null; }
   if (matchListener) { matchListener(); matchListener = null; }
-  if (searchPoll) { clearInterval(searchPoll); searchPoll = null; }
   if (heartbeatInt) { clearInterval(heartbeatInt); heartbeatInt = null; }
 }
 on('cancel-search-btn', async () => {
@@ -1360,10 +1434,32 @@ on('cancel-search-btn', async () => {
   isSearching = false;
   stopWatchdog();
   cleanupSearch();
-  if (currentUser) await set(ref(db, 'matchmaking/' + currentUser.uid), null);
+  if (currentUser) {
+    await set(ref(db, 'matchmaking/' + currentUser.uid), null).catch(() => {});
+    // повторная страховка от "воскресшей" записи
+    setTimeout(() => { if (currentUser) set(ref(db, 'matchmaking/' + currentUser.uid), null).catch(() => {}); }, 500);
+  }
   $('search-overlay').classList.add('hidden');
+  $('search-count').textContent = '';
   toast('Поиск отменён');
 });
+
+// Глобальный поллер: счётчик на кнопке + чистка мёртвых (работает всегда в меню)
+setInterval(async () => {
+  const modeVisible = !$('screen-mode').classList.contains('hidden');
+  if (!modeVisible && !isSearching) return;
+  try {
+    const s = await get(ref(db, 'matchmaking'));
+    const q = s.val() || {};
+    const now = Date.now();
+    const sweep = {};
+    const myUid = currentUser ? currentUser.uid : '';
+    for (const id of Object.keys(q)) if (id !== myUid && !isAlive(q[id], now)) sweep['matchmaking/' + id] = null;
+    if (Object.keys(sweep).length && currentUser) update(ref(db, sweep)).catch(() => {});
+    const cnt = queueCounts(q);
+    if (!isSearching) $('search-count').textContent = cnt.total > 0 ? '(' + cnt.total + ' ищет)' : '';
+  } catch (e) {}
+}, 5000);
 
 function showRoulette(roomId, myColor, oppProfile) {
   $('roulette-screen').classList.add('active');
@@ -1387,7 +1483,7 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
     currentKingRules = data.kingRules || 'flying';
     const oppUid = myColor === 'w' ? data.black : data.white;
     if (!G || G.roomId !== roomId) {
-      G = { mode:'online', roomId, myColor, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:20,b:20}, over:false, timerInt:null, oppUid, oppProfile, eloUp:false, moveCount: data.moveCount||0, startTime: Date.now(), spectator:false, matchCode: data.matchCode||null, diff:'normal', botColor:null };
+      G = { mode:'online', roomId, myColor, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over:false, timerInt:null, oppUid, oppProfile, eloUp:false, moveCount: data.moveCount||0, startTime: Date.now(), spectator:false, matchCode: data.matchCode||null, diff:'normal', botColor:null, whiteUid: data.white };
       setCard('me', { nick: currentUser.nick, elo: currentUser.elo, winStreak: currentUser.winStreak, avatar: currentUser.avatar });
       $('me-av').innerHTML = currentUser.avatar ? '<img src="' + esc(currentUser.avatar) + '">' : '🙂';
       setCard('opp', Object.assign({ uid: oppUid }, oppProfile));
@@ -1397,6 +1493,7 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
       if (G.matchCode) { $('match-code-box').classList.remove('hidden'); $('match-code-val').textContent = G.matchCode; }
       showScreen('game');
       renderBoard();
+      fillGameTop1();
       startTurnTimer();
     } else {
       G.board = JSON.parse(data.board);
@@ -1426,7 +1523,7 @@ on('spectate-btn', async () => {
   const bs = await get(ref(db, 'users/' + data.black));
   const wp = ws.exists() ? ws.val() : { nick: 'Белый', elo: 1000 };
   const bp = bs.exists() ? bs.val() : { nick: 'Чёрный', elo: 1000 };
-  G = { mode:'spectate', roomId, myColor:null, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:20,b:20}, over: data.status==='finished', timerInt:null, eloUp:true, moveCount: data.moveCount||0, startTime: Date.now(), spectator:true, matchCode: data.matchCode||code, oppUid: data.black, oppProfile: bp, diff:'normal', botColor:null };
+  G = { mode:'spectate', roomId, myColor:null, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over: data.status==='finished', timerInt:null, eloUp:true, moveCount: data.moveCount||0, startTime: Date.now(), spectator:true, matchCode: data.matchCode||code, oppUid: data.black, oppProfile: bp, diff:'normal', botColor:null, whiteUid: data.white };
   setCard('me', wp); $('me-av').innerHTML = wp.avatar ? '<img src="' + esc(wp.avatar) + '">' : '⚪';
   setCard('opp', bp); $('opp-av').innerHTML = bp.avatar ? '<img src="' + esc(bp.avatar) + '">' : '⚫';
   $('spectator-badge').classList.remove('hidden');
@@ -1435,6 +1532,7 @@ on('spectate-btn', async () => {
   $('game-chat-box').innerHTML = '';
   showScreen('game');
   renderBoard();
+  fillGameTop1();
   startTurnTimer();
   renderGameChat(data.chat || {});
   toast('Наблюдение за матчем ' + code, 'success');
@@ -1574,7 +1672,7 @@ async function executeFullMove(singleMove) {
   let result = null;
   if (!nextHas) result = moverColor;
   G.board = newBoard; G.turn = nextTurn;
-  if (G.mode === 'bot') G.timers[moverColor] = 20;
+  G.timers[moverColor] = TURN_SECONDS;
   renderBoard();
   const flipped = G.myColor === 'b' && !G.spectator;
   animatePieceMove(animPath, animCaptures, moverColor, isKingNow, flipped, () => {
@@ -1582,7 +1680,7 @@ async function executeFullMove(singleMove) {
     else if (G.mode === 'bot') scheduleBotMove(nextTurn, moverColor);
   });
   if (G.mode === 'online') {
-    const upd = { board: JSON.stringify(newBoard), turn: nextTurn, ['timers/' + moverColor]: 20, ['timers/' + nextTurn]: 20, moveCount: G.moveCount, lastMove: { from: animPath[0], to: lastIdx } };
+    const upd = { board: JSON.stringify(newBoard), turn: nextTurn, ['timers/' + moverColor]: TURN_SECONDS, ['timers/' + nextTurn]: TURN_SECONDS, moveCount: G.moveCount, lastMove: { from: animPath[0], to: lastIdx } };
     if (result) { upd.status = 'finished'; upd.result = result; }
     await update(ref(db, 'rooms/' + G.roomId), upd);
   }
@@ -1598,7 +1696,7 @@ function scheduleBotMove(nextTurn, moverColor) {
     if (!bm) { endGame(moverColor, G.board); return; }
     const nb = applyStep(G.board, bm);
     const isKingNow = !!(nb[bm.to] && nb[bm.to].king);
-    G.board = nb; G.turn = moverColor; G.timers[G.botColor] = 20;
+    G.board = nb; G.turn = moverColor; G.timers[G.botColor] = TURN_SECONDS;
     G.moveCount++;
     playSound(bm.captures.length ? 'capture' : 'move');
     renderBoard();
@@ -1639,6 +1737,10 @@ async function handleGameOver(result, finalBoard) {
   else if (result === 'draw') toast('Ничья');
   else { toast('Поражение', 'error'); playSound('lose'); }
   renderBoard();
+  if (currentUser && G.mode === 'online') {
+    runTransaction(ref(db, 'users/' + currentUser.uid + '/onlineGames'), c => (c || 0) + 1).catch(() => {});
+    currentUser.onlineGames = (currentUser.onlineGames || 0) + 1;
+  }
   if (result !== 'draw' && currentUser && G.mode === 'online') {
     const board = finalBoard || G.board;
     let myP = 0, myK = 0, opP = 0, opK = 0;
@@ -1691,39 +1793,75 @@ async function updateOnlineElo(won, stats) {
   }
   const newE = Math.max(100, u.elo + delta);
   const newSt = won ? (u.winStreak||0)+1 : 0;
-  await update(userRef, { elo: newE, maxElo: Math.max(u.maxElo||1000, newE), wins: (u.wins||0)+(won?1:0), losses: (u.losses||0)+(won?0:1), winStreak: newSt, maxWinStreak: Math.max(u.maxWinStreak||0, newSt), onlineGames: (u.onlineGames||0)+1 });
+  await update(userRef, { elo: newE, maxElo: Math.max(u.maxElo||1000, newE), wins: (u.wins||0)+(won?1:0), losses: (u.losses||0)+(won?0:1), winStreak: newSt, maxWinStreak: Math.max(u.maxWinStreak||0, newSt) });
   currentUser.elo = newE;
+  top1Cache.ts = 0; // сброс кэша TOP1
   toast('Elo: ' + (delta>0?'+':'') + delta + ' → ' + newE, delta > 0 ? 'success' : 'error');
 }
 
+// ================= ТАЙМЕР (30 сек, фикс мёртвого таймера) =================
 function startTurnTimer() {
+  if (!G) return;
   if (G.timerInt) clearInterval(G.timerInt);
   G.timerInt = setInterval(async () => {
-    if (!G || G.over) { clearInterval(G.timerInt); return; }
+    if (!G || G.over) { if (G && G.timerInt) clearInterval(G.timerInt); return; }
     const color = G.turn;
     if (G.timers[color] > 0) G.timers[color]--;
     renderBoard();
     if (G.timers[color] <= 5 && G.timers[color] > 0) playSound('tick');
-    if (G.timers[color] <= 0) { clearInterval(G.timerInt); await handleTimeout(color); }
+    if (G.timers[color] <= 0) {
+      clearInterval(G.timerInt);
+      G.timerInt = null;
+      await handleTimeout(color);
+    }
   }, 1000);
-  $('game-timer').textContent = '00:00';
   clearInterval(G._clockInt);
   G._clockInt = setInterval(() => { if (G && !G.over) $('game-timer').textContent = fmtTime((Date.now()-G.startTime)/1000); }, 1000);
 }
+
 async function handleTimeout(color) {
-  const pieces = [];
-  G.board.forEach((p, i) => { if (p && p.color === color) pieces.push(i); });
-  if (!pieces.length) { if (G.mode === 'bot') endGame(color === 'w' ? 'b' : 'w', G.board); else handleGameOver(color === 'w' ? 'b' : 'w', G.board); return; }
-  const simple = pieces.filter(i => !G.board[i].king);
-  const pool = simple.length ? simple : pieces;
-  G.board[pool[Math.floor(Math.random()*pool.length)]] = null;
-  const next = color === 'w' ? 'b' : 'w';
-  G.turn = next; G.timers[color] = 20; G.timers[next] = 20;
-  G.moveCount = (G.moveCount||0)+1;
-  renderBoard();
-  if (G.mode === 'online' && G.roomId) await update(ref(db, 'rooms/' + G.roomId), { board: JSON.stringify(G.board), turn: next, ['timers/' + color]: 20, ['timers/' + next]: 20, moveCount: G.moveCount });
-  toast('⏱ Время вышло! Удалена шашка', 'error');
-  startTurnTimer();
+  try {
+    if (!G || G.over) return;
+    if (G.mode === 'online' && G.roomId) {
+      // Атомарно через транзакцию: применит только ОДИН клиент
+      await runTransaction(ref(db, 'rooms/' + G.roomId), room => {
+        if (!room || room.status !== 'playing' || room.turn !== color) return; // отмена
+        const board = JSON.parse(room.board);
+        const pieces = [];
+        board.forEach((p, i) => { if (p && p.color === color) pieces.push(i); });
+        const other = color === 'w' ? 'b' : 'w';
+        if (!pieces.length) { room.status = 'finished'; room.result = other; return room; }
+        const simple = pieces.filter(i => !board[i].king);
+        const pool = simple.length ? simple : pieces;
+        board[pool[Math.floor(Math.random()*pool.length)]] = null;
+        room.board = JSON.stringify(board);
+        room.turn = other;
+        room.timers = { w: TURN_SECONDS, b: TURN_SECONDS };
+        room.moveCount = (room.moveCount || 0) + 1;
+        return room;
+      });
+      G.timers = { w: TURN_SECONDS, b: TURN_SECONDS };
+      toast('⏱ Время вышло! Удалена шашка', 'error');
+    } else {
+      const pieces = [];
+      G.board.forEach((p, i) => { if (p && p.color === color) pieces.push(i); });
+      if (!pieces.length) { endGame(color === 'w' ? 'b' : 'w', G.board); return; }
+      const simple = pieces.filter(i => !G.board[i].king);
+      const pool = simple.length ? simple : pieces;
+      G.board[pool[Math.floor(Math.random()*pool.length)]] = null;
+      const next = color === 'w' ? 'b' : 'w';
+      G.turn = next;
+      G.timers = { w: TURN_SECONDS, b: TURN_SECONDS };
+      G.moveCount = (G.moveCount||0)+1;
+      renderBoard();
+      toast('⏱ Время вышло! Удалена шашка', 'error');
+    }
+  } catch (e) {
+    devLog('timeout error: ' + e.message, 'err');
+  } finally {
+    // ГАРАНТИЯ: таймер всегда перезапускается, игра не зависает
+    if (G && !G.over) startTurnTimer();
+  }
 }
 
 on('surrender-btn', async () => {
@@ -1774,6 +1912,7 @@ async function sendGameChat() {
   if (!t || !currentUser || !G || G.spectator) return;
   if (G.mode === 'online' && G.roomId) {
     await push(ref(db, 'rooms/' + G.roomId + '/chat'), { uid: currentUser.uid, nick: currentUser.nick, text: t, ts: Date.now(), deleted: false });
+    bumpChatCounter();
   } else {
     const box = $('game-chat-box');
     const d = document.createElement('div');
@@ -1813,7 +1952,7 @@ function renderRanksBox() {
 setUI(localStorage.getItem('uiMode') || 'pc');
 renderRanksBox();
 applySettings();
-devLog('🌿 Шашки v1.1.2 готовы. M — консоль', 'info');
+devLog('🌿 Шашки v1.1 готовы. M — консоль', 'info');
 </script>
 </body>
 </html>
