@@ -651,16 +651,39 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await get(ref(db, "users/" + user.uid));
     if (snap.exists()) {
       currentUser = { uid: user.uid, ...snap.val() };
+      
       const defaults = {
         botElo: 4000, botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
         botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
-        onlineGames: 0, botGames: 0, playtime: 0, lastNickChange: 0, clan: "", displayId: "00000"
+        onlineGames: 0, botGames: 0, playtime: 0, lastNickChange: 0, clan: ""
       };
-      let needsUpdate = false;
+      
+      let updates = {};
+      
+      // Добавляем только те поля, которых нет в базе (не трогаем существующие!)
       for (const [k, v] of Object.entries(defaults)) {
-        if (currentUser[k] === undefined) { currentUser[k] = v; needsUpdate = true; }
+        if (currentUser[k] === undefined) { 
+          currentUser[k] = v; 
+          updates[k] = v; 
+        }
       }
-      if (needsUpdate) update(ref(db, "users/" + user.uid), defaults).catch(()=>{});
+
+      // Если ID нет или он равен "00000" - выдаем настоящий ID
+      if (!currentUser.displayId || currentUser.displayId === "00000") {
+         let displayIdNum = 1;
+         const counterRef = ref(db, 'system/userCounter');
+         const result = await runTransaction(counterRef, (current) => {
+            if (current === null) return 1;
+            return current + 1;
+         });
+         if (result.snapshot.exists()) displayIdNum = result.snapshot.val();
+         currentUser.displayId = String(displayIdNum).padStart(5, '0');
+         updates.displayId = currentUser.displayId;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        update(ref(db, "users/" + user.uid), updates).catch(()=>{});
+      }
       
       update(ref(db, "users/" + user.uid), { lastSeen: Date.now() }).catch(()=>{});
       log('User logged in:', currentUser.nick);
@@ -1366,8 +1389,6 @@ async function startOnlineSearch() {
     $("#search-overlay").classList.remove("active");
     showRoulette(roomId, myColor, oppProfile);
   });
-
-  // Таймаут убран, поиск бесконечный
 }
 
 function showRoulette(roomId, myColor, oppProfile) {
