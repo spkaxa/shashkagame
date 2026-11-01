@@ -726,7 +726,6 @@ onAuthStateChanged(auth, async (user) => {
         }
       }
 
-      // Пересчёт общего BotElo по новой формуле
       const correctTotal = computeTotalBotElo(currentUser);
       if (currentUser.botElo !== correctTotal) {
         currentUser.botElo = correctTotal;
@@ -1140,7 +1139,7 @@ function inside(r,c) { return r>=0 && r<8 && c>=0 && c<8; }
 function getStepsForPiece(board, from, color) {
   const p = board[from];
   if (!p || p.color !== color) return [];
-    const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
+  const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
   const [r, c] = rc(from);
   let steps = [];
 
@@ -1204,9 +1203,9 @@ function applyStep(board, step) {
   return nb;
 }
 
-// ============ BOT (УМНЫЙ И БЕЗОШИБОЧНЫЙ) ============
+// ============ BOT ============
 let botDepth = 1;
-// ВАЖНО: depth 10 для невозможного, 8 для сложного, 6 для среднего, 1 для легкого
+
 function getBotSequences(board, color) {
   let sequences = [];
   function findCaptures(currBoard, startSquare, currentPath) {
@@ -1247,13 +1246,10 @@ function evalFor(board, color) {
     let v = p.king ? 5.0 : 1.0;
     
     if (!p.king) {
-      // Пешки ближе к дамкам ценнее
       if (p.color === 'w') v += (7 - r) * 0.2;
       else v += r * 0.2;
-      // Пешки на краях слабее
       if (c === 0 || c === 7) v -= 0.2;
     } else {
-      // Дамки в центре сильнее
       if (r > 0 && r < 7 && c > 0 && c < 7) v += 0.8;
     }
     if (p.color === color) s += v; else s -= v;
@@ -1300,10 +1296,8 @@ function botChooseMove(board, color, depth) {
   const sequences = getBotSequences(board, color);
   if (sequences.length === 0) return null;
 
-  // Легкий бот - 70% шанс сделать случайный ход
   if (depth === 1 && Math.random() < 0.7) {
-    const seq = sequences[Math.floor(Math.random() * sequences.length)];
-    return seq[seq.length - 1]; // Возвращаем ПОСЛЕДНИЙ шаг цепочки, чтобы бот доедал до конца
+    return sequences[Math.floor(Math.random() * sequences.length)]; // Возвращаем всю цепочку
   }
 
   let bestSeq = sequences[0];
@@ -1322,8 +1316,7 @@ function botChooseMove(board, color, depth) {
     alpha = Math.max(alpha, sc);
   }
   
-  // ВАЖНО: Возвращаем ПОСЛЕДНИЙ шаг из последовательности (чтобы цепочка завершалась)
-  return bestSeq[bestSeq.length - 1];
+  return bestSeq; // Возвращаем всю цепочку
 }
 
 // ============ GAME STATE & RENDER ============
@@ -1350,7 +1343,6 @@ function setPlayerCard(prefix, data) {
 
 function startBotGame(diff) {
   if (!currentUser) return toast("Войдите в аккаунт", "error");
-  // Настройка сложности
   const depths = { easy: 1, normal: 6, hard: 8, impossible: 10 };
   const names = { easy: 'Легкий', normal: 'Средний', hard: 'Сложный', impossible: 'Невозможный' };
   botDepth = depths[diff] || 1;
@@ -1358,7 +1350,7 @@ function startBotGame(diff) {
   game = {
     mode: 'bot', board: initBoard(), turn: 'w', myColor: 'w', botColor: 'b',
     timers: { w: 20, b: 20 }, timerInterval: null, gameOver: false, eloUpdated: false,
-    botLevel: diff, lastMove: null
+    botLevel: diff, lastMove: null, moveCount: 0
   };
   setPlayerCard('p-top', { nick: `Бот (${names[diff]})`, tag: '', clan: '', elo: 1000, maxElo: 1000, winStreak: 0, avatar: '', uid: '' });
   setPlayerCard('p-bottom', { uid: currentUser.uid, nick: currentUser.nick, tag: currentUser.tag, clan: currentUser.clan, elo: currentUser.elo, maxElo: currentUser.maxElo, winStreak: currentUser.winStreak, avatar: currentUser.avatar });
@@ -1568,7 +1560,6 @@ function renderChat(chatObj) {
     const d = document.createElement("div");
     d.className = "chat-msg" + (m.uid === currentUser?.uid ? " own" : "");
     
-    // Кликабельный ник (кроме ботов)
     let authorHtml = `<span class="author">${escapeHtml(m.nick)}:</span>`;
     if (m.uid && m.uid !== "bot") {
       authorHtml = `<span class="author clickable" data-uid="${m.uid}">${escapeHtml(m.nick)}:</span>`;
@@ -1578,7 +1569,6 @@ function renderChat(chatObj) {
     
     d.innerHTML = `${authorHtml}${textHtml}`;
     
-    // Кнопка удаления для своих сообщений (если не удалено)
     if (m.uid === currentUser?.uid && !m.deleted) {
       const btn = document.createElement("button");
       btn.className = "msg-delete";
@@ -1593,7 +1583,6 @@ function renderChat(chatObj) {
       d.appendChild(btn);
     }
     
-    // Клик по нику открывает профиль
     d.querySelectorAll('.author.clickable').forEach(el => {
       el.onclick = (e) => {
         e.stopPropagation();
@@ -1720,7 +1709,7 @@ function onCellClick(i) {
         midMoveBoard = applyStep(activeBoard, move);
         midMovePiece = move.to;
         midMovePath = [move.to];
-        midMoveStart = selected; // Запоминаем откуда начался ход
+        if (midMoveStart === null) midMoveStart = selected;
         
         const nextSteps = getStepsForPiece(midMoveBoard, midMovePiece, game.myColor).filter(s => s.captures.length > 0);
         if (nextSteps.length > 0) {
@@ -1790,15 +1779,24 @@ async function executeFullMove(singleMove = null) {
     // Ход бота
     setTimeout(() => {
       if (game.gameOver) return;
-      const bm = botChooseMove(game.board, game.botColor, botDepth);
-      if (!bm) { endGame(moverColor, 'bot', game.board); return; }
+      const bmSeq = botChooseMove(game.board, game.botColor, botDepth);
       
-      const nb = applyStep(game.board, bm);
-      game.board = nb; game.turn = moverColor;
+      if (!bmSeq || bmSeq.length === 0) { endGame(moverColor, 'bot', game.board); return; }
+      
+      let nb = game.board;
+      for (const step of bmSeq) {
+        nb = applyStep(nb, step);
+      }
+      
+      game.board = nb; 
+      game.turn = moverColor;
       game.timers[game.botColor] = 20;
       game.moveCount++;
-      game.lastMove = { from: bm.from, to: bm.to };
-      playSound(bm.captures.length ? 'capture' : 'move');
+      
+      const lastStep = bmSeq[bmSeq.length - 1];
+      game.lastMove = { from: bmSeq[0].from, to: lastStep.to };
+      
+      playSound(bmSeq.some(s => s.captures.length > 0) ? 'capture' : 'move');
       renderBoard();
       
       const myHasMoves = Array.from({length: 64}, (_, i) => getStepsForPiece(nb, i, moverColor)).some(s => s.length > 0);
@@ -1844,7 +1842,7 @@ async function updateBotElo(won, diff) {
   
   const depths = { easy: 1, normal: 6, hard: 8, impossible: 10 };
   const depth = depths[diff] || 1;
-  let delta = won ? (5 + depth * 2) : -(3 + depth * 1); // За невозможного дают больше очков
+  let delta = won ? (5 + depth * 2) : -(3 + depth * 1);
   
   const fieldElo = `botElo_${diff}`;
   const fieldWins = `botWins_${diff}`;
@@ -1853,7 +1851,6 @@ async function updateBotElo(won, diff) {
   const newElo = Math.max(100, oldElo + delta);
   const newWins = (u[fieldWins] || 0) + (won ? 1 : 0);
   
-  // Обновляем данные локально для расчета
   const tempUser = { ...u, [fieldElo]: newElo };
   const newTotalElo = computeTotalBotElo(tempUser);
   
@@ -1925,180 +1922,195 @@ async function updateEloAfterGame(won, stats) {
     const newWins = u.wins + (won ? 1 : 0);
     const newLosses = u.losses + (won ? 0 : 1);
     const newMaxElo = Math.max(u.maxElo, newElo);
-    const newOnlineGames = (u.onlineGames || 0) + 1;
-    
-    await update(userRef, { 
-      elo: newElo, maxElo: newMaxElo, 
-      wins: newWins, losses: newLosses, 
-      winStreak: newStreak, maxWinStreak: newMaxStreak,
-      onlineGames: newOnlineGames
-    });
-    
-    currentUser.elo = newElo; currentUser.maxElo = newMaxElo; 
-    currentUser.wins = newWins; currentUser.losses = newLosses; 
-    currentUser.winStreak = newStreak; currentUser.maxWinStreak = newMaxStreak;
-    currentUser.onlineGames = newOnlineGames;
-    
-    log('Elo updated:', delta, '→', newElo);
-    toast(`Elo: ${delta > 0 ? '+' : ''}${delta} → ${newElo}`, delta > 0 ? "success" : "error");
-  } finally { 
-    setTimeout(() => { updateEloAfterGame._running = false; }, 5000); 
-  }
-}
-
-// ============ TIMER ============
-function startTurnTimer() {
-  if (game.timerInterval) clearInterval(game.timerInterval);
-  game.timerInterval = setInterval(async () => {
-    if (!game || game.gameOver) { clearInterval(game.timerInterval); return; }
-    const color = game.turn;
-    if (game.timers[color] > 0) game.timers[color]--;
-    renderBoard();
-    if (game.timers[color] <= 5 && game.timers[color] > 0) playSound('tick');
-    if (game.timers[color] <= 0) {
-      clearInterval(game.timerInterval);
-      await handleTimeout(color);
-    }
-  }, 1000);
-}
-
-async function handleTimeout(color) {
-  const pieces = [];
-  game.board.forEach((p, i) => { if (p && p.color === color) pieces.push(i); });
-  if (pieces.length === 0) { endGame(color === 'w' ? 'b' : 'w', game.mode, game.board); return; }
-  const simple = pieces.filter(i => !game.board[i].king);
-  const pool = simple.length ? simple : pieces;
-  const removeIdx = pool[Math.floor(Math.random() * pool.length)];
-  game.board[removeIdx] = null;
-  const next = color === 'w' ? 'b' : 'w';
-  game.turn = next;
-  game.timers[color] = 20; game.timers[next] = 20;
-  game.moveCount = (game.moveCount || 0) + 1;
-  renderBoard();
-  if (game.mode === 'online' && game.roomId) {
-    await update(ref(db, "rooms/" + game.roomId), {
-      board: JSON.stringify(game.board), turn: next,
-      [`timers/${color}`]: 20, [`timers/${next}`]: 20,
-      moveCount: game.moveCount
-    });
-  }
-  toast(`⏱ Время вышло! Удалена шашка.`, "error");
-}
-
-// ============ CHAT ============
-$("#btn-send-chat").onclick = async () => {
-  const text = $("#chat-input").value.trim(); if (!text || !currentUser) return;
-  if (game.mode === 'online' && game.roomId) {
-    const m = push(ref(db, "rooms/" + game.roomId + "/chat"));
-    await set(m, { id: m.key, uid: currentUser.uid, nick: currentUser.nick, text, ts: Date.now(), deleted: false });
-  } else {
-    const box = $("#chat-box");
-    const d = document.createElement("div");
-    d.className = "chat-msg own";
-    d.innerHTML = `<span class="author">${escapeHtml(currentUser.nick)}:</span>${escapeHtml(text)}`;
-    box.appendChild(d); box.scrollTop = box.scrollHeight;
-  }
-  $("#chat-input").value = "";
-};
-$("#chat-input").addEventListener("keydown", e => { if (e.key === "Enter") $("#btn-send-chat").click(); });
-
-$("#btn-surrender").onclick = async () => {
-  if (!game || game.gameOver) return;
-  if (game.mode === 'bot') {
-    endGame(game.botColor, 'bot', game.board);
-  } else if (game.roomId) {
-    const winner = game.myColor === 'w' ? 'b' : 'w';
-    await update(ref(db, "rooms/" + game.roomId), { status: "finished", result: winner });
-    handleGameOver(winner, game.board);
-  }
-};
-$("#btn-leave-game").onclick = () => {
-  if (game?.timerInterval) clearInterval(game.timerInterval);
-  if (roomUnsub) { roomUnsub(); roomUnsub = null; }
-  game = null; midMoveBoard = null; selected = null; possibleMoves = [];
-  $("#game-area").classList.remove("active");
-  showScreen("#screen-menu");
-};
-
-// ============ GLOBAL CHAT & RULES ============
-$("#btn-global-chat").onclick = () => { showScreen("#screen-global-chat"); loadGlobalChat(); };
-$("#btn-global-back").onclick = () => showScreen("#screen-menu");
-
-let globalChatUnsub = null;
-function loadGlobalChat() {
-  if (globalChatUnsub) globalChatUnsub();
-  const q = query(ref(db, "globalChat"), orderByChild("ts"), limitToLast(100));
-  globalChatUnsub = onValue(q, (snap) => {
-    const box = $("#global-chat-messages"); box.innerHTML = "";
-    const msgs = snap.val() || {};
-    
-    Object.entries(msgs).sort((a,b) => a[1].ts - b[1].ts).forEach(([key, m]) => {
-      const d = document.createElement("div");
-      d.className = "chat-msg" + (m.uid === currentUser?.uid ? " own" : "");
+    const newOnlineGames = (u.onlineGames || 0)
+          const newOnlineGames = (u.onlineGames || 0) + 1;
       
-      let authorHtml = `<span class="author">${escapeHtml(m.nick)}:</span>`;
-      if (m.uid && m.uid !== "bot") {
-        authorHtml = `<span class="author clickable" data-uid="${m.uid}">${escapeHtml(m.nick)}:</span>`;
-      }
-      
-      const textHtml = m.deleted ? `<span class="deleted-msg">Сообщение удалено</span>` : escapeHtml(m.text);
-      
-      d.innerHTML = `${authorHtml}${textHtml}`;
-      
-      if (m.uid === currentUser?.uid && !m.deleted) {
-        const btn = document.createElement("button");
-        btn.className = "msg-delete";
-        btn.innerHTML = "🗑️";
-        btn.title = "Удалить сообщение";
-        btn.onclick = (e) => {
-          e.stopPropagation();
-          update(ref(db, `globalChat/${key}`), { deleted: true, text: "" });
-        };
-        d.appendChild(btn);
-      }
-      
-      d.querySelectorAll('.author.clickable').forEach(el => {
-        el.onclick = (e) => {
-          e.stopPropagation();
-          openProfileModal(el.dataset.uid);
-        };
+      await update(userRef, { 
+        elo: newElo, maxElo: newMaxElo, 
+        wins: newWins, losses: newLosses, 
+        winStreak: newStreak, maxWinStreak: newMaxStreak,
+        onlineGames: newOnlineGames
       });
       
-      box.appendChild(d);
-    });
-    box.scrollTop = box.scrollHeight;
-  });
-}
-$("#btn-global-send").onclick = async () => {
-  const text = $("#global-chat-input").value.trim();
-  if (!text || !currentUser) return;
-  const m = push(ref(db, "globalChat"));
-  await set(m, { id: m.key, uid: currentUser.uid, nick: currentUser.nick, text, ts: Date.now(), deleted: false });
-  $("#global-chat-input").value = "";
-};
-$("#global-chat-input").addEventListener("keydown", e => { if (e.key === "Enter") $("#btn-global-send").click(); });
-
-$("#btn-rules").onclick = () => showScreen("#screen-rules");
-$("#btn-rules-back").onclick = () => showScreen("#screen-menu");
-
-// ============ PROFILE MODAL ============
-async function openProfileModal(uid) {
-  const body = $("#profile-modal-body");
-  if (!uid) {
-    body.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-dim)">Это бот. У ботов нет профиля 🐺</div>`;
-  } else {
-    const snap = await get(ref(db, "users/" + uid));
-    if (!snap.exists()) { body.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-dim)">Профиль недоступен</div>`; }
-    else body.innerHTML = profileCardHTML(snap.val(), uid, true);
+      currentUser.elo = newElo; currentUser.maxElo = newMaxElo; 
+      currentUser.wins = newWins; currentUser.losses = newLosses; 
+      currentUser.winStreak = newStreak; currentUser.maxWinStreak = newMaxStreak;
+      currentUser.onlineGames = newOnlineGames;
+      
+      log('Elo updated:', delta, '→', newElo);
+      toast(`Elo: ${delta > 0 ? '+' : ''}${delta} → ${newElo}`, delta > 0 ? "success" : "error");
+    } finally { 
+      setTimeout(() => { updateEloAfterGame._running = false; }, 5000); 
+    }
   }
-  $("#profile-modal").classList.add("active");
-}
-$("#p-top").onclick = () => { const uid = $("#p-top").dataset.uid; if (uid) openProfileModal(uid); else toast("Бот — нет профиля"); };
-$("#p-bottom").onclick = () => { if (currentUser) openProfileModal(currentUser.uid); };
-$("#modal-close").onclick = () => $("#profile-modal").classList.remove("active");
-$("#profile-modal").onclick = (e) => { if (e.target.id === "profile-modal") $("#profile-modal").classList.remove("active"); };
 
-log('App ready. Version 1.0.2 by xxspk (@spkaxa)');
+  // ============ TIMER ============
+  function startTurnTimer() {
+    if (game.timerInterval) clearInterval(game.timerInterval);
+    game.timerInterval = setInterval(async () => {
+      if (!game || game.gameOver) { clearInterval(game.timerInterval); return; }
+      const color = game.turn;
+      if (game.timers[color] > 0) game.timers[color]--;
+      renderBoard();
+      if (game.timers[color] <= 5 && game.timers[color] > 0) playSound('tick');
+      if (game.timers[color] <= 0) {
+        clearInterval(game.timerInterval);
+        await handleTimeout(color);
+      }
+    }, 1000);
+  }
+
+  async function handleTimeout(color) {
+    const pieces = [];
+    game.board.forEach((p, i) => { if (p && p.color === color) pieces.push(i); });
+    if (pieces.length === 0) { endGame(color === 'w' ? 'b' : 'w', game.mode, game.board); return; }
+    const simple = pieces.filter(i => !game.board[i].king);
+    const pool = simple.length ? simple : pieces;
+    const removeIdx = pool[Math.floor(Math.random() * pool.length)];
+    game.board[removeIdx] = null;
+    const next = color === 'w' ? 'b' : 'w';
+    game.turn = next;
+    game.timers[color] = 20; game.timers[next] = 20;
+    game.moveCount = (game.moveCount || 0) + 1;
+    renderBoard();
+    if (game.mode === 'online' && game.roomId) {
+      await update(ref(db, "rooms/" + game.roomId), {
+        board: JSON.stringify(game.board), turn: next,
+        [`timers/${color}`]: 20, [`timers/${next}`]: 20,
+        moveCount: game.moveCount
+      });
+    }
+    toast(`⏱ Время вышло! Удалена шашка.`, "error");
+  }
+
+  // ============ CHAT ============
+  $("#btn-send-chat").onclick = async () => {
+    const text = $("#chat-input").value.trim(); if (!text || !currentUser) return;
+    if (game.mode === 'online' && game.roomId) {
+      const m = push(ref(db, "rooms/" + game.roomId + "/chat"));
+      await set(m, { id: m.key, uid: currentUser.uid, nick: currentUser.nick, text, ts: Date.now(), deleted: false });
+    } else {
+      const box = $("#chat-box");
+      const d = document.createElement("div");
+      d.className = "chat-msg own";
+      d.innerHTML = `<span class="author">${escapeHtml(currentUser.nick)}:</span>${escapeHtml(text)}`;
+      box.appendChild(d); box.scrollTop = box.scrollHeight;
+    }
+    $("#chat-input").value = "";
+  };
+  $("#chat-input").addEventListener("keydown", e => { if (e.key === "Enter") $("#btn-send-chat").click(); });
+
+  $("#btn-surrender").onclick = async () => {
+    if (!game || game.gameOver) return;
+    if (game.mode === 'bot') {
+      endGame(game.botColor, 'bot', game.board);
+    } else if (game.roomId) {
+      const winner = game.myColor === 'w' ? 'b' : 'w';
+      await update(ref(db, "rooms/" + game.roomId), { status: "finished", result: winner });
+      handleGameOver(winner, game.board);
+    }
+  };
+
+  // НОВАЯ ЛОГИКА: Выйти = Сдаться
+  $("#btn-leave-game").onclick = async () => {
+    if (game && !game.gameOver) {
+      if (!confirm("Вы уверены, что хотите выйти? Это засчитается как поражение (сдача).")) return;
+      
+      if (game.mode === 'bot') {
+        endGame(game.botColor, 'bot', game.board);
+      } else if (game.mode === 'online' && game.roomId) {
+        const winner = game.myColor === 'w' ? 'b' : 'w';
+        await update(ref(db, "rooms/" + game.roomId), { status: "finished", result: winner });
+        handleGameOver(winner, game.board);
+      }
+    }
+    
+    if (game?.timerInterval) clearInterval(game.timerInterval);
+    if (roomUnsub) { roomUnsub(); roomUnsub = null; }
+    game = null; midMoveBoard = null; selected = null; possibleMoves = [];
+    $("#game-area").classList.remove("active");
+    showScreen("#screen-menu");
+  };
+
+  // ============ GLOBAL CHAT & RULES ============
+  $("#btn-global-chat").onclick = () => { showScreen("#screen-global-chat"); loadGlobalChat(); };
+  $("#btn-global-back").onclick = () => showScreen("#screen-menu");
+
+  let globalChatUnsub = null;
+  function loadGlobalChat() {
+    if (globalChatUnsub) globalChatUnsub();
+    const q = query(ref(db, "globalChat"), orderByChild("ts"), limitToLast(100));
+    globalChatUnsub = onValue(q, (snap) => {
+      const box = $("#global-chat-messages"); box.innerHTML = "";
+      const msgs = snap.val() || {};
+      
+      Object.entries(msgs).sort((a,b) => a[1].ts - b[1].ts).forEach(([key, m]) => {
+        const d = document.createElement("div");
+        d.className = "chat-msg" + (m.uid === currentUser?.uid ? " own" : "");
+        
+        let authorHtml = `<span class="author">${escapeHtml(m.nick)}:</span>`;
+        if (m.uid && m.uid !== "bot") {
+          authorHtml = `<span class="author clickable" data-uid="${m.uid}">${escapeHtml(m.nick)}:</span>`;
+        }
+        
+        const textHtml = m.deleted ? `<span class="deleted-msg">Сообщение удалено</span>` : escapeHtml(m.text);
+        
+        d.innerHTML = `${authorHtml}${textHtml}`;
+        
+        if (m.uid === currentUser?.uid && !m.deleted) {
+          const btn = document.createElement("button");
+          btn.className = "msg-delete";
+          btn.innerHTML = "🗑️";
+          btn.title = "Удалить сообщение";
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            update(ref(db, `globalChat/${key}`), { deleted: true, text: "" });
+          };
+          d.appendChild(btn);
+        }
+        
+        d.querySelectorAll('.author.clickable').forEach(el => {
+          el.onclick = (e) => {
+            e.stopPropagation();
+            openProfileModal(el.dataset.uid);
+          };
+        });
+        
+        box.appendChild(d);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+  }
+  $("#btn-global-send").onclick = async () => {
+    const text = $("#global-chat-input").value.trim();
+    if (!text || !currentUser) return;
+    const m = push(ref(db, "globalChat"));
+    await set(m, { id: m.key, uid: currentUser.uid, nick: currentUser.nick, text, ts: Date.now(), deleted: false });
+    $("#global-chat-input").value = "";
+  };
+  $("#global-chat-input").addEventListener("keydown", e => { if (e.key === "Enter") $("#btn-global-send").click(); });
+
+  $("#btn-rules").onclick = () => showScreen("#screen-rules");
+  $("#btn-rules-back").onclick = () => showScreen("#screen-menu");
+
+  // ============ PROFILE MODAL ============
+  async function openProfileModal(uid) {
+    const body = $("#profile-modal-body");
+    if (!uid) {
+      body.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-dim)">Это бот. У ботов нет профиля 🐺</div>`;
+    } else {
+      const snap = await get(ref(db, "users/" + uid));
+      if (!snap.exists()) { body.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-dim)">Профиль недоступен</div>`; }
+      else body.innerHTML = profileCardHTML(snap.val(), uid, true);
+    }
+    $("#profile-modal").classList.add("active");
+  }
+  $("#p-top").onclick = () => { const uid = $("#p-top").dataset.uid; if (uid) openProfileModal(uid); else toast("Бот — нет профиля"); };
+  $("#p-bottom").onclick = () => { if (currentUser) openProfileModal(currentUser.uid); };
+  $("#modal-close").onclick = () => $("#profile-modal").classList.remove("active");
+  $("#profile-modal").onclick = (e) => { if (e.target.id === "profile-modal") $("#profile-modal").classList.remove("active"); };
+
+  log('App ready. Version 1.0.2 by xxspk (@spkaxa)');
 </script>
 </body>
 </html>
