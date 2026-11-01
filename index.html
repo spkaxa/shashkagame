@@ -174,6 +174,7 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 #dev-log .err{color:var(--red)}
 #dev-log .ok{color:var(--green)}
 #dev-log .info{color:var(--blue)}
+#dev-log .warn{color:var(--gold)}
 #dev-hint{position:fixed;bottom:10px;right:12px;font-size:10px;color:rgba(255,255,255,.25);z-index:40}
 #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:12px 22px;border-radius:12px;font-size:14px;opacity:0;transition:.3s;z-index:500;pointer-events:none;border:1px solid var(--main);max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -225,7 +226,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
   <div class="logo">
     <div class="logo-row">
       <span class="leaf">🌿</span><span>Шашки Онлайн</span>
-      <span class="ver">v1.1.1</span>
+      <span class="ver">v1.1.2</span>
       <span class="author" id="creator-link">создатель xxspk (@spkaxa)</span>
     </div>
     <div class="credit">кодил qwen &lt;3</div>
@@ -251,7 +252,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
   <div class="panel auth-card">
     <div class="auth-logo">🌿</div>
     <div class="auth-title" id="auth-title">Вход</div>
-    <div class="auth-sub">v1.1.1 · создатель xxspk · кодил qwen &lt;3</div>
+    <div class="auth-sub">v1.1.2 · создатель xxspk · кодил qwen &lt;3</div>
     <div class="field"><label>Имя</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
     <div class="field"><label>Пароль (мин. 6 символов)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
     <button class="btn big" id="auth-submit">Войти</button>
@@ -839,7 +840,6 @@ async function showProfile(uid) {
 }
 function openProfileModal(uid) { showProfile(uid); }
 
-// Делегирование кликов по никам и кнопкам удаления в чатах
 function bindChatClicks(container, isGlobal) {
   container.addEventListener('click', e => {
     const nickEl = e.target.closest('.nick-link');
@@ -886,7 +886,7 @@ async function sendGlobalChat() {
 on('global-chat-send', sendGlobalChat);
 $('global-chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendGlobalChat(); });
 
-// ================= РЕЙТИНГ (без orderByChild — нет ошибки индексов) =================
+// ================= РЕЙТИНГ =================
 let ratingFilter = 'total';
 document.querySelectorAll('#rating-filter .chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -1201,8 +1201,17 @@ on('diff-normal', () => startBotGame('normal'));
 on('diff-hard', () => startBotGame('hard'));
 on('diff-impossible', () => startBotGame('impossible'));
 
-// ================= МАТЧМЕЙКИНГ (исправленный порядок) =================
+// ================= МАТЧМЕЙКИНГ v1.1.2 =================
+// Защита от "призраков": heartbeat каждые 4 сек, чистка мёртвых,
+// watchdog у гостя (сам возвращается в очередь, если приглашение потерялось)
 let isSearching = false, queueListener = null, matchListener = null, searchPoll = null;
+let heartbeatInt = null, guestWatchdog = null;
+
+function isAlive(entry, now) {
+  if (!entry) return false;
+  if (entry.heartbeat) return (now - entry.heartbeat) < 20000;
+  return entry.joinedAt ? (now - entry.joinedAt) < 30000 : false;
+}
 
 on('play-online-btn', () => {
   if (!currentUser) { toast('Войдите', 'error'); return; }
@@ -1218,12 +1227,28 @@ async function startOnlineSearch() {
 
   $('search-overlay').classList.remove('hidden');
 
-  // 1) СНАЧАЛА слушатель приглашений
+  // 0) Чистим мёртвые записи очереди перед входом
+  try {
+    const qSnap = await get(ref(db, 'matchmaking'));
+    const q0 = qSnap.val() || {};
+    const now0 = Date.now();
+    const sweep = {};
+    for (const id of Object.keys(q0)) {
+      if (id !== uid && !isAlive(q0[id], now0)) sweep['matchmaking/' + id] = null;
+    }
+    if (Object.keys(sweep).length) {
+      await update(ref(db, sweep));
+      devLog('Вычищено мёртвых записей очереди: ' + Object.keys(sweep).length, 'warn');
+    }
+  } catch (e) { devLog('sweep: ' + e.message, 'err'); }
+
+  // 1) Слушатель приглашений — ДО входа в очередь
   matchListener = onValue(ref(db, 'match_request/' + uid), async snap => {
     const req = snap.val();
     if (!req || !isSearching) return;
     devLog('Получен match_request от ' + req.fromUid, 'ok');
     isSearching = false;
+    stopWatchdog();
     cleanupSearch();
     await set(ref(db, 'match_request/' + uid), null);
     await set(ref(db, 'matchmaking/' + uid), null);
@@ -1234,27 +1259,33 @@ async function startOnlineSearch() {
     showRoulette(req.roomId, req.myColor, oppProfile);
   });
 
-  // 2) затем вход в очередь
-  await set(ref(db, 'matchmaking/' + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: myJoinedAt, kingRules });
+  // 2) Вход в очередь + heartbeat
+  await set(ref(db, 'matchmaking/' + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: myJoinedAt, kingRules, heartbeat: Date.now() });
   onDisconnect(ref(db, 'matchmaking/' + uid)).remove();
+  heartbeatInt = setInterval(() => {
+    if (isSearching) update(ref(db, 'matchmaking/' + uid + '/heartbeat'), Date.now()).catch(() => {});
+  }, 4000);
 
-  // 3) слушатель очереди
+  // 3) Слушатель очереди
   queueListener = onValue(ref(db, 'matchmaking'), async snap => {
     const q = snap.val() || {};
-    const count = Object.keys(q).length;
-    $('modal-search-count').textContent = 'Ищут игру: ' + count;
-    $('search-count').textContent = count > 0 ? '(' + count + ' ищет)' : '';
+    const now = Date.now();
+    const aliveCount = Object.entries(q).filter(([id, e]) => isAlive(e, now)).length;
+    $('modal-search-count').textContent = 'Ищут игру: ' + aliveCount;
+    $('search-count').textContent = aliveCount > 0 ? '(' + aliveCount + ' ищет)' : '';
     if (!isSearching) return;
     const me = q[uid];
-    if (!me) return; // хост уже забрал меня — жду приглашение
-    const candidates = Object.entries(q).filter(([id]) => id !== uid);
+    if (!me) { startWatchdog(kingRules); return; } // меня забрал хост — жду приглашение, watchdog страхует
+    stopWatchdog();
+    const candidates = Object.entries(q).filter(([id, e]) => id !== uid && isAlive(e, now));
     if (!candidates.length) return;
-    candidates.sort((a, b) => a[1].joinedAt - b[1].joinedAt);
+    candidates.sort((a, b) => (a[1].joinedAt || 0) - (b[1].joinedAt || 0));
     const [oppUid, oppData] = candidates[0];
     const iAmHost = (me.joinedAt < oppData.joinedAt) || (me.joinedAt === oppData.joinedAt && uid < oppUid);
-    if (!iAmHost) return; // я гость
+    if (!iAmHost) return; // я гость — жду приглашение
     devLog('Я хост, создаю матч с ' + oppData.nick, 'ok');
     isSearching = false;
+    stopWatchdog();
     cleanupSearch();
     const roomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
     const matchCode = String(Math.floor(1000 + Math.random() * 9000));
@@ -1280,24 +1311,54 @@ async function startOnlineSearch() {
     showRoulette(roomId, myColor, oppProfile);
   });
 
+  // 4) Фоновая чистка мёртвых + счётчик
   searchPoll = setInterval(async () => {
     try {
-      const snap = await get(ref(db, 'matchmaking'));
-      const count = Object.keys(snap.val() || {}).length;
+      const s = await get(ref(db, 'matchmaking'));
+      const q = s.val() || {};
+      const now = Date.now();
+      const sweep = {};
+      for (const id of Object.keys(q)) if (id !== uid && !isAlive(q[id], now)) sweep['matchmaking/' + id] = null;
+      if (Object.keys(sweep).length) update(ref(db, sweep)).catch(() => {});
+      const count = Object.keys(q).length - Object.keys(sweep).length;
       $('search-count').textContent = count > 0 ? '(' + count + ' ищет)' : '';
       if (isSearching) $('modal-search-count').textContent = 'Ищут игру: ' + count;
     } catch (e) {}
-  }, 4000);
+  }, 5000);
+}
+
+// Watchdog гостя: если меня убрали из очереди, а приглашение не пришло за 8 сек —
+// возвращаюсь в очередь сам, чтобы не висеть в поиске вечно
+function startWatchdog(kingRules) {
+  if (guestWatchdog) return;
+  guestWatchdog = setTimeout(async () => {
+    guestWatchdog = null;
+    if (!isSearching || !currentUser) return;
+    try {
+      const reqSnap = await get(ref(db, 'match_request/' + currentUser.uid));
+      if (reqSnap.exists()) return; // приглашение пришло — matchListener обработает
+      devLog('Watchdog: приглашение не пришло, возвращаюсь в очередь', 'warn');
+      await set(ref(db, 'matchmaking/' + currentUser.uid), {
+        nick: currentUser.nick, elo: currentUser.elo,
+        joinedAt: Date.now(), kingRules, heartbeat: Date.now()
+      });
+    } catch (e) { devLog('watchdog: ' + e.message, 'err'); }
+  }, 8000);
+}
+function stopWatchdog() {
+  if (guestWatchdog) { clearTimeout(guestWatchdog); guestWatchdog = null; }
 }
 
 function cleanupSearch() {
   if (queueListener) { queueListener(); queueListener = null; }
   if (matchListener) { matchListener(); matchListener = null; }
   if (searchPoll) { clearInterval(searchPoll); searchPoll = null; }
+  if (heartbeatInt) { clearInterval(heartbeatInt); heartbeatInt = null; }
 }
 on('cancel-search-btn', async () => {
   if (!isSearching) return;
   isSearching = false;
+  stopWatchdog();
   cleanupSearch();
   if (currentUser) await set(ref(db, 'matchmaking/' + currentUser.uid), null);
   $('search-overlay').classList.add('hidden');
@@ -1752,7 +1813,7 @@ function renderRanksBox() {
 setUI(localStorage.getItem('uiMode') || 'pc');
 renderRanksBox();
 applySettings();
-devLog('🌿 Шашки v1.1.1 готовы. M — консоль', 'info');
+devLog('🌿 Шашки v1.1.2 готовы. M — консоль', 'info');
 </script>
 </body>
 </html>
