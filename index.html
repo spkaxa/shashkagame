@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🌿 Шашки Онлайн v1.0.2</title>
 <style>
-:root{--main:#4caf50;--bg:#0f1720;--bg2:#16212e;--bg3:#1d2b3c;--card:#182435;--txt:#e8eef5;--txt2:#9fb0c3;--gold:#ffd54f;--red:#ff5c5c;--green:#69db7c;--blue:#5ba8ff;--radius:14px}
+:root {
+  --main:#4caf50; --bg:#0f1720; --bg2:#16212e; --bg3:#1d2b3c;
+  --card:#182435; --txt:#e8eef5; --txt2:#9fb0c3; --gold:#ffd54f;
+  --red:#ff5c5c; --green:#69db7c; --blue:#5ba8ff; --radius:14px;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%}
 body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:radial-gradient(1200px 700px at 20% -10%,#1b2c42 0%,var(--bg) 55%);color:var(--txt);overflow-x:hidden;padding-bottom:20px}
@@ -14,7 +18,7 @@ input,textarea,select{font-family:inherit;outline:none}
 .hidden{display:none!important}
 
 #app-header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 18px;background:rgba(10,16,24,.85);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:50;backdrop-filter:blur(8px)}
-.logo{display:flex;flex-direction:column;gap:0}
+.logo{display:flex;flex-direction:column}
 .logo-row{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
 .logo .leaf{font-size:26px;filter:drop-shadow(0 0 6px rgba(90,220,120,.5))}
 .logo .ver{font-size:11px;color:var(--txt2);font-weight:400}
@@ -24,7 +28,7 @@ input,textarea,select{font-family:inherit;outline:none}
 .navbtn{background:var(--bg3);color:var(--txt);border:1px solid rgba(255,255,255,.08);padding:8px 14px;border-radius:10px;font-size:13px;transition:.15s;display:flex;align-items:center;gap:6px}
 .navbtn:hover{background:var(--main);color:#fff;transform:translateY(-1px)}
 .navbtn.danger:hover{background:var(--red)}
-#ui-switch{display:flex;background:var(--bg3);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1);margin-left:10px}
+#ui-switch{display:flex;background:var(--bg3);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
 #ui-switch button{background:transparent;color:var(--txt2);padding:8px 14px;font-size:13px;border:none}
 #ui-switch button.on{background:var(--main);color:#fff;font-weight:600}
 
@@ -93,6 +97,7 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .cell.capture-possible{background:#fca5a5 !important}
 .cell.must-capture::before{content:'';position:absolute;inset:10%;border:3px dashed var(--red);border-radius:50%;animation:pulse 1s infinite}
 @keyframes pulse{from{opacity:.5}to{opacity:1}}
+
 .piece{width:78%;height:78%;border-radius:50%;position:relative;z-index:3;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s;font-size:clamp(14px,3vw,26px)}
 .piece.white{background:radial-gradient(circle at 35% 30%,#fffbe8,#e8d9b0 60%,#c9b080);border:2px solid #a08a5a;box-shadow:0 4px 8px rgba(0,0,0,.5),inset 0 2px 4px rgba(255,255,255,.7);color:#8a6d2f}
 .piece.black{background:radial-gradient(circle at 35% 30%,#5a4a3a,#2e2318 60%,#181008);border:2px solid #0a0704;box-shadow:0 4px 8px rgba(0,0,0,.6),inset 0 2px 4px rgba(255,255,255,.15);color:#ffd54f}
@@ -102,6 +107,7 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .piece.king.black::after{color:#fbbf24}
 .piece.anim-piece{position:absolute;z-index:100;pointer-events:none;transition:left .18s ease,top .18s ease}
 .piece.dying{transition:opacity .15s,transform .15s;opacity:0!important;transform:scale(0)!important}
+
 #capture-alert{position:absolute;top:-40px;left:50%;transform:translateX(-50%);background:var(--red);color:white;padding:6px 16px;border-radius:20px;font-weight:bold;font-size:14px;display:none;animation:pop .3s;z-index:20;white-space:nowrap}
 #capture-alert.show{display:block}
 @keyframes pop{0%{transform:translateX(-50%) scale(.5);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
@@ -125,7 +131,7 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 #chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--bg2);border-radius:10px;margin-bottom:12px;border:1px solid rgba(255,255,255,.05)}
 .chat-msg{max-width:82%;animation:fadeIn .2s;display:flex;flex-direction:column;gap:2px}
 .chat-msg.own{align-self:flex-end}
-.chat-msg .bubble{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.35;background:var(--bg3);border:1px solid rgba(255,255,255,.07);position:relative;word-wrap:break-word}
+.chat-msg .bubble{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.35;background:var(--bg3);border:1px solid rgba(255,255,255,.07);word-wrap:break-word}
 .chat-msg.own .bubble{background:linear-gradient(135deg,var(--main),#2e7d32);color:#fff}
 .chat-msg.deleted .bubble{opacity:.55;font-style:italic;color:var(--txt2);background:rgba(255,92,92,.1);border:1px dashed rgba(255,92,92,.3)}
 .chat-msg .meta{display:flex;gap:8px;align-items:center;font-size:11px}
@@ -139,6 +145,7 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 #chat-input-row{display:flex;gap:8px}
 #chat-input,#global-chat-input{flex:1;padding:12px 14px;border-radius:11px;background:var(--bg2);border:1px solid rgba(255,255,255,.12);color:var(--txt);font-size:14px}
 #chat-input:focus,#global-chat-input:focus{border-color:var(--main)}
+
 #game-chat-box{background:var(--bg2);border-radius:10px;height:220px;overflow-y:auto;padding:8px;font-size:13px;display:flex;flex-direction:column;gap:6px;border:1px solid rgba(255,255,255,.08)}
 .gchat-msg{padding:6px 10px;border-radius:8px;background:var(--bg3);word-break:break-word;display:flex;flex-direction:column;gap:2px}
 .gchat-msg.own{background:linear-gradient(135deg,var(--main),#2e7d32);color:#fff;align-self:flex-end}
@@ -155,7 +162,6 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .modal{background:linear-gradient(180deg,var(--card),#121c29);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:26px;max-width:460px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.6);position:relative}
 .modal .x{position:absolute;top:12px;right:14px;background:none;color:var(--txt2);font-size:20px}
 .modal .x:hover{color:#fff}
-#search-box{text-align:center;padding:30px}
 .spinner{width:56px;height:56px;border-radius:50%;margin:0 auto 16px;border:5px solid rgba(255,255,255,.15);border-top-color:var(--main);animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 #roulette-screen{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;justify-content:center;align-items:center;flex-direction:column;z-index:1000;text-align:center}
@@ -186,7 +192,6 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 
 body.ui-mobile #app-header{flex-direction:column;gap:8px;padding:8px}
 body.ui-mobile .logo-row{font-size:17px}
-body.ui-mobile .logo .leaf{font-size:22px}
 body.ui-mobile #header-nav{margin-left:0;width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 body.ui-mobile .navbtn{justify-content:center;padding:10px 6px;font-size:12px}
 body.ui-mobile #ui-switch{margin:0 auto;width:100%}
@@ -194,7 +199,7 @@ body.ui-mobile #ui-switch button{flex:1;padding:11px}
 body.ui-mobile .screen{margin:8px auto;padding:0 6px}
 body.ui-mobile .panel{padding:12px;border-radius:12px}
 body.ui-mobile #board{width:min(92vw,380px);height:min(92vw,380px);border-width:4px}
-body.ui-mobile #game-wrap{flex-direction:column;align-items:center;gap:6px;padding:0}
+body.ui-mobile #game-wrap{flex-direction:column;align-items:center;gap:6px}
 body.ui-mobile #board-box{width:100%;display:flex;justify-content:center}
 body.ui-mobile .gside{width:100%;max-width:400px;gap:6px}
 body.ui-mobile .btn{padding:12px 16px;font-size:14px}
@@ -222,7 +227,8 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
 <header id="app-header">
   <div class="logo">
     <div class="logo-row">
-      <span class="leaf">🌿</span><span>Шашки Онлайн</span>
+      <span class="leaf">🌿</span>
+      <span>Шашки Онлайн</span>
       <span class="ver">v1.0.2</span>
       <span class="author" onclick="showProfileByNick('larp')">создатель xxspk (@spkaxa)</span>
     </div>
@@ -252,7 +258,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
     <div class="auth-sub">v1.0.2 · создатель xxspk · кодил qwen &lt;3</div>
     <div class="field"><label>Имя</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
     <div class="field"><label>Пароль (мин. 6 символов)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
-    <button class="btn big" id="auth-submit" onclick="authSubmit()">Войти</button>
+    <button class="btn big" onclick="authSubmit()">Войти</button>
     <div style="text-align:center;margin-top:12px">
       <button class="linkish" id="auth-toggle" onclick="toggleAuthMode()">Нет аккаунта? Зарегистрироваться</button>
     </div>
@@ -364,7 +370,7 @@ body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
         <div class="timer" id="opp-timer">20</div>
       </div>
       <div id="turn-banner">Ваш ход</div>
-      <div class="pcard" id="me-card" onclick="if(currentUser&&!G?.spectator)openProfileModal(currentUser.uid)">
+      <div class="pcard" id="me-card" onclick="if(currentUser&&(!G||!G.spectator))openProfileModal(currentUser.uid)">
         <div class="avatar sm" id="me-av">🙂</div>
         <div class="info">
           <div class="nm"><span id="me-name">Вы</span> <span class="fire" id="me-streak">🔥0</span></div>
@@ -452,11 +458,11 @@ const firebaseConfig={apiKey:"AIzaSyCk7Y-HHntq-tZMkJbDpk5WEct1IJ06RRs",authDomai
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 const auth=getAuth(app);
-devLog('Firebase OK','ok');
 
+// ============ УТИЛИТЫ ============
 const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function escAttr(s){return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;')}
+function escAttr(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;')}
 function fmtTime(s){s=Math.floor(s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 function fmtTimeHM(ts){if(!ts)return'';const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
 function fmtTimeAgo(ts){if(!ts)return'давно';const d=Date.now()-ts;if(d<3e5)return'🟢 Онлайн';if(d<36e5)return Math.floor(d/6e4)+' мин назад';if(d<864e5)return Math.floor(d/36e5)+' ч назад';return Math.floor(d/864e5)+' дн назад'}
@@ -464,17 +470,31 @@ function toast(m,t=''){const el=$('toast');el.textContent=m;el.className='show '
 function devLog(m,c=''){const b=$('dev-log');if(!b)return;const d=document.createElement('div');if(c)d.className=c;d.textContent=`[${new Date().toLocaleTimeString()}] ${m}`;b.appendChild(d);b.scrollTop=b.scrollHeight}
 function clearDevLog(){$('dev-log').innerHTML='';devLog('Консоль очищена','info')}
 function toggleDev(){$('dev-console').classList.toggle('open')}
+window.clearDevLog=clearDevLog;window.toggleDev=toggleDev;
 
 const RANKS=[
-{n:'Новичок',min:0,max:1199,c:'#9e9e9e',icon:'🌱',w:25,l:-15},{n:'Ученик',min:1200,max:1499,c:'#8bc34a',icon:'📗',w:25,l:-15},{n:'Любитель',min:1500,max:1999,c:'#4caf50',icon:'♟️',w:24,l:-16},{n:'Стратег',min:2000,max:2499,c:'#29b6f6',icon:'🧠',w:22,l:-18},{n:'Мастер',min:2500,max:2999,c:'#7e57c2',icon:'🎯',w:20,l:-20},{n:'Гроссмейстер',min:3000,max:3999,c:'#ffa726',icon:'⚡',w:16,l:-22},{n:'Чемпион',min:4000,max:4999,c:'#ff7043',icon:'🏆',w:15,l:-25},{n:'Легенда',min:5000,max:Infinity,c:'#ffd54f',icon:'👑',w:12,l:-25}];
+  {n:'Новичок',min:0,max:1199,c:'#9e9e9e',icon:'🌱',w:25,l:-15},
+  {n:'Ученик',min:1200,max:1499,c:'#8bc34a',icon:'📗',w:25,l:-15},
+  {n:'Любитель',min:1500,max:1999,c:'#4caf50',icon:'♟️',w:24,l:-16},
+  {n:'Стратег',min:2000,max:2499,c:'#29b6f6',icon:'🧠',w:22,l:-18},
+  {n:'Мастер',min:2500,max:2999,c:'#7e57c2',icon:'🎯',w:20,l:-20},
+  {n:'Гроссмейстер',min:3000,max:3999,c:'#ffa726',icon:'⚡',w:16,l:-22},
+  {n:'Чемпион',min:4000,max:4999,c:'#ff7043',icon:'🏆',w:15,l:-25},
+  {n:'Легенда',min:5000,max:Infinity,c:'#ffd54f',icon:'👑',w:12,l:-25}
+];
 function getRank(e){return RANKS.find(r=>e>=r.min&&e<=r.max)||RANKS[0]}
 function renderRanksBox(){$('ranks-box').innerHTML=RANKS.map(r=>`<div style="background:var(--bg2);border:1px solid ${r.c}55;border-radius:10px;padding:10px;font-size:12px"><div style="font-weight:700;color:${r.c}">${r.icon} ${r.n}</div><div style="color:var(--txt2)">${r.min} - ${r.max===Infinity?'∞':r.max} Elo</div></div>`).join('')}
 
 function setUI(m){localStorage.setItem('uiMode',m);document.body.classList.toggle('ui-mobile',m==='mobile');$('ui-pc').classList.toggle('on',m==='pc');$('ui-mobile-btn').classList.toggle('on',m==='mobile')}
 window.setUI=setUI;
 
+// ============ АВТОРИЗАЦИЯ ============
 let currentUser=null,authMode='login';
-function toggleAuthMode(){authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход':'Регистрация';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';$('auth-toggle').textContent=authMode==='login'?'Нет аккаунта? Зарегистрироваться':'← Назад ко входу'}
+function toggleAuthMode(){
+  authMode=authMode==='login'?'register':'login';
+  $('auth-title').textContent=authMode==='login'?'Вход':'Регистрация';
+  $('auth-toggle').textContent=authMode==='login'?'Нет аккаунта? Зарегистрироваться':'← Назад ко входу';
+}
 window.toggleAuthMode=toggleAuthMode;
 
 async function authSubmit(){
@@ -493,19 +513,30 @@ async function authSubmit(){
       const profile={nick:name,tag:'',avatar:'',bio:'',clan:'',displayId:did,elo:1000,maxElo:1000,botElo:1000,botElo_easy:1000,botElo_normal:1000,botElo_hard:1000,botElo_impossible:1000,botWins_easy:0,botWins_normal:0,botWins_hard:0,botWins_impossible:0,wins:0,losses:0,winStreak:0,maxWinStreak:0,onlineGames:0,botGames:0,playtime:0,lastSeen:Date.now(),lastNickChange:0,createdAt:Date.now(),deleted:false};
       await set(ref(db,'users/'+uid),profile);
       await set(ref(db,'nicknames/'+name.toLowerCase()),uid);
-      currentUser={uid,...profile};toast('Аккаунт создан! ID: '+did,'success');enterApp();
+      currentUser={uid,...profile};
+      toast('Аккаунт создан! ID: '+did,'success');
+      enterApp();
     }else{
       const cred=await signInWithEmailAndPassword(auth,email,pass);
       const snap=await get(ref(db,'users/'+cred.user.uid));
       if(!snap.exists()){toast('Профиль не найден','error');return}
-      currentUser={uid:cred.user.uid,...snap.val()};toast('Добро пожаловать!','success');enterApp();
+      currentUser={uid:cred.user.uid,...snap.val()};
+      toast('Добро пожаловать!','success');
+      enterApp();
     }
   }catch(e){toast(e.code?e.code+': '+e.message:e.message,'error')}
 }
 window.authSubmit=authSubmit;
+
 function logout(){signOut(auth);currentUser=null;location.reload()}
 window.logout=logout;
-function enterApp(){$('header-nav').classList.remove('hidden');showScreen('mode');applySettings();devLog('Вход: '+currentUser.nick,'ok')}
+
+function enterApp(){
+  $('header-nav').classList.remove('hidden');
+  showScreen('mode');
+  applySettings();
+  devLog('Вход: '+currentUser.nick,'ok');
+}
 
 onAuthStateChanged(auth,async user=>{
   if(user){
@@ -526,17 +557,26 @@ onAuthStateChanged(auth,async user=>{
     }
   }else{currentUser=null;showScreen('auth')}
 });
+
 setInterval(()=>{if(currentUser)update(ref(db,'users/'+currentUser.uid),{lastSeen:Date.now()}).catch(()=>{})},12e4);
 setInterval(()=>{if(currentUser){runTransaction(ref(db,'users/'+currentUser.uid+'/playtime'),c=>(c||0)+60).catch(()=>{});currentUser.playtime=(currentUser.playtime||0)+60}},6e4);
 
-function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));const el=$('screen-'+n);if(el)el.classList.remove('hidden');if(n==='chat')renderGlobalChat();if(n==='settings')renderNickTimer()}
+function showScreen(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+  const el=$('screen-'+n);
+  if(el)el.classList.remove('hidden');
+  if(n==='chat')renderGlobalChat();
+  if(n==='settings')renderNickTimer();
+}
 window.showScreen=showScreen;
 
 function applySettings(){
   const sc=localStorage.getItem('themeColor')||'#4caf50';
-  document.documentElement.style.setProperty('--main',sc);$('set-color').value=sc;
+  document.documentElement.style.setProperty('--main',sc);
+  $('set-color').value=sc;
   const vol=localStorage.getItem('musicVol')?parseFloat(localStorage.getItem('musicVol')):0.4;
-  $('set-vol').value=vol*100;$('vol-val').textContent=Math.round(vol*100)+'%';
+  $('set-vol').value=vol*100;
+  $('vol-val').textContent=Math.round(vol*100)+'%';
   const mus=localStorage.getItem('musicOn')!=='false';
   $('music-btn').textContent=mus?'🎵 Музыка: вкл':'🎵 Музыка: выкл';
   const bgm=$('bg-music');bgm.volume=vol;
@@ -544,24 +584,44 @@ function applySettings(){
 }
 $('set-color').addEventListener('input',e=>{document.documentElement.style.setProperty('--main',e.target.value);localStorage.setItem('themeColor',e.target.value)});
 $('set-vol').addEventListener('input',e=>{$('vol-val').textContent=e.target.value+'%';localStorage.setItem('musicVol',e.target.value/100);$('bg-music').volume=e.target.value/100});
-function toggleMusic(){const m=localStorage.getItem('musicOn')!=='false';localStorage.setItem('musicOn',!m);const b=$('bg-music');if(!m){b.play().catch(()=>{});$('music-btn').textContent='🎵 Музыка: вкл'}else{b.pause();$('music-btn').textContent='🎵 Музыка: выкл'}}
+function toggleMusic(){
+  const m=localStorage.getItem('musicOn')!=='false';
+  localStorage.setItem('musicOn',!m);
+  const b=$('bg-music');
+  if(!m){b.play().catch(()=>{});$('music-btn').textContent='🎵 Музыка: вкл'}
+  else{b.pause();$('music-btn').textContent='🎵 Музыка: выкл'}
+}
 window.toggleMusic=toggleMusic;
 
-function renderNickTimer(){const u=currentUser;if(!u)return;const el=$('nick-timer');if(u.lastNickChange){const l=u.lastNickChange+432e5-Date.now();if(l>0){el.textContent='Следующая смена через '+Math.ceil(l/36e5)+' ч';$('nick-btn').disabled=true;return}}el.textContent='Можно сменить ник';$('nick-btn').disabled=false}
+function renderNickTimer(){
+  const u=currentUser;if(!u)return;
+  const el=$('nick-timer');
+  if(u.lastNickChange){
+    const l=u.lastNickChange+432e5-Date.now();
+    if(l>0){el.textContent='Следующая смена через '+Math.ceil(l/36e5)+' ч';$('nick-btn').disabled=true;return}
+  }
+  el.textContent='Можно сменить ник';$('nick-btn').disabled=false;
+}
 async function changeNick(){
-  const u=currentUser;if(!u)return;const now=Date.now();
+  const u=currentUser;if(!u)return;
+  const now=Date.now();
   if(u.lastNickChange&&now-u.lastNickChange<432e5){toast('Смена ника раз в 12 ч','error');return}
   const nn=$('set-newnick').value.trim();
   if(nn.length<2){toast('Ник слишком короткий');return}
   const s=await get(ref(db,'nicknames/'+nn.toLowerCase()));
   if(s.exists()){toast('Ник занят','error');return}
   await update(ref(db),{[`users/${u.uid}/nick`]:nn,[`users/${u.uid}/lastNickChange`]:now,[`nicknames/${u.nick.toLowerCase()}`]:null,[`nicknames/${nn.toLowerCase()}`]:u.uid});
-  currentUser.nick=nn;currentUser.lastNickChange=now;$('set-newnick').value='';toast('Ник изменён ✔','success');
+  currentUser.nick=nn;currentUser.lastNickChange=now;$('set-newnick').value='';
+  toast('Ник изменён ✔','success');
 }
 window.changeNick=changeNick;
 
+// ============ ПРОФИЛЬ ============
 function calcTotalBotElo(u){return(u.botElo_easy||1000)+(u.botElo_normal||1000)+(u.botElo_hard||1000)+(u.botElo_impossible||1000)-3000}
-function avatarHtml(u,c){if(u.avatar)return`<div class="avatar ${c}"><img src="${esc(u.avatar)}" onerror="this.parentNode.innerHTML='🙂'"></div>`;return`<div class="avatar ${c}">🙂</div>`}
+function avatarHtml(u,c){
+  if(u.avatar)return`<div class="avatar ${c}"><img src="${esc(u.avatar)}" onerror="this.parentNode.innerHTML='🙂'"></div>`;
+  return`<div class="avatar ${c}">🙂</div>`;
+}
 function renderMyProfile(){const u=currentUser;if(!u)return;renderProfileInto(u,true)}
 window.renderMyProfile=renderMyProfile;
 
@@ -569,51 +629,120 @@ function renderProfileInto(u,isMe){
   const tot=calcTotalBotElo(u),rk=getRank(u.elo||1000),box=$('my-profile-box');
   const bw=(u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
   const kd=u.losses===0?(u.wins||0):((u.wins||0)/u.losses).toFixed(2);
-  box.innerHTML=`<div class="profile-head">${avatarHtml(u,'')}<div style="flex:1;min-width:200px"><div class="pname">${esc(u.nick)} ${u.tag?`<span class="ptag">${esc(u.tag)}</span>`:''} ${u.clan?`<span class="pclan">⚔ ${esc(u.clan)}</span>`:''} <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ${u.displayId||'00000'}</span></div><div style="margin:6px 0"><span class="rank-badge">${rk.icon} ${rk.n} · ${u.elo||1000} Elo</span></div><div style="margin:6px 0;font-size:13px">🤖 Общий BotElo: <b style="color:var(--gold);font-size:16px">${tot}</b></div><div class="pabout">${u.bio?esc(u.bio):'<i style="opacity:.5">Нет описания</i>'}</div></div>${isMe?`<button class="btn small secondary" onclick="openEditProfile()">✏️ Редактировать</button>`:''}</div>
-  <div class="stat-grid"><div class="stat-card"><div class="v">${u.elo||1000}</div><div class="l">Онлайн Elo (макс ${u.maxElo||1000})</div></div><div class="stat-card"><div class="v">${u.wins||0}</div><div class="l">🌐 Побед онлайн</div></div><div class="stat-card"><div class="v">${bw}</div><div class="l">🤖 Побед с ботом</div></div><div class="stat-card"><div class="v">${u.losses||0}</div><div class="l">Поражения онлайн</div></div><div class="stat-card"><div class="v">${kd}</div><div class="l">K/D (онлайн)</div></div><div class="stat-card"><div class="v">${u.winStreak||0}</div><div class="l">Винстрик (макс ${u.maxWinStreak||0})</div></div><div class="stat-card"><div class="v">${fmtTime(u.playtime||0)}</div><div class="l">Плейтайм</div></div><div class="stat-card"><div class="v">${(u.onlineGames||0)+(u.botGames||0)}</div><div class="l">Всего игр</div></div></div>
-  <div style="margin-top:14px">${eloLine('🟢 Лёгкий бот',u,'easy')}${eloLine('🔵 Обычный бот',u,'normal')}${eloLine('🟠 Сложный бот',u,'hard')}${eloLine('🔥 Невозможный бот',u,'impossible')}</div>
-  <div class="row" style="margin-top:16px">${isMe?`<button class="btn secondary" onclick="showScreen('menu')">В меню</button>`:`<button class="btn secondary" onclick="closeModal()">Закрыть</button>`}</div>`;
+  box.innerHTML=`
+  <div class="profile-head">
+    ${avatarHtml(u,'')}
+    <div style="flex:1;min-width:200px">
+      <div class="pname">${esc(u.nick)} ${u.tag?`<span class="ptag">${esc(u.tag)}</span>`:''} ${u.clan?`<span class="pclan">⚔ ${esc(u.clan)}</span>`:''} <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ${u.displayId||'00000'}</span></div>
+      <div style="margin:6px 0"><span class="rank-badge">${rk.icon} ${rk.n} · ${u.elo||1000} Elo</span></div>
+      <div style="margin:6px 0;font-size:13px">🤖 Общий BotElo: <b style="color:var(--gold);font-size:16px">${tot}</b></div>
+      <div class="pabout">${u.bio?esc(u.bio):'<i style="opacity:.5">Нет описания</i>'}</div>
+    </div>
+    ${isMe?`<button class="btn small secondary" onclick="openEditProfile()">✏️ Редактировать</button>`:''}
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="v">${u.elo||1000}</div><div class="l">Онлайн Elo (макс ${u.maxElo||1000})</div></div>
+    <div class="stat-card"><div class="v">${u.wins||0}</div><div class="l">🌐 Побед онлайн</div></div>
+    <div class="stat-card"><div class="v">${bw}</div><div class="l">🤖 Побед с ботом</div></div>
+    <div class="stat-card"><div class="v">${u.losses||0}</div><div class="l">Поражения онлайн</div></div>
+    <div class="stat-card"><div class="v">${kd}</div><div class="l">K/D (онлайн)</div></div>
+    <div class="stat-card"><div class="v">${u.winStreak||0}</div><div class="l">Винстрик (макс ${u.maxWinStreak||0})</div></div>
+    <div class="stat-card"><div class="v">${fmtTime(u.playtime||0)}</div><div class="l">Плейтайм</div></div>
+    <div class="stat-card"><div class="v">${(u.onlineGames||0)+(u.botGames||0)}</div><div class="l">Всего игр</div></div>
+  </div>
+  <div style="margin-top:14px">
+    ${eloLine('🟢 Лёгкий бот',u,'easy')}${eloLine('🔵 Обычный бот',u,'normal')}${eloLine('🟠 Сложный бот',u,'hard')}${eloLine('🔥 Невозможный бот',u,'impossible')}
+  </div>
+  <div class="row" style="margin-top:16px">
+    ${isMe?`<button class="btn secondary" onclick="showScreen('menu')">В меню</button>`:`<button class="btn secondary" onclick="closeModal()">Закрыть</button>`}
+  </div>`;
 }
 function eloLine(l,u,d){return`<div class="elo-row"><span class="lab">${l}</span><span><b style="color:var(--gold)">${u['botElo_'+d]||1000}</b> · <span style="color:var(--green)">${u['botWins_'+d]||0}W</span></span></div>`}
-function openEditProfile(){const u=currentUser;$('edit-tag').value=u.tag||'';$('edit-clan').value=u.clan||'';$('edit-about').value=u.bio||'';$('edit-avatar-url').value=u.avatar&&u.avatar.startsWith('http')?u.avatar:'';showScreen('profile-edit')}
+function openEditProfile(){
+  const u=currentUser;
+  $('edit-tag').value=u.tag||'';$('edit-clan').value=u.clan||'';
+  $('edit-about').value=u.bio||'';
+  $('edit-avatar-url').value=u.avatar&&u.avatar.startsWith('http')?u.avatar:'';
+  showScreen('profile-edit');
+}
 window.openEditProfile=openEditProfile;
-$('edit-avatar-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('edit-avatar-url').value=ev.target.result;toast('Аватар загружен')};r.readAsDataURL(f)});
-async function saveProfile(){if(!currentUser)return;const a=$('edit-avatar-url').value.trim(),t=$('edit-tag').value.trim().slice(0,20),c=$('edit-clan').value.trim().slice(0,20),b=$('edit-about').value.trim().slice(0,160);await update(ref(db,'users/'+currentUser.uid),{avatar:a,tag:t,clan:c,bio:b});currentUser.avatar=a;currentUser.tag=t;currentUser.clan=c;currentUser.bio=b;toast('Профиль сохранён ✔','success');showScreen('profile-view');renderMyProfile()}
+$('edit-avatar-file').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{$('edit-avatar-url').value=ev.target.result;toast('Аватар загружен')};
+  r.readAsDataURL(f);
+});
+async function saveProfile(){
+  if(!currentUser)return;
+  const a=$('edit-avatar-url').value.trim(),t=$('edit-tag').value.trim().slice(0,20),c=$('edit-clan').value.trim().slice(0,20),b=$('edit-about').value.trim().slice(0,160);
+  await update(ref(db,'users/'+currentUser.uid),{avatar:a,tag:t,clan:c,bio:b});
+  currentUser.avatar=a;currentUser.tag=t;currentUser.clan=c;currentUser.bio=b;
+  toast('Профиль сохранён ✔','success');
+  showScreen('profile-view');renderMyProfile();
+}
 window.saveProfile=saveProfile;
-async function deleteAccount(){if(!confirm('Удалить аккаунт навсегда?'))return;const u=currentUser;await update(ref(db,'users/'+u.uid),{deleted:true,nick:'Аккаунт удален',avatar:'',bio:'',tag:'',clan:''});await set(ref(db,'nicknames/'+u.nick.toLowerCase()),null);await signOut(auth);location.reload()}
+async function deleteAccount(){
+  if(!confirm('Удалить аккаунт навсегда?'))return;
+  const u=currentUser;
+  await update(ref(db,'users/'+u.uid),{deleted:true,nick:'Аккаунт удален',avatar:'',bio:'',tag:'',clan:''});
+  await set(ref(db,'nicknames/'+u.nick.toLowerCase()),null);
+  await signOut(auth);location.reload();
+}
 window.deleteAccount=deleteAccount;
 
+// ============ РЕЙТИНГ И ИГРОКИ ============
 let ratingFilter='total';
-function setRatingFilter(f){ratingFilter=f;document.querySelectorAll('#rating-filter .chip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));renderRating()}
+function setRatingFilter(f){
+  ratingFilter=f;
+  document.querySelectorAll('#rating-filter .chip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));
+  renderRating();
+}
 window.setRatingFilter=setRatingFilter;
 async function renderRating(){
   $('rating-box').innerHTML='Загрузка...';
   try{
-    const snap=await get(ref(db,'users'));const users=snap.val()||{};let sorted=[];
+    const snap=await get(ref(db,'users'));
+    const users=snap.val()||{};
+    let sorted=[];
     if(ratingFilter==='total')sorted=Object.entries(users).filter(([_,u])=>!u.deleted).map(([uid,u])=>[uid,{...u,_d:calcTotalBotElo(u)}]).sort((a,b)=>b[1]._d-a[1]._d).slice(0,50);
     else if(ratingFilter==='online')sorted=Object.entries(users).filter(([_,u])=>!u.deleted).map(([uid,u])=>[uid,{...u,_d:u.elo||1000}]).sort((a,b)=>b[1]._d-a[1]._d).slice(0,50);
     else if(ratingFilter==='maxElo')sorted=Object.entries(users).filter(([_,u])=>!u.deleted).map(([uid,u])=>[uid,{...u,_d:u.maxElo||1000}]).sort((a,b)=>b[1]._d-a[1]._d).slice(0,50);
     else{const f='botElo_'+ratingFilter;sorted=Object.entries(users).filter(([_,u])=>!u.deleted).map(([uid,u])=>[uid,{...u,_d:u[f]||1000}]).sort((a,b)=>b[1]._d-a[1]._d).slice(0,50)}
-    $('rating-box').innerHTML=sorted.map(([uid,u],i)=>`<div class="lb-item" onclick="showProfile('${escAttr(uid)}')"><div class="lb-rank">#${i+1}</div><div class="avatar sm" style="width:36px;height:36px;font-size:16px">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nick?u.nick[0].toUpperCase():'?')}</div><div style="flex:1"><div style="font-weight:700">${esc(u.nick||'')}</div><div style="font-size:11px;color:var(--txt2)">${u.clan?'['+esc(u.clan)+'] ':''}${fmtTimeAgo(u.lastSeen)}</div></div><div class="lb-val">${u._d||0}</div></div>`).join('')||'<div style="text-align:center;color:var(--txt2)">Нет данных</div>';
+    $('rating-box').innerHTML=sorted.map(([uid,u],i)=>`
+      <div class="lb-item" onclick="showProfile('${escAttr(uid)}')">
+        <div class="lb-rank">#${i+1}</div>
+        <div class="avatar sm" style="width:36px;height:36px;font-size:16px">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nick?u.nick[0].toUpperCase():'?')}</div>
+        <div style="flex:1"><div style="font-weight:700">${esc(u.nick||'')}</div><div style="font-size:11px;color:var(--txt2)">${u.clan?'['+esc(u.clan)+'] ':''}${fmtTimeAgo(u.lastSeen)}</div></div>
+        <div class="lb-val">${u._d||0}</div>
+      </div>`).join('')||'<div style="text-align:center;color:var(--txt2)">Нет данных</div>';
   }catch(e){$('rating-box').innerHTML='Ошибка: '+e.message}
 }
 window.renderRating=renderRating;
+
 async function renderPlayers(){
   $('players-box').innerHTML='Загрузка...';
   try{
-    const snap=await get(ref(db,'users'));const users=snap.val()||{};
+    const snap=await get(ref(db,'users'));
+    const users=snap.val()||{};
     const sorted=Object.entries(users).filter(([_,u])=>!u.deleted).sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0));
     const me=currentUser;
     $('players-box').innerHTML=sorted.map(([uid,u])=>{
       const on=Date.now()-(u.lastSeen||0)<3e5;
-      return`<div class="player-item" onclick="showProfile('${escAttr(uid)}')"><span class="online-dot ${on?'on':'off'}"></span><div class="avatar sm" style="width:36px;height:36px;font-size:16px">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nick?u.nick[0].toUpperCase():'?')}</div><div style="flex:1"><div style="font-weight:700">${esc(u.nick||'')}${uid===me?.uid?' <span style="color:var(--main);font-size:11px">(ты)</span>':''}</div><div style="font-size:11px;color:var(--txt2)">${u.clan?'['+esc(u.clan)+'] ':''}${fmtTimeAgo(u.lastSeen)}</div></div><div class="lb-val">${u.elo||1000}</div></div>`;}).join('');
+      return`<div class="player-item" onclick="showProfile('${escAttr(uid)}')">
+        <span class="online-dot ${on?'on':'off'}"></span>
+        <div class="avatar sm" style="width:36px;height:36px;font-size:16px">${u.avatar?`<img src="${esc(u.avatar)}">`:(u.nick?u.nick[0].toUpperCase():'?')}</div>
+        <div style="flex:1"><div style="font-weight:700">${esc(u.nick||'')}${uid===me?.uid?' <span style="color:var(--main);font-size:11px">(ты)</span>':''}</div><div style="font-size:11px;color:var(--txt2)">${u.clan?'['+esc(u.clan)+'] ':''}${fmtTimeAgo(u.lastSeen)}</div></div>
+        <div class="lb-val">${u.elo||1000}</div>
+      </div>`;}).join('');
   }catch(e){$('players-box').innerHTML='Ошибка: '+e.message}
 }
 window.renderPlayers=renderPlayers;
 
+// ============ МОДАЛКИ ============
 function openModal(h){$('modal-content').innerHTML=`<button class="x" onclick="closeModal()">✕</button>`+h;$('modal-bg').classList.remove('hidden')}
 function closeModal(){$('modal-bg').classList.add('hidden')}
 window.closeModal=closeModal;
+
 async function showProfile(uid){
   if(!uid)return;
   const snap=await get(ref(db,'users/'+uid));
@@ -621,17 +750,44 @@ async function showProfile(uid){
   const u=snap.val(),tot=calcTotalBotElo(u),rk=getRank(u.elo||1000);
   const bw=(u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
   const kd=u.losses===0?(u.wins||0):((u.wins||0)/u.losses).toFixed(2);
-  openModal(`<div style="text-align:center;margin-bottom:14px">${avatarHtml(u,'md')}</div>
-  <div class="profile-head" style="justify-content:center;margin-bottom:10px"><div style="text-align:center;width:100%"><div class="pname" style="justify-content:center">${esc(u.nick)} ${u.tag?`<span class="ptag">${esc(u.tag)}</span>`:''}</div>${u.clan?`<div style="margin-top:4px"><span class="pclan">⚔ ${esc(u.clan)}</span></div>`:''}<div style="font-size:11px;color:var(--txt2);margin-top:4px">ID: ${u.displayId||'00000'}</div><div style="margin:8px 0"><span class="rank-badge">${rk.icon} ${rk.n} · ${u.elo||1000} Elo</span></div><div style="font-size:13px;margin:4px 0">🤖 BotElo: <b style="color:var(--gold)">${tot}</b></div><div class="pabout" style="margin:8px auto">${u.bio?esc(u.bio):''}</div></div></div>
-  <div class="stat-grid"><div class="stat-card"><div class="v">${u.wins||0}</div><div class="l">🌐 Побед онлайн</div></div><div class="stat-card"><div class="v">${bw}</div><div class="l">🤖 Побед с ботом</div></div><div class="stat-card"><div class="v">${u.losses||0}</div><div class="l">Поражения</div></div><div class="stat-card"><div class="v">${kd}</div><div class="l">K/D</div></div><div class="stat-card"><div class="v">${u.winStreak||0}</div><div class="l">Винстрик</div></div><div class="stat-card"><div class="v">${u.maxWinStreak||0}</div><div class="l">Макс. винстрик</div></div><div class="stat-card"><div class="v">${fmtTime(u.playtime||0)}</div><div class="l">Плейтайм</div></div><div class="stat-card"><div class="v">${u.onlineGames||0}</div><div class="l">Игр онлайн</div></div></div>
-  <div style="margin-top:12px">${eloLine('🟢 Лёгкий',u,'easy')}${eloLine('🔵 Обычный',u,'normal')}${eloLine('🟠 Сложный',u,'hard')}${eloLine('🔥 Невозможный',u,'impossible')}</div>`);
+  openModal(`
+    <div style="text-align:center;margin-bottom:14px">${avatarHtml(u,'md')}</div>
+    <div class="profile-head" style="justify-content:center;margin-bottom:10px">
+      <div style="text-align:center;width:100%">
+        <div class="pname" style="justify-content:center">${esc(u.nick)} ${u.tag?`<span class="ptag">${esc(u.tag)}</span>`:''}</div>
+        ${u.clan?`<div style="margin-top:4px"><span class="pclan">⚔ ${esc(u.clan)}</span></div>`:''}
+        <div style="font-size:11px;color:var(--txt2);margin-top:4px">ID: ${u.displayId||'00000'}</div>
+        <div style="margin:8px 0"><span class="rank-badge">${rk.icon} ${rk.n} · ${u.elo||1000} Elo</span></div>
+        <div style="font-size:13px;margin:4px 0">🤖 BotElo: <b style="color:var(--gold)">${tot}</b></div>
+        <div class="pabout" style="margin:8px auto">${u.bio?esc(u.bio):''}</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="v">${u.wins||0}</div><div class="l">🌐 Побед онлайн</div></div>
+      <div class="stat-card"><div class="v">${bw}</div><div class="l">🤖 Побед с ботом</div></div>
+      <div class="stat-card"><div class="v">${u.losses||0}</div><div class="l">Поражения</div></div>
+      <div class="stat-card"><div class="v">${kd}</div><div class="l">K/D</div></div>
+      <div class="stat-card"><div class="v">${u.winStreak||0}</div><div class="l">Винстрик</div></div>
+      <div class="stat-card"><div class="v">${u.maxWinStreak||0}</div><div class="l">Макс. винстрик</div></div>
+      <div class="stat-card"><div class="v">${fmtTime(u.playtime||0)}</div><div class="l">Плейтайм</div></div>
+      <div class="stat-card"><div class="v">${u.onlineGames||0}</div><div class="l">Игр онлайн</div></div>
+    </div>
+    <div style="margin-top:12px">
+      ${eloLine('🟢 Лёгкий',u,'easy')}${eloLine('🔵 Обычный',u,'normal')}${eloLine('🟠 Сложный',u,'hard')}${eloLine('🔥 Невозможный',u,'impossible')}
+    </div>`);
 }
-async function showProfileByNick(nick){const s=await get(ref(db,'nicknames/'+nick.toLowerCase()));if(s.exists())showProfile(s.val());else toast('Игрок "'+nick+'" не найден','error')}
+window.showProfile=showProfile;
+
+async function showProfileByNick(nick){
+  const s=await get(ref(db,'nicknames/'+nick.toLowerCase()));
+  if(s.exists())showProfile(s.val());
+  else toast('Игрок "'+nick+'" не найден','error');
+}
 window.showProfileByNick=showProfileByNick;
 function openProfileModal(uid){showProfile(uid)}
 window.openProfileModal=openProfileModal;
-window.showProfile=showProfile;
 
+// ============ ГЛОБАЛЬНЫЙ ЧАТ ============
 let globalChatUnsub=null;
 function renderGlobalChat(){
   if(globalChatUnsub)globalChatUnsub();
@@ -649,22 +805,39 @@ function renderGlobalChat(){
     box.scrollTop=box.scrollHeight;
   });
 }
-async function sendGlobalChat(){const t=$('global-chat-input').value.trim();if(!t||!currentUser)return;const m=push(ref(db,'globalChat'));await set(m,{uid:currentUser.uid,nick:currentUser.nick,text:t,ts:Date.now(),deleted:false});$('global-chat-input').value=''}
+async function sendGlobalChat(){
+  const t=$('global-chat-input').value.trim();
+  if(!t||!currentUser)return;
+  const m=push(ref(db,'globalChat'));
+  await set(m,{uid:currentUser.uid,nick:currentUser.nick,text:t,ts:Date.now(),deleted:false});
+  $('global-chat-input').value='';
+}
 window.sendGlobalChat=sendGlobalChat;
-async function deleteGlobalMsg(k){if(!currentUser)return;await update(ref(db,`globalChat/${k}`),{deleted:true});toast('Сообщение удалено','success')}
+async function deleteGlobalMsg(k){
+  if(!currentUser)return;
+  await update(ref(db,`globalChat/${k}`),{deleted:true});
+  toast('Сообщение удалено','success');
+}
 window.deleteGlobalMsg=deleteGlobalMsg;
 
 // ============ ДВИЖОК ШАШЕК ============
-function initBoard(){const b=new Array(64).fill(null);for(let r=0;r<3;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'b',king:false};for(let r=5;r<8;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'w',king:false};return b}
+function initBoard(){
+  const b=new Array(64).fill(null);
+  for(let r=0;r<3;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'b',king:false};
+  for(let r=5;r<8;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'w',king:false};
+  return b;
+}
 function cloneBoard(b){return b.map(p=>p?{...p}:null)}
 function idx(r,c){return r*8+c}
 function rc(i){return[Math.floor(i/8),i%8]}
 function inside(r,c){return r>=0&&r<8&&c>=0&&c<8}
+
 function getStepsForPiece(board,from,color,kr){
   const p=board[from];if(!p||p.color!==color)return[];
   const dirs=[[-1,-1],[-1,1],[1,-1],[1,1]];
   const[r,c]=rc(from);let steps=[];
   const k=kr||'flying';
+  
   if(p.king&&k==='short'){
     for(const[dr,dc]of dirs){
       const nr=r+dr,nc=c+dc,tr=r+2*dr,tc=c+2*dc;
@@ -672,16 +845,23 @@ function getStepsForPiece(board,from,color,kr){
         steps.push({from,to:idx(tr,tc),captures:[idx(nr,nc)],promote:false});
     }
     if(steps.length>0)return steps;
-    for(const[dr,dc]of dirs){const nr=r+dr,nc=c+dc;if(inside(nr,nc)&&!board[idx(nr,nc)])steps.push({from,to:idx(nr,nc),captures:[],promote:false})}
+    for(const[dr,dc]of dirs){
+      const nr=r+dr,nc=c+dc;
+      if(inside(nr,nc)&&!board[idx(nr,nc)])steps.push({from,to:idx(nr,nc),captures:[],promote:false});
+    }
     return steps;
   }
+  
   if(p.king){
     for(const[dr,dc]of dirs){
       let nr=r+dr,nc=c+dc;
       while(inside(nr,nc)&&!board[idx(nr,nc)]){nr+=dr;nc+=dc}
       if(inside(nr,nc)&&board[idx(nr,nc)].color!==color){
         let er=nr+dr,ec=nc+dc;
-        while(inside(er,ec)&&!board[idx(er,ec)]){steps.push({from,to:idx(er,ec),captures:[idx(nr,nc)],promote:false});er+=dr;ec+=dc}
+        while(inside(er,ec)&&!board[idx(er,ec)]){
+          steps.push({from,to:idx(er,ec),captures:[idx(nr,nc)],promote:false});
+          er+=dr;ec+=dc;
+        }
       }
     }
   }else{
@@ -694,35 +874,111 @@ function getStepsForPiece(board,from,color,kr){
   if(steps.length>0)return steps;
   if(!p.king){
     const fwd=color==='w'?-1:1;
-    for(const dc of[-1,1]){const nr=r+fwd,nc=c+dc;if(inside(nr,nc)&&!board[idx(nr,nc)])steps.push({from,to:idx(nr,nc),captures:[],promote:(color==='w'&&nr===0)||(color==='b'&&nr===7)})}
+    for(const dc of[-1,1]){
+      const nr=r+fwd,nc=c+dc;
+      if(inside(nr,nc)&&!board[idx(nr,nc)])steps.push({from,to:idx(nr,nc),captures:[],promote:(color==='w'&&nr===0)||(color==='b'&&nr===7)});
+    }
   }else{
-    for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){steps.push({from,to:idx(nr,nc),captures:[],promote:false});nr+=dr;nc+=dc}}
+    for(const[dr,dc]of dirs){
+      let nr=r+dr,nc=c+dc;
+      while(inside(nr,nc)&&!board[idx(nr,nc)]){steps.push({from,to:idx(nr,nc),captures:[],promote:false});nr+=dr;nc+=dc}
+    }
   }
   return steps;
 }
-function mustCapture(board,color,kr){for(let i=0;i<64;i++){if(board[i]&&board[i].color===color){if(getStepsForPiece(board,i,color,kr).some(s=>s.captures.length>0))return true}}return false}
-function applyStep(board,step){const nb=cloneBoard(board);const p=nb[step.from];nb[step.from]=null;for(const c of step.captures)nb[c]=null;nb[step.to]={color:p.color,king:p.king||step.promote};return nb}
 
+function mustCapture(board,color,kr){
+  for(let i=0;i<64;i++){
+    if(board[i]&&board[i].color===color){
+      if(getStepsForPiece(board,i,color,kr).some(s=>s.captures.length>0))return true;
+    }
+  }
+  return false;
+}
+
+function applyStep(board,step){
+  const nb=cloneBoard(board);
+  const p=nb[step.from];
+  nb[step.from]=null;
+  for(const c of step.captures)nb[c]=null;
+  nb[step.to]={color:p.color,king:p.king||step.promote};
+  return nb;
+}
+
+// ============ БОТ ============
 function getBotSequences(board,color,kr){
   let sequences=[];
   function fc(cb,start,path){
     const steps=getStepsForPiece(cb,start,color,kr).filter(s=>s.captures.length>0);
     if(steps.length===0){if(path.length>0)sequences.push([...path]);return}
-    for(const step of steps){fc(applyStep(cb,step),step.to,[...path,step])}
+    for(const step of steps)fc(applyStep(cb,step),step.to,[...path,step]);
   }
-  for(let i=0;i<64;i++){if(board[i]&&board[i].color===color){if(getStepsForPiece(board,i,color,kr).some(s=>s.captures.length>0))fc(board,i,[])}}
-  if(sequences.length===0){for(let i=0;i<64;i++){if(board[i]&&board[i].color===color){const steps=getStepsForPiece(board,i,color,kr).filter(s=>s.captures.length===0);for(const step of steps)sequences.push([step])}}}
+  for(let i=0;i<64;i++){
+    if(board[i]&&board[i].color===color){
+      if(getStepsForPiece(board,i,color,kr).some(s=>s.captures.length>0))fc(board,i,[]);
+    }
+  }
+  if(sequences.length===0){
+    for(let i=0;i<64;i++){
+      if(board[i]&&board[i].color===color){
+        const steps=getStepsForPiece(board,i,color,kr).filter(s=>s.captures.length===0);
+        for(const step of steps)sequences.push([step]);
+      }
+    }
+  }
   return sequences;
 }
-function evalAdv(b,c){let s=0;for(let i=0;i<64;i++){const p=b[i];if(!p)continue;const[r,cc]=rc(i);let v=p.king?5:1;if(!p.king){v+=(p.color==='w'?(7-r):r)*0.18;v+=(3.5-Math.max(Math.abs(3.5-r),Math.abs(3.5-cc)))*0.08;if(cc===0||cc===7)v-=0.15;if((p.color==='w'&&r===7)||(p.color==='b'&&r===0))v+=0.3}else v+=(3.5-Math.max(Math.abs(3.5-r),Math.abs(3.5-cc)))*0.15;if(p.color===c)s+=v;else s-=v}return s}
-function evalFor(b,c){let s=0;for(let i=0;i<64;i++){const p=b[i];if(!p)continue;const[r,cc]=rc(i);let v=p.king?4.5:1;if(!p.king){v+=(p.color==='w'?(7-r):r)*0.15;if(cc===0||cc===7)v-=0.1}else if(r>0&&r<7&&cc>0&&cc<7)v+=0.5;if(p.color===c)s+=v;else s-=v}return s}
+
+function evalAdv(b,c){
+  let s=0;
+  for(let i=0;i<64;i++){
+    const p=b[i];if(!p)continue;
+    const[r,cc]=rc(i);
+    let v=p.king?5:1;
+    if(!p.king){
+      v+=(p.color==='w'?(7-r):r)*0.18;
+      v+=(3.5-Math.max(Math.abs(3.5-r),Math.abs(3.5-cc)))*0.08;
+      if(cc===0||cc===7)v-=0.15;
+      if((p.color==='w'&&r===7)||(p.color==='b'&&r===0))v+=0.3;
+    }else v+=(3.5-Math.max(Math.abs(3.5-r),Math.abs(3.5-cc)))*0.15;
+    if(p.color===c)s+=v;else s-=v;
+  }
+  return s;
+}
+function evalFor(b,c){
+  let s=0;
+  for(let i=0;i<64;i++){
+    const p=b[i];if(!p)continue;
+    const[r,cc]=rc(i);
+    let v=p.king?4.5:1;
+    if(!p.king){v+=(p.color==='w'?(7-r):r)*0.15;if(cc===0||cc===7)v-=0.1}
+    else if(r>0&&r<7&&cc>0&&cc<7)v+=0.5;
+    if(p.color===c)s+=v;else s-=v;
+  }
+  return s;
+}
 function minimax(b,d,a,bt,isMax,bc,ef){
   const cur=isMax?bc:(bc==='w'?'b':'w');
   const seqs=getBotSequences(b,cur,'flying');
   if(seqs.length===0)return isMax?-100000-d*100:100000+d*100;
   if(d===0)return ef(b,bc);
-  if(isMax){let mx=-Infinity;for(const sq of seqs){let nb=b;for(const st of sq)nb=applyStep(nb,st);const sc=minimax(nb,d-1,a,bt,false,bc,ef);if(sc>mx)mx=sc;if(mx>a)a=mx;if(bt<=a)break}return mx}
-  else{let mn=Infinity;for(const sq of seqs){let nb=b;for(const st of sq)nb=applyStep(nb,st);const sc=minimax(nb,d-1,a,bt,true,bc,ef);if(sc<mn)mn=sc;if(mn<bt)bt=mn;if(bt<=a)break}return mn}
+  if(isMax){
+    let mx=-Infinity;
+    for(const sq of seqs){
+      let nb=b;for(const st of sq)nb=applyStep(nb,st);
+      const sc=minimax(nb,d-1,a,bt,false,bc,ef);
+      if(sc>mx)mx=sc;if(mx>a)a=mx;if(bt<=a)break;
+    }
+    return mx;
+  }else{
+    let mn=Infinity;
+    for(const sq of seqs){
+      let nb=b;for(const st of sq)nb=applyStep(nb,st);
+      const sc=minimax(nb,d-1,a,bt,true,bc,ef);
+      if(sc<mn)mn=sc;if(mn<bt)bt=mn;if(bt<=a)break;
+    }
+    return mn;
+  }
 }
 function botChooseMove(board,color,diff){
   const seqs=getBotSequences(board,color,'flying');
@@ -757,7 +1013,13 @@ function botChooseMove(board,color,diff){
     for(let d=4;d<=12;d++){
       if(performance.now()>deadline&&d>6)break;
       let cb=null,cs=-Infinity,a=-Infinity;
-      for(const sq of sorted){if(performance.now()>deadline)break;let nb=board;for(const st of sq)nb=applyStep(nb,st);const sc=minimax(nb,d-1,a,Infinity,false,color,evalAdv);if(sc>cs){cs=sc;cb=sq}if(sc>a)a=sc}
+      for(const sq of sorted){
+        if(performance.now()>deadline)break;
+        let nb=board;for(const st of sq)nb=applyStep(nb,st);
+        const sc=minimax(nb,d-1,a,Infinity,false,color,evalAdv);
+        if(sc>cs){cs=sc;cb=sq}
+        if(sc>a)a=sc;
+      }
       if(cb)best=cb;
     }
     return best[0];
@@ -770,7 +1032,11 @@ let animating=false;
 function animatePieceMove(path,captures,color,isKing,flipped,callback){
   animating=true;
   const bd=$('board'),cs=bd.clientWidth/8;
-  function gp(i){const[r,c]=rc(i);const dr=flipped?7-r:r,dc=flipped?7-c:c;return{x:dc*cs+cs*0.11,y:dr*cs+cs*0.11}}
+  function gp(i){
+    const[r,c]=rc(i);
+    const dr=flipped?7-r:r,dc=flipped?7-c:c;
+    return{x:dc*cs+cs*0.11,y:dr*cs+cs*0.11};
+  }
   const lastIdx=path[path.length-1];
   const lastEl=bd.querySelector(`.cell[data-idx="${lastIdx}"] .piece`);
   if(lastEl)lastEl.style.visibility='hidden';
@@ -779,12 +1045,19 @@ function animatePieceMove(path,captures,color,isKing,flipped,callback){
   const anim=document.createElement('div');
   anim.className='piece anim-piece '+(color==='w'?'white':'black')+(isKing?' king':'');
   anim.style.width=cs*0.78+'px';anim.style.height=cs*0.78+'px';
-  const sp=gp(path[0]);anim.style.left=sp.x+'px';anim.style.top=sp.y+'px';
+  const sp=gp(path[0]);
+  anim.style.left=sp.x+'px';anim.style.top=sp.y+'px';
   bd.appendChild(anim);
   let step=0;
   function doStep(){
     step++;
-    if(step>=path.length){anim.remove();if(lastEl)lastEl.style.visibility='';animating=false;if(callback)callback();return}
+    if(step>=path.length){
+      anim.remove();
+      if(lastEl)lastEl.style.visibility='';
+      animating=false;
+      if(callback)callback();
+      return;
+    }
     if(captures&&step-1<captures.length){
       const capEl=bd.querySelector(`.cell[data-idx="${captures[step-1]}"] .piece`);
       if(capEl){capEl.classList.add('dying');setTimeout(()=>capEl.remove(),200)}
@@ -803,14 +1076,27 @@ const BOT_META={easy:{n:'Лёгкий бот 🟢',elo:800},normal:{n:'Обыч�
 function startBotGame(diff){
   if(!currentUser){toast('Войдите','error');return}
   G={mode:'bot',diff,board:initBoard(),turn:'w',myColor:'w',botColor:'b',timers:{w:20,b:20},timerInt:null,over:false,eloUp:false,moveCount:0,startTime:Date.now(),kingRules:'flying',oppUid:null,roomId:null,spectator:false,matchCode:null};
-  $('me-name').textContent=currentUser.nick;$('me-sub').textContent=currentUser.elo+' Elo';$('me-rank').textContent=getRank(currentUser.elo).n;$('me-streak').textContent='🔥'+(currentUser.winStreak||0);$('me-av').innerHTML=currentUser.avatar?`<img src="${currentUser.avatar}">`:'🙂';
-  $('opp-name').textContent=BOT_META[diff].n;$('opp-sub').textContent=BOT_META[diff].elo+' Elo';$('opp-rank').textContent=getRank(BOT_META[diff].elo).n;$('opp-streak').textContent='🔥0';$('opp-av').innerHTML='🤖';
-  $('game-chat-box').innerHTML='';$('match-code-box').classList.add('hidden');$('spectator-badge').classList.add('hidden');
-  showScreen('game');renderBoard();startTurnTimer();devLog('Bot game: '+diff,'ok');
+  $('me-name').textContent=currentUser.nick;
+  $('me-sub').textContent=currentUser.elo+' Elo';
+  $('me-rank').textContent=getRank(currentUser.elo).n;
+  $('me-streak').textContent='🔥'+(currentUser.winStreak||0);
+  $('me-av').innerHTML=currentUser.avatar?`<img src="${currentUser.avatar}">`:'🙂';
+  $('opp-name').textContent=BOT_META[diff].n;
+  $('opp-sub').textContent=BOT_META[diff].elo+' Elo';
+  $('opp-rank').textContent=getRank(BOT_META[diff].elo).n;
+  $('opp-streak').textContent='🔥0';
+  $('opp-av').innerHTML='🤖';
+  $('game-chat-box').innerHTML='';
+  $('match-code-box').classList.add('hidden');
+  $('spectator-badge').classList.add('hidden');
+  showScreen('game');
+  renderBoard();
+  startTurnTimer();
+  devLog('Bot game: '+diff,'ok');
 }
 window.startBotGame=startBotGame;
 
-// ============ МАТЧМЕЙКИНГ (ИСПРАВЛЕННЫЙ) ============
+// ============ ИСПРАВЛЕННЫЙ МАТЧМЕЙКИНГ ============
 let isSearching=false,queueListener=null,matchListener=null;
 
 async function startOnlineSearch(){
@@ -823,10 +1109,9 @@ async function startOnlineSearch(){
   await set(ref(db,'matchmaking/'+uid),{nick:currentUser.nick,elo:currentUser.elo,joinedAt:myJoinedAt,kingRules});
   onDisconnect(ref(db,'matchmaking/'+uid)).remove();
   
-  openModal(`<div id="search-box"><div class="spinner"></div><div style="font-size:17px;font-weight:700">Ищем противника...</div><div id="modal-search-count" style="font-size:13px;color:var(--gold);margin-top:6px">Ищут игру: ...</div><div style="font-size:12px;color:var(--txt2);margin-top:8px">Поиск не ограничен по времени</div><button class="btn secondary small" style="margin-top:16px" onclick="cancelSearch()">Отменить</button></div>`);
+  openModal(`<div style="text-align:center;padding:30px"><div class="spinner"></div><div style="font-size:17px;font-weight:700">Ищем противника...</div><div id="modal-search-count" style="font-size:13px;color:var(--gold);margin-top:6px">Ищут игру: ...</div><div style="font-size:12px;color:var(--txt2);margin-top:8px">Поиск не ограничен по времени</div><button class="btn secondary small" style="margin-top:16px" onclick="cancelSearch()">Отменить</button></div>`);
   devLog('Поиск начат, joinedAt='+myJoinedAt,'info');
 
-  // Слушаем приглашение (для гостя)
   matchListener=onValue(ref(db,'match_request/'+uid),async snap=>{
     const req=snap.val();
     if(!req||!isSearching)return;
@@ -842,7 +1127,6 @@ async function startOnlineSearch(){
     showRoulette(req.roomId,req.myColor,oppProfile);
   });
 
-  // Слушаем очередь (для хоста)
   queueListener=onValue(ref(db,'matchmaking'),async snap=>{
     const q=snap.val()||{};
     const count=Object.keys(q).length;
@@ -852,18 +1136,15 @@ async function startOnlineSearch(){
     if(scEl)scEl.textContent=count>0?`(${count} ищет)`:'';
     
     if(!isSearching)return;
-    
     const me=q[uid];
-    if(!me)return; // нас уже удалили (хост забрал)
+    if(!me)return;
     
     const candidates=Object.entries(q).filter(([id])=>id!==uid);
     if(candidates.length===0)return;
     
-    // Берём первого кандидата по времени входа
     candidates.sort((a,b)=>a[1].joinedAt-b[1].joinedAt);
     const[oppUid,oppData]=candidates[0];
     
-    // Хост = тот, кто РАНЬШЕ зашёл в очередь. Если одновременно — у кого uid меньше.
     const iAmHost=(me.joinedAt<oppData.joinedAt)||(me.joinedAt===oppData.joinedAt&&uid<oppUid);
     if(!iAmHost){
       devLog('Ждём хоста ('+oppData.nick+'), я гость','info');
@@ -874,7 +1155,6 @@ async function startOnlineSearch(){
     isSearching=false;
     cleanupSearchListeners();
     
-    // Атомарно удаляем обоих из очереди
     await set(ref(db,'matchmaking/'+uid),null);
     await set(ref(db,'matchmaking/'+oppUid),null);
     
@@ -893,8 +1173,6 @@ async function startOnlineSearch(){
       kingRules,matchCode
     });
     await set(ref(db,'matchCodes/'+matchCode),roomId);
-    
-    // Отправляем приглашение гостю
     await set(ref(db,'match_request/'+oppUid),{roomId,fromUid:uid,myColor:oppColor});
     devLog('Комната '+roomId+' создана, код '+matchCode,'ok');
     
@@ -917,11 +1195,11 @@ async function cancelSearch(){
   isSearching=false;
   cleanupSearchListeners();
   if(currentUser)await set(ref(db,'matchmaking/'+currentUser.uid),null);
-  closeModal();toast('Поиск отменён');
+  closeModal();
+  toast('Поиск отменён');
 }
 window.cancelSearch=cancelSearch;
 
-// Обновление счётчика в меню
 setInterval(async()=>{
   if(!$('screen-mode').classList.contains('hidden')&&!isSearching){
     try{
@@ -954,16 +1232,30 @@ function joinOnlineGame(roomId,myColor,oppProfile){
     const oppUid=myColor==='w'?data.black:data.white;
     if(!G||G.roomId!==roomId){
       G={mode:'online',roomId,myColor,board:JSON.parse(data.board),turn:data.turn,timers:data.timers||{w:20,b:20},over:false,timerInt:null,oppUid,oppProfile,eloUp:false,moveCount:data.moveCount||0,lastMove:data.lastMove||null,startTime:Date.now(),kingRules:data.kingRules||'flying',diff:'normal',botColor:null,spectator:false,matchCode:data.matchCode||null};
-      $('me-name').textContent=currentUser.nick;$('me-sub').textContent=currentUser.elo+' Elo';$('me-rank').textContent=getRank(currentUser.elo).n;$('me-streak').textContent='🔥'+(currentUser.winStreak||0);$('me-av').innerHTML=currentUser.avatar?`<img src="${currentUser.avatar}">`:'🙂';
-      $('opp-name').textContent=oppProfile.nick;$('opp-sub').textContent=(oppProfile.elo||1000)+' Elo';$('opp-rank').textContent=getRank(oppProfile.elo||1000).n;$('opp-streak').textContent='🔥'+(oppProfile.winStreak||0);$('opp-av').innerHTML=oppProfile.avatar?`<img src="${oppProfile.avatar}">`:'😎';
-      $('game-chat-box').innerHTML='';$('spectator-badge').classList.add('hidden');
+      $('me-name').textContent=currentUser.nick;
+      $('me-sub').textContent=currentUser.elo+' Elo';
+      $('me-rank').textContent=getRank(currentUser.elo).n;
+      $('me-streak').textContent='🔥'+(currentUser.winStreak||0);
+      $('me-av').innerHTML=currentUser.avatar?`<img src="${currentUser.avatar}">`:'🙂';
+      $('opp-name').textContent=oppProfile.nick;
+      $('opp-sub').textContent=(oppProfile.elo||1000)+' Elo';
+      $('opp-rank').textContent=getRank(oppProfile.elo||1000).n;
+      $('opp-streak').textContent='🔥'+(oppProfile.winStreak||0);
+      $('opp-av').innerHTML=oppProfile.avatar?`<img src="${oppProfile.avatar}">`:'😎';
+      $('game-chat-box').innerHTML='';
+      $('spectator-badge').classList.add('hidden');
       if(G.matchCode){$('match-code-box').classList.remove('hidden');$('match-code-val').textContent=G.matchCode}
-      showScreen('game');renderBoard();startTurnTimer();
+      showScreen('game');
+      renderBoard();
+      startTurnTimer();
     }else{
-      G.board=JSON.parse(data.board);G.turn=data.turn;G.timers=data.timers||G.timers;G.moveCount=data.moveCount||G.moveCount;G.lastMove=data.lastMove||G.lastMove;
+      G.board=JSON.parse(data.board);G.turn=data.turn;
+      G.timers=data.timers||G.timers;G.moveCount=data.moveCount||G.moveCount;
+      G.lastMove=data.lastMove||G.lastMove;
     }
     if(data.status==='finished'){handleGameOver(data.result);return}
-    renderBoard();renderGameChat(data.chat||{});
+    renderBoard();
+    renderGameChat(data.chat||{});
   });
 }
 
@@ -981,15 +1273,27 @@ async function startSpectate(){
   const wp=whiteSnap.exists()?whiteSnap.val():{nick:'Белый'};
   const bp=blackSnap.exists()?blackSnap.val():{nick:'Чёрный'};
   G={mode:'spectator',roomId,myColor:null,board:JSON.parse(data.board),turn:data.turn,timers:data.timers||{w:20,b:20},over:data.status==='finished',timerInt:null,eloUp:true,moveCount:data.moveCount||0,lastMove:data.lastMove||null,startTime:Date.now(),kingRules:data.kingRules||'flying',spectator:true,matchCode:data.matchCode||code,oppUid:null,diff:'normal',botColor:null};
-  $('me-name').textContent=wp.nick||'Белый';$('me-sub').textContent=(wp.elo||1000)+' Elo';$('me-rank').textContent=getRank(wp.elo||1000).n;$('me-streak').textContent='🔥'+(wp.winStreak||0);$('me-av').innerHTML=wp.avatar?`<img src="${wp.avatar}">`:'⚪';
-  $('opp-name').textContent=bp.nick||'Чёрный';$('opp-sub').textContent=(bp.elo||1000)+' Elo';$('opp-rank').textContent=getRank(bp.elo||1000).n;$('opp-streak').textContent='🔥'+(bp.winStreak||0);$('opp-av').innerHTML=bp.avatar?`<img src="${bp.avatar}">`:'⚫';
-  $('game-chat-box').innerHTML='';$('spectator-badge').classList.remove('hidden');
+  $('me-name').textContent=wp.nick||'Белый';
+  $('me-sub').textContent=(wp.elo||1000)+' Elo';
+  $('me-rank').textContent=getRank(wp.elo||1000).n;
+  $('me-streak').textContent='🔥'+(wp.winStreak||0);
+  $('me-av').innerHTML=wp.avatar?`<img src="${wp.avatar}">`:'⚪';
+  $('opp-name').textContent=bp.nick||'Чёрный';
+  $('opp-sub').textContent=(bp.elo||1000)+' Elo';
+  $('opp-rank').textContent=getRank(bp.elo||1000).n;
+  $('opp-streak').textContent='🔥'+(bp.winStreak||0);
+  $('opp-av').innerHTML=bp.avatar?`<img src="${bp.avatar}">`:'⚫';
+  $('game-chat-box').innerHTML='';
+  $('spectator-badge').classList.remove('hidden');
   if(G.matchCode){$('match-code-box').classList.remove('hidden');$('match-code-val').textContent=G.matchCode}
-  showScreen('game');renderBoard();
+  showScreen('game');
+  renderBoard();
   if(roomUnsub)roomUnsub();
   roomUnsub=onValue(ref(db,'rooms/'+roomId),s2=>{
     const d=s2.val();if(!d||!G||!G.spectator)return;
-    G.board=JSON.parse(d.board);G.turn=d.turn;G.timers=d.timers||G.timers;G.moveCount=d.moveCount||G.moveCount;G.lastMove=d.lastMove||G.lastMove;G.over=d.status==='finished';
+    G.board=JSON.parse(d.board);G.turn=d.turn;
+    G.timers=d.timers||G.timers;G.moveCount=d.moveCount||G.moveCount;
+    G.lastMove=d.lastMove||G.lastMove;G.over=d.status==='finished';
     renderBoard();renderGameChat(d.chat||{});
     if(d.status==='finished'){$('turn-banner').textContent='🏁 Матч завершён';setTimeout(()=>{if(G&&G.spectator)exitGame(true)},5000)}
   });
@@ -1009,7 +1313,11 @@ async function handleGameOver(result,finalBoard=null){
     const board=finalBoard||G.board;
     let myP=0,myK=0,opP=0,opK=0;
     const opC=G.myColor==='w'?'b':'w';
-    for(let i=0;i<64;i++){const p=board[i];if(!p)continue;if(p.color===G.myColor){myP++;if(p.king)myK++}else if(p.color===opC){opP++;if(p.king)opK++}}
+    for(let i=0;i<64;i++){
+      const p=board[i];if(!p)continue;
+      if(p.color===G.myColor){myP++;if(p.king)myK++}
+      else if(p.color===opC){opP++;if(p.king)opK++}
+    }
     updateEloAfterGame(result===G.myColor,{myLost:12-myP,opLost:12-opP,myKings:myK,opKings:opK,oppElo:G.oppProfile?(G.oppProfile.elo||1000):1000,isTotalWipe:result===G.myColor?opP===0:myP===0,moveCount:G.moveCount||0});
   }
   scheduleAutoExit();
@@ -1018,8 +1326,13 @@ function scheduleAutoExit(){
   if(exitTimerInt)clearInterval(exitTimerInt);
   let sec=4;
   const banner=$('turn-banner');
-  banner.textContent=`Возврат в меню через ${sec}...`;banner.style.color='var(--gold)';
-  exitTimerInt=setInterval(()=>{sec--;if(sec<=0){clearInterval(exitTimerInt);exitTimerInt=null;exitGame(true)}else banner.textContent=`Возврат в меню через ${sec}...`},1000);
+  banner.textContent=`Возврат в меню через ${sec}...`;
+  banner.style.color='var(--gold)';
+  exitTimerInt=setInterval(()=>{
+    sec--;
+    if(sec<=0){clearInterval(exitTimerInt);exitTimerInt=null;exitGame(true)}
+    else banner.textContent=`Возврат в меню через ${sec}...`;
+  },1000);
 }
 
 function renderBoard(){
@@ -1033,7 +1346,8 @@ function renderBoard(){
   $('capture-alert').classList.toggle('show',hasMand&&!midMoveBoard);
   const flipped=G&&G.myColor==='b'&&!G.spectator;
   const renderOrder=[];
-  if(flipped){for(let i=63;i>=0;i--)renderOrder.push(i)}else{for(let i=0;i<64;i++)renderOrder.push(i)}
+  if(flipped){for(let i=63;i>=0;i--)renderOrder.push(i)}
+  else{for(let i=0;i<64;i++)renderOrder.push(i)}
   for(const i of renderOrder){
     const[r,c]=rc(i);
     const cell=document.createElement('div');
@@ -1044,7 +1358,9 @@ function renderBoard(){
     else if(possibleMoves.some(m=>m.to===i))cell.classList.add(possibleMoves.find(m=>m.to===i).captures.length?'capture-possible':'possible');
     const p=active[i];
     if(p){
-      if(isMy&&hasMand&&!midMoveBoard){if(getStepsForPiece(active,i,G.myColor,kr).some(s=>s.captures.length>0))cell.classList.add('must-capture')}
+      if(isMy&&hasMand&&!midMoveBoard){
+        if(getStepsForPiece(active,i,G.myColor,kr).some(s=>s.captures.length>0))cell.classList.add('must-capture');
+      }
       const piece=document.createElement('div');
       piece.className='piece '+(p.color==='w'?'white':'black')+(p.king?' king':'');
       cell.appendChild(piece);
@@ -1081,8 +1397,12 @@ function onCellClick(i){
       const nb=applyStep(midMoveBoard,mv);
       midMoveBoard=nb;midMovePiece=mv.to;midMovePath.push(mv.to);
       const next=getStepsForPiece(midMoveBoard,midMovePiece,G.myColor,kr).filter(s=>s.captures.length>0);
-      if(next.length>0){possibleMoves=next;renderBoard()}else executeFullMove();
-    }else{midMoveBoard=null;midMovePiece=null;midMovePath=[];selected=null;possibleMoves=[];renderBoard()}
+      if(next.length>0){possibleMoves=next;renderBoard()}
+      else executeFullMove();
+    }else{
+      midMoveBoard=null;midMovePiece=null;midMovePath=[];
+      selected=null;possibleMoves=[];renderBoard();
+    }
     return;
   }
   const p=active[i];
@@ -1093,7 +1413,8 @@ function onCellClick(i){
         playSound('capture');
         midMoveBoard=applyStep(active,mv);midMovePiece=mv.to;midMovePath=[mv.to];
         const next=getStepsForPiece(midMoveBoard,midMovePiece,G.myColor,kr).filter(s=>s.captures.length>0);
-        if(next.length>0){possibleMoves=next;selected=null;renderBoard()}else executeFullMove();
+        if(next.length>0){possibleMoves=next;selected=null;renderBoard()}
+        else executeFullMove();
       }else{playSound('move');executeFullMove([mv])}
       return;
     }
@@ -1110,9 +1431,11 @@ function onCellClick(i){
 async function executeFullMove(singleMove=null){
   let animPath,animCaptures;
   const moverColor=G.turn;
-  if(singleMove){animPath=[singleMove[0].from,singleMove[0].to];animCaptures=singleMove[0].captures}
-  else{
-    animPath=[selected!==null?selected:G.lastMove?.from||0,...midMovePath];
+  if(singleMove){
+    animPath=[singleMove[0].from,singleMove[0].to];
+    animCaptures=singleMove[0].captures;
+  }else{
+    animPath=[selected!==null?selected:(G.lastMove?G.lastMove.from:0),...midMovePath];
     animCaptures=[];
     let tempBoard=G.board;
     for(let j=0;j<midMovePath.length;j++){
@@ -1126,7 +1449,8 @@ async function executeFullMove(singleMove=null){
   const nextTurn=moverColor==='w'?'b':'w';
   const lastIdx=singleMove?singleMove[0].to:midMovePath[midMovePath.length-1];
   const isNowKing=newBoard[lastIdx]?.king||false;
-  selected=null;possibleMoves=[];midMoveBoard=null;midMovePiece=null;midMovePath=[];
+  selected=null;possibleMoves=[];
+  midMoveBoard=null;midMovePiece=null;midMovePath=[];
   G.moveCount=(G.moveCount||0)+1;
   G.lastMove={from:animPath[0],to:animPath[animPath.length-1]};
   const nextHas=Array.from({length:64},(_,i)=>getStepsForPiece(newBoard,i,nextTurn,G.kingRules)).some(s=>s.length>0);
@@ -1150,7 +1474,10 @@ async function executeFullMove(singleMove=null){
     await update(ref(db,'rooms/'+G.roomId),upd);
   }
 }
-function endGameOrFinish(result,board){if(G.mode==='bot')endGame(result,'bot',board);else if(G.mode==='online')handleGameOver(result,board)}
+function endGameOrFinish(result,board){
+  if(G.mode==='bot')endGame(result,'bot',board);
+  else if(G.mode==='online')handleGameOver(result,board);
+}
 function scheduleBotMove(nextTurn,moverColor){
   setTimeout(()=>{
     if(G.over)return;
@@ -1173,8 +1500,11 @@ function endGame(result,mode,finalBoard=null){
     if(G.eloUp)return;
     G.eloUp=true;G.over=true;
     if(G.timerInt)clearInterval(G.timerInt);
-    if(result===G.myColor){toast('🏆 Победа!','success');playSound('win')}else{toast('Поражение','error');playSound('lose')}
-    renderBoard();updateBotElo(result===G.myColor,G.diff);scheduleAutoExit();
+    if(result===G.myColor){toast('🏆 Победа!','success');playSound('win')}
+    else{toast('Поражение','error');playSound('lose')}
+    renderBoard();
+    updateBotElo(result===G.myColor,G.diff);
+    scheduleAutoExit();
   }else if(mode==='online')handleGameOver(result,finalBoard);
 }
 async function updateBotElo(won,diff){
@@ -1202,15 +1532,27 @@ async function updateEloAfterGame(won,stats){
   const snap=await get(userRef);if(!snap.exists())return;
   const u=snap.val();const r=getRank(u.elo);
   let delta=0;const eloDiff=stats.oppElo-u.elo;
-  if(won){delta=r.w+stats.opLost+stats.myKings*2;if(eloDiff>0)delta+=Math.min(20,Math.floor(eloDiff/50));else if(eloDiff<0)delta-=Math.min(10,Math.floor(Math.abs(eloDiff)/200));if(u.winStreak>=20)delta+=7;else if(u.winStreak>=10)delta+=6;else if(u.winStreak>=5)delta+=5;else if(u.winStreak>=3)delta+=2;delta=Math.max(5,Math.min(50,delta))}
-  else{delta=r.l-stats.myLost-stats.opKings*2;if(stats.isTotalWipe)delta-=5;if(eloDiff>0)delta+=Math.min(15,Math.floor(eloDiff/100));else if(eloDiff<0)delta-=Math.min(15,Math.floor(Math.abs(eloDiff)/100));delta=Math.max(-50,Math.min(-1,delta))}
+  if(won){
+    delta=r.w+stats.opLost+stats.myKings*2;
+    if(eloDiff>0)delta+=Math.min(20,Math.floor(eloDiff/50));
+    else if(eloDiff<0)delta-=Math.min(10,Math.floor(Math.abs(eloDiff)/200));
+    if(u.winStreak>=20)delta+=7;else if(u.winStreak>=10)delta+=6;else if(u.winStreak>=5)delta+=5;else if(u.winStreak>=3)delta+=2;
+    delta=Math.max(5,Math.min(50,delta));
+  }else{
+    delta=r.l-stats.myLost-stats.opKings*2;
+    if(stats.isTotalWipe)delta-=5;
+    if(eloDiff>0)delta+=Math.min(15,Math.floor(eloDiff/100));
+    else if(eloDiff<0)delta-=Math.min(15,Math.floor(Math.abs(eloDiff)/100));
+    delta=Math.max(-50,Math.min(-1,delta));
+  }
   const newE=Math.max(100,u.elo+delta);
   const newSt=won?(u.winStreak||0)+1:0;
   const newMaxSt=Math.max(u.maxWinStreak||0,newSt);
   await update(userRef,{elo:newE,maxElo:Math.max(u.maxElo||1000,newE),wins:(u.wins||0)+(won?1:0),losses:(u.losses||0)+(won?0:1),winStreak:newSt,maxWinStreak:newMaxSt,onlineGames:(u.onlineGames||0)+1});
   currentUser.elo=newE;currentUser.maxElo=Math.max(u.maxElo||1000,newE);
   currentUser.wins=(u.wins||0)+(won?1:0);currentUser.losses=(u.losses||0)+(won?0:1);
-  currentUser.winStreak=newSt;currentUser.maxWinStreak=newMaxSt;currentUser.onlineGames=(u.onlineGames||0)+1;
+  currentUser.winStreak=newSt;currentUser.maxWinStreak=newMaxSt;
+  currentUser.onlineGames=(u.onlineGames||0)+1;
   toast(`Elo: ${delta>0?'+':''}${delta} → ${newE}`,delta>0?'success':'error');
 }
 function startTurnTimer(){
@@ -1225,16 +1567,21 @@ function startTurnTimer(){
   },1000);
   $('game-timer').textContent='00:00';
   clearInterval(G._clockInt);
-  G._clockInt=setInterval(()=>{if(!G||G.over)return;$('game-timer').textContent=fmtTime((Date.now()-G.startTime)/1000)},1000);
+  G._clockInt=setInterval(()=>{
+    if(!G||G.over)return;
+    $('game-timer').textContent=fmtTime((Date.now()-G.startTime)/1000);
+  },1000);
 }
 async function handleTimeout(color){
-  const pieces=[];G.board.forEach((p,i)=>{if(p&&p.color===color)pieces.push(i)});
+  const pieces=[];
+  G.board.forEach((p,i)=>{if(p&&p.color===color)pieces.push(i)});
   if(pieces.length===0){endGame(color==='w'?'b':'w',G.mode,G.board);return}
   const simple=pieces.filter(i=>!G.board[i].king);
   const pool=simple.length?simple:pieces;
   G.board[pool[Math.floor(Math.random()*pool.length)]]=null;
   const next=color==='w'?'b':'w';
-  G.turn=next;G.timers[color]=20;G.timers[next]=20;G.moveCount=(G.moveCount||0)+1;
+  G.turn=next;G.timers[color]=20;G.timers[next]=20;
+  G.moveCount=(G.moveCount||0)+1;
   renderBoard();
   if(G.mode==='online'&&G.roomId)await update(ref(db,'rooms/'+G.roomId),{board:JSON.stringify(G.board),turn:next,[`timers/${color}`]:20,[`timers/${next}`]:20,moveCount:G.moveCount});
   toast('⏱ Время вышло! Удалена шашка','error');
@@ -1244,17 +1591,20 @@ async function surrender(){
   if(!confirm('Сдаться?'))return;
   if(exitTimerInt){clearInterval(exitTimerInt);exitTimerInt=null}
   if(G.mode==='bot')endGame(G.botColor,'bot',G.board);
-  else if(G.roomId){const winner=G.myColor==='w'?'b':'w';await update(ref(db,'rooms/'+G.roomId),{status:'finished',result:winner});handleGameOver(winner,G.board)}
+  else if(G.roomId){
+    const winner=G.myColor==='w'?'b':'w';
+    await update(ref(db,'rooms/'+G.roomId),{status:'finished',result:winner});
+    handleGameOver(winner,G.board);
+  }
 }
 window.surrender=surrender;
 function exitGame(force=false){
   if(!force&&G&&!G.over&&!G.spectator&&!confirm('Выйти? Игра не засчитается.'))return;
   if(exitTimerInt){clearInterval(exitTimerInt);exitTimerInt=null}
-  if(G?.timerInt)clearInterval(G.timerInt);
-  if(G?._clockInt)clearInterval(G._clockInt);
+  if(G&&G.timerInt)clearInterval(G.timerInt);
+  if(G&&G._clockInt)clearInterval(G._clockInt);
   if(roomUnsub){roomUnsub();roomUnsub=null}
   if(G&&G.matchCode&&G.mode!=='spectator')set(ref(db,'matchCodes/'+G.matchCode),null).catch(()=>{});
-  if(G&&G.mode==='online'&&G.roomId)update(ref(db,'rooms/'+G.roomId),{status:'finished',result:G.myColor==='w'?'b':'w'}).catch(()=>{});
   G=null;midMoveBoard=null;selected=null;possibleMoves=[];animating=false;
   showScreen('mode');
 }
@@ -1262,7 +1612,7 @@ window.exitGame=exitGame;
 
 function renderGameChat(chatObj){
   const box=$('game-chat-box');box.innerHTML='';
-  Object.entries(chatObj).sort((a,b)=>a[1].ts-b[1].ts).forEach(([key,m])=>{
+  Object.entries(chatObj||{}).sort((a,b)=>a[1].ts-b[1].ts).forEach(([key,m])=>{
     const own=m.uid===currentUser?.uid&&!G?.spectator;
     const del=m.deleted;
     const d=document.createElement('div');
@@ -1276,14 +1626,27 @@ function renderGameChat(chatObj){
 async function sendGameChat(){
   const t=$('chat-input').value.trim();
   if(!t||!currentUser||G?.spectator)return;
-  if(G.mode==='online'&&G.roomId){const m=push(ref(db,'rooms/'+G.roomId+'/chat'));await set(m,{uid:currentUser.uid,nick:currentUser.nick,text:t,ts:Date.now(),deleted:false})}
-  else{const box=$('game-chat-box');const d=document.createElement('div');d.className='gchat-msg own';d.innerHTML=`<div class="gm-header"><span class="gm-nick">${esc(currentUser.nick)}</span><span class="gm-time">${fmtTimeHM(Date.now())}</span></div><div>${esc(t)}</div>`;box.appendChild(d);box.scrollTop=box.scrollHeight}
+  if(G.mode==='online'&&G.roomId){
+    const m=push(ref(db,'rooms/'+G.roomId+'/chat'));
+    await set(m,{uid:currentUser.uid,nick:currentUser.nick,text:t,ts:Date.now(),deleted:false});
+  }else{
+    const box=$('game-chat-box');
+    const d=document.createElement('div');
+    d.className='gchat-msg own';
+    d.innerHTML=`<div class="gm-header"><span class="gm-nick">${esc(currentUser.nick)}</span><span class="gm-time">${fmtTimeHM(Date.now())}</span></div><div>${esc(t)}</div>`;
+    box.appendChild(d);box.scrollTop=box.scrollHeight;
+  }
   $('chat-input').value='';
 }
 window.sendGameChat=sendGameChat;
-async function deleteGameMsg(k){if(!G||!G.roomId||!currentUser)return;await update(ref(db,`rooms/${G.roomId}/chat/${k}`),{deleted:true});toast('Сообщение удалено','success')}
+async function deleteGameMsg(k){
+  if(!G||!G.roomId||!currentUser)return;
+  await update(ref(db,`rooms/${G.roomId}/chat/${k}`),{deleted:true});
+  toast('Сообщение удалено','success');
+}
 window.deleteGameMsg=deleteGameMsg;
 
+// ============ ЗВУКИ ============
 const audioCtx=new(window.AudioContext||window.webkitAudioContext)();
 const masterGain=audioCtx.createGain();masterGain.gain.value=0.5;masterGain.connect(audioCtx.destination);
 function playSound(type){
