@@ -1057,26 +1057,42 @@ function idx(r, c) { return r*8+c; }
 function rc(i) { return [Math.floor(i/8), i%8]; }
 function inside(r, c) { return r>=0 && r<8 && c>=0 && c<8; }
 
+// Состояние «взятие по ходу»: пока pieceId не обнулено, текущая фигура обязана
+// продолжать бить (используется в UI и в переборе ходов — единая логика для всех).
+let captureChain = { pieceId: null, board: null };
+
+function isPromotionRow(color, r) { return (color === 'w' && r === 0) || (color === 'b' && r === 7); }
+
 function getStepsForPiece(board, from, color) {
   const p = board[from];
   if (!p || p.color !== color) return [];
   const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
   const [r, c] = rc(from);
   const steps = [];
-  if (p.king) {
+  if (p.king || currentKingRules === 'short') {
     if (currentKingRules === 'short') {
       for (const [dr, dc] of dirs) {
         const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
         if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
-          steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: false });
+          steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: !p.king && isPromotionRow(color, tr) });
       }
       if (steps.length) return steps;
-      for (const [dr, dc] of dirs) {
-        const nr = r+dr, nc = c+dc;
-        if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: false });
+      // Простая шашка бьёт/ходит вперёд-назад через 1 клетку; дамка — во все стороны
+      if (p.king) {
+        for (const [dr, dc] of dirs) {
+          const nr = r+dr, nc = c+dc;
+          if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: false });
+        }
+      } else {
+        const fwd = color === 'w' ? -1 : 1;
+        for (const dc of [-1, 1]) {
+          const nr = r+fwd, nc = c+dc;
+          if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: isPromotionRow(color, nr) });
+        }
       }
       return steps;
     }
+    // «Летающая» дамка: бьёт на любое расстояние, ходит на любое свободное расстояние
     for (const [dr, dc] of dirs) {
       let nr = r+dr, nc = c+dc;
       while (inside(nr,nc) && !board[idx(nr,nc)]) { nr += dr; nc += dc; }
@@ -1088,18 +1104,27 @@ function getStepsForPiece(board, from, color) {
         }
       }
     }
+    if (steps.length) return steps;
+    for (const [dr, dc] of dirs) {
+      let nr = r+dr, nc = c+dc;
+      while (inside(nr,nc) && !board[idx(nr,nc)]) {
+        steps.push({ from, to: idx(nr,nc), captures: [], promote: false });
+        nr += dr; nc += dc;
+      }
+    }
     return steps;
   }
+  // Простая шашка: бьёт вперёд и назад через 1 клетку
   for (const [dr, dc] of dirs) {
     const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
     if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
-      steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: (color==='w'&&tr===0)||(color==='b'&&tr===7) });
+      steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: isPromotionRow(color, tr) });
   }
   if (steps.length) return steps;
   const fwd = color === 'w' ? -1 : 1;
   for (const dc of [-1, 1]) {
     const nr = r+fwd, nc = c+dc;
-    if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: (color==='w'&&nr===0)||(color==='b'&&nr===7) });
+    if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: isPromotionRow(color, nr) });
   }
   return steps;
 }
@@ -1121,7 +1146,9 @@ function applyStep(board, step) {
 }
 
 // ================= БОТ =================
-function getBotSequences(board, color) {
+// Полный ход = цепочка шагов (множественное взятие выполняется ЦЕЛИКОМ за один ход).
+// Используется и ботом, и проверкой наличия ходов — единая логика для всех.
+function getFullMoves(board, color) {
   const sequences = [];
   function fc(cb, start, path) {
     const steps = getStepsForPiece(cb, start, color).filter(s => s.captures.length > 0);
@@ -1129,17 +1156,18 @@ function getBotSequences(board, color) {
     for (const step of steps) fc(applyStep(cb, step), step.to, path.concat([step]));
   }
   for (let i = 0; i < 64; i++) {
-    if (board[i] && board[i].color === color && getStepsForPiece(board, i, color).some(s => s.captures.length > 0)) fc(board, i, []);
-  }
-  if (!sequences.length) {
-    for (let i = 0; i < 64; i++) {
-      if (board[i] && board[i].color === color) {
-        for (const step of getStepsForPiece(board, i, color).filter(s => !s.captures.length)) sequences.push([step]);
-      }
+    if (board[i] && board[i].color === color) {
+      const all = getStepsForPiece(board, i, color);
+      const caps = all.filter(s => s.captures.length > 0);
+      if (caps.length) { fc(board, i, []); }
+      else for (const st of all) sequences.push([st]);
     }
   }
-  return sequences;
+  // Если обязательное взятие возможно — все остальные ходы запрещены
+  const captureSeqs = sequences.filter(sq => sq.some(st => st.captures.length > 0));
+  return captureSeqs.length ? captureSeqs : sequences;
 }
+function getBotSequences(board, color) { return getFullMoves(board, color); }
 function evalFor(b, c) {
   let s = 0;
   for (let i = 0; i < 64; i++) {
@@ -1180,30 +1208,32 @@ function minimax(b, d, a, bt, isMax, bc) {
 }
 function capsOf(seq) { return seq.reduce((s, st) => s + st.captures.length, 0); }
 function botChooseMove(board, color, diff) {
-  const seqs = getBotSequences(board, color);
+  const seqs = getFullMoves(board, color);
   if (!seqs.length) return null;
+  // ВАЖНО: возвращается ВСЯ цепочка шагов, а не только первый — иначе бот
+  // «рубил 2+ за один ход в расчёте», но исполнял лишь первое взятие.
   if (diff === 'easy') {
     if (Math.random() < 0.75) {
       const quiet = seqs.filter(s => capsOf(s) === 0);
-      if (quiet.length && Math.random() < 0.7) return quiet[Math.floor(Math.random()*quiet.length)][0];
+      if (quiet.length && Math.random() < 0.7) return quiet[Math.floor(Math.random()*quiet.length)];
       const sorted = seqs.slice().sort((a, b) => capsOf(a) - capsOf(b));
-      return sorted[Math.floor(Math.random()*Math.min(3, sorted.length))][0];
+      return sorted[Math.floor(Math.random()*Math.min(3, sorted.length))];
     }
     let best = seqs[0], bs = -Infinity;
     for (const sq of seqs) { let nb = board; for (const st of sq) nb = applyStep(nb, st); const sc = evalFor(nb, color); if (sc > bs) { bs = sc; best = sq; } }
-    return best[0];
+    return best;
   }
   if (diff === 'normal') {
     const sh = seqs.slice().sort(() => Math.random() - 0.5);
     let best = sh[0], bs = -Infinity, a = -Infinity;
     for (const sq of sh) { let nb = board; for (const st of sq) nb = applyStep(nb, st); const sc = minimax(nb, 5, a, Infinity, false, color); if (sc > bs) { bs = sc; best = sq; } if (sc > a) a = sc; }
-    return best[0];
+    return best;
   }
   if (diff === 'hard') {
     const sorted = seqs.slice().sort((a, b) => capsOf(b) - capsOf(a));
     let best = sorted[0], bs = -Infinity, a = -Infinity;
     for (const sq of sorted) { let nb = board; for (const st of sq) nb = applyStep(nb, st); const sc = minimax(nb, 7, a, Infinity, false, color); if (sc > bs) { bs = sc; best = sq; } if (sc > a) a = sc; }
-    return best[0];
+    return best;
   }
   const deadline = performance.now() + 3000;
   const sorted = seqs.slice().sort((a, b) => capsOf(b) - capsOf(a));
@@ -1220,16 +1250,66 @@ function botChooseMove(board, color, diff) {
     }
     if (cb) best = cb;
   }
-  return best[0];
+  return best;
 }
 
 // ================= АНИМАЦИЯ =================
+let arrowFadeTimers = [];
+function clearMoveArrows() {
+  const bd = $('board');
+  if (bd) bd.querySelectorAll('svg.move-arrow').forEach(s => s.remove());
+  arrowFadeTimers.forEach(t => clearTimeout(t));
+  arrowFadeTimers = [];
+}
+// Полупрозрачная чёрная стрелка сегмента хода from->to. Остаётся на доске и
+// плавно исчезает (~8 c). При множественном взятии рисуется отдельная стрелка
+// на каждый сегмент — видно, кем именно срубили по очереди.
+function drawMoveArrow(from, to, permanent) {
+  const bd = $('board');
+  const cs = bd.clientWidth / 8;
+  function center(i) {
+    const [r, c] = rc(i);
+    return { x: c*cs + cs/2, y: r*cs + cs/2 };
+  }
+  const a = center(from), b = center(to);
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx/len, uy = dy/len;
+  const inset = cs * 0.34;
+  const sx = a.x + ux*inset, sy = a.y + uy*inset;
+  const ex = b.x - ux*inset, ey = b.y - uy*inset;
+  const head = cs * 0.20;
+  const bx = ex - ux*head, by = ey - uy*head;
+  const px = -uy, py = ux;
+  const w = Math.max(3, cs*0.07);
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'move-arrow');
+  svg.style.width = bd.clientWidth + 'px';
+  svg.style.height = bd.clientHeight + 'px';
+  const line = '<line x1="' + sx + '" y1="' + sy + '" x2="' + bx + '" y2="' + by + '" stroke="black" stroke-opacity="0.28" stroke-width="' + w + '" stroke-linecap="round"/>' +
+    '<polygon points="' + ex + ',' + ey + ' ' + (bx + px*head*0.55) + ',' + (by + py*head*0.55) + ' ' + (bx - px*head*0.55) + ',' + (by - py*head*0.55) + '" fill="black" fill-opacity="0.3"/>';
+  svg.innerHTML = '<defs><filter id="af' + Date.now() + randomSuffix() + '"></filter></defs>' + line;
+  bd.appendChild(svg);
+  if (!permanent) {
+    arrowFadeTimers.push(setTimeout(() => {
+      svg.classList.add('fade-out');
+      arrowFadeTimers.push(setTimeout(() => svg.remove(), 900));
+    }, 8000));
+  }
+}
+function randomSuffix() { return Math.random().toString(36).slice(2, 6); }
+
 function animatePieceMove(path, captures, color, isKing, flipped, callback) {
   const bd = $('board'), cs = bd.clientWidth / 8;
   function gp(i) {
     const [r, c] = rc(i);
     const dr = flipped ? 7-r : r, dc = flipped ? 7-c : c;
     return { x: dc*cs + cs*0.11, y: dr*cs + cs*0.11 };
+  }
+  // Перед новой анимацией убираем старые стрелки последнего хода
+  clearMoveArrows();
+  for (let s = 0; s < path.length - 1; s++) {
+    drawMoveArrow(path[s], path[s+1]);
   }
   const lastEl = bd.querySelector('.cell[data-idx="' + path[path.length-1] + '"] .piece');
   if (lastEl) lastEl.style.visibility = 'hidden';
@@ -1265,6 +1345,8 @@ function animatePieceMove(path, captures, color, isKing, flipped, callback) {
 // ================= ИГРА =================
 let G = null, selected = null, possibleMoves = [], roomUnsub = null;
 let midMoveBoard = null, midMovePiece = null, midMovePath = [], exitTimerInt = null;
+let chainOrigin = null;   // клетка, с которой началась цепочка многократного взятия
+let animating = false;    // идёт анимация хода — клики блокируются
 const BOT_META = { easy:{n:'Лёгкий бот 🟢',elo:800}, normal:{n:'Обычный бот 🔵',elo:1500}, hard:{n:'Сложный бот 🟠',elo:2200}, impossible:{n:'Невозможный бот 🔥',elo:3500} };
 
 function setCard(prefix, data) {
@@ -1622,9 +1704,19 @@ function renderBoard() {
   }
 }
 
+// Список «полных ходов» для фигуры с клетки from (для подсветки в UI).
+// Если шашка может бить — показываем только взятия (они обязательны).
+function getMovesForSelectedPiece(board, from, color) {
+  const all = getStepsForPiece(board, from, color);
+  const caps = all.filter(s => s.captures.length > 0);
+  return caps.length ? caps : all;
+}
+
 function onCellClick(i) {
   if (!G || G.over || G.spectator) return;
   if (G.turn !== G.myColor) return;
+  // Пока идёт анимация хода — клики игнорируем (иначе можно «проскочить» два хода подряд)
+  if (animating) return;
   const active = midMoveBoard || G.board;
   const hasMand = mustCapture(active, G.myColor);
   if (midMoveBoard) {
@@ -1634,10 +1726,11 @@ function onCellClick(i) {
       midMoveBoard = applyStep(midMoveBoard, mv);
       midMovePiece = mv.to;
       midMovePath.push(mv.to);
+      // Продолжаем бить ТОЙ ЖЕ фигурой: если по пути она стала дамкой — добиваем как дамка
       const next = getStepsForPiece(midMoveBoard, midMovePiece, G.myColor).filter(s => s.captures.length > 0);
       if (next.length) { possibleMoves = next; renderBoard(); } else executeFullMove();
     } else {
-      midMoveBoard = null; midMovePiece = null; midMovePath = [];
+      midMoveBoard = null; midMovePiece = null; midMovePath = []; chainOrigin = null;
       selected = null; possibleMoves = []; renderBoard();
     }
     return;
@@ -1648,6 +1741,7 @@ function onCellClick(i) {
     if (mv) {
       if (mv.captures.length) {
         playSound('capture');
+        chainOrigin = selected;
         midMoveBoard = applyStep(active, mv);
         midMovePiece = mv.to; midMovePath = [mv.to];
         const next = getStepsForPiece(midMoveBoard, midMovePiece, G.myColor).filter(s => s.captures.length > 0);
@@ -1657,7 +1751,7 @@ function onCellClick(i) {
     }
   }
   if (p && p.color === G.myColor) {
-    const steps = getStepsForPiece(active, i, G.myColor);
+    const steps = getMovesForSelectedPiece(active, i, G.myColor);
     if (steps.length) {
       if (hasMand && !steps.some(s => s.captures.length > 0)) { toast('⚠️ Обязательное взятие!', 'error'); return; }
       selected = i; possibleMoves = steps; renderBoard();
@@ -1665,32 +1759,36 @@ function onCellClick(i) {
   } else { selected = null; possibleMoves = []; renderBoard(); }
 }
 
-async function executeFullMove(singleMove) {
-  let animPath, animCaptures;
+async function executeFullMove(seq) {
+  let animPath, animCaptures, newBoard;
   const moverColor = G.turn;
-  if (singleMove) {
-    animPath = [singleMove[0].from, singleMove[0].to];
-    animCaptures = singleMove[0].captures;
+  if (seq) {
+    // Одиночный ход без многократного взятия (цепочка из одного шага)
+    animPath = [seq[0].from, seq[0].to];
+    animCaptures = seq[0].captures;
+    newBoard = applyStep(G.board, seq[0]);
   } else {
-    animPath = [selected !== null ? selected : midMovePath[0]].concat(midMovePath);
+    // Многократное взятие: цепочка уже сыграна на midMoveBoard
+    animPath = [midMovePath[0]].concat(midMovePath.slice());
+    animPath.unshift(getOriginOfChain());
     animCaptures = [];
     let tb = G.board;
     for (let j = 0; j < midMovePath.length; j++) {
-      const from = j === 0 ? (selected !== null ? selected : midMovePath[0]) : midMovePath[j-1];
+      const from = j === 0 ? animPath[0] : midMovePath[j-1];
       const to = midMovePath[j];
       const st = getStepsForPiece(tb, from, G.myColor).find(s => s.to === to);
       if (st && st.captures.length) animCaptures = animCaptures.concat(st.captures);
       if (st) tb = applyStep(tb, st);
     }
+    newBoard = midMoveBoard;
   }
-  const newBoard = singleMove ? applyStep(G.board, singleMove[0]) : midMoveBoard;
   const nextTurn = moverColor === 'w' ? 'b' : 'w';
   const lastIdx = animPath[animPath.length-1];
   const isKingNow = !!(newBoard[lastIdx] && newBoard[lastIdx].king);
   selected = null; possibleMoves = [];
   midMoveBoard = null; midMovePiece = null; midMovePath = [];
   G.moveCount = (G.moveCount||0) + 1;
-  const nextHas = Array.from({length:64}, (_, i) => getStepsForPiece(newBoard, i, nextTurn)).some(s => s.length > 0);
+  const nextHas = getFullMoves(newBoard, nextTurn).length > 0;
   let result = null;
   if (!nextHas) result = moverColor;
   G.board = newBoard; G.turn = nextTurn;
@@ -1701,10 +1799,12 @@ async function executeFullMove(singleMove) {
   // одновременно запускали свой таймер и списывали время друг другу.
   if (G.timerInt) { clearInterval(G.timerInt); G.timerInt = null; }
   const flipped = G.myColor === 'b' && !G.spectator;
+  animating = true;
   animatePieceMove(animPath, animCaptures, moverColor, isKingNow, flipped, () => {
+    animating = false;
     if (result) endGameOrFinish(result, newBoard);
     else if (G.mode === 'bot') scheduleBotMove(nextTurn, moverColor);
-    if (G && !G.over) startTurnTimer();
+    if (G && !G.over && G.mode !== 'bot') startTurnTimer();
   });
   if (G.mode === 'online') {
     try {
@@ -1714,23 +1814,32 @@ async function executeFullMove(singleMove) {
     } catch (e) { devLog('move sync error: ' + e.message, 'err'); }
   }
 }
+// Клетка, с которой началась цепочка многократного взятия (первый шаг хранит from)
+function getOriginOfChain() { return chainOrigin !== null ? chainOrigin : midMovePath[0]; }
 function endGameOrFinish(result, board) {
+  if (!G) return;
   if (G.mode === 'bot') endGame(result, board);
   else handleGameOver(result, board);
 }
 function scheduleBotMove(nextTurn, moverColor) {
   setTimeout(() => {
     if (!G || G.over) return;
-    const bm = botChooseMove(G.board, G.botColor, G.diff);
-    if (!bm) { endGame(moverColor, G.board); return; }
-    const nb = applyStep(G.board, bm);
-    const isKingNow = !!(nb[bm.to] && nb[bm.to].king);
+    const seq = botChooseMove(G.board, G.botColor, G.diff);
+    if (!seq || !seq.length) { endGame(moverColor, G.board); return; }
+    // Применяем ВСЮ цепочку (бот обязан рубить 2+ за один ход целиком)
+    let nb = G.board;
+    const bPath = [seq[0].from], bCaps = [];
+    for (const st of seq) { nb = applyStep(nb, st); bPath.push(st.to); if (st.captures.length) bCaps.push(...st.captures); }
+    const lastIdx = bPath[bPath.length-1];
+    const isKingNow = !!(nb[lastIdx] && nb[lastIdx].king);
     G.board = nb; G.turn = moverColor; G.timers[G.botColor] = TURN_SECONDS;
     G.moveCount++;
-    playSound(bm.captures.length ? 'capture' : 'move');
+    playSound(bCaps.length ? 'capture' : 'move');
     renderBoard();
-    animatePieceMove([bm.from, bm.to], bm.captures, G.botColor, isKingNow, false, () => {
-      const myHas = Array.from({length:64}, (_, i) => getStepsForPiece(nb, i, moverColor)).some(s => s.length > 0);
+    animating = true;
+    animatePieceMove(bPath, bCaps, G.botColor, isKingNow, false, () => {
+      animating = false;
+      const myHas = getFullMoves(nb, moverColor).length > 0;
       if (!myHas) endGame(G.botColor, nb);
       else if (G && !G.over) startTurnTimer(); // возобновляем отсчёт времени после хода бота
     });
