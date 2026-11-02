@@ -1322,13 +1322,19 @@ function animatePieceMove(path, captures, color, isKing, flipped, callback) {
   const sp = gp(path[0]);
   anim.style.left = sp.x + 'px'; anim.style.top = sp.y + 'px';
   bd.appendChild(anim);
-  let step = 0;
+  let step = 0, finished = false;
+  function finish() {
+    // Гарантия вызова callback ровно один раз — иначе зависал animating и экран
+    anim.remove();
+    if (lastEl) lastEl.style.visibility = '';
+    if (callback) callback();
+  }
   function doStep() {
+    if (finished) return;
     step++;
     if (step >= path.length) {
-      anim.remove();
-      if (lastEl) lastEl.style.visibility = '';
-      if (callback) callback();
+      finished = true;
+      finish();
       return;
     }
     if (captures && step-1 < captures.length) {
@@ -1339,6 +1345,8 @@ function animatePieceMove(path, captures, color, isKing, flipped, callback) {
     anim.style.left = pos.x + 'px'; anim.style.top = pos.y + 'px';
     setTimeout(doStep, 200);
   }
+  // Страховка: если что-то пойдёт не так с DOM/таймерами — ход всё равно завершится
+  setTimeout(() => { if (!finished) { finished = true; finish(); } }, path.length * 220 + 1200);
   setTimeout(doStep, 50);
 }
 
@@ -1760,58 +1768,75 @@ function onCellClick(i) {
 }
 
 async function executeFullMove(seq) {
-  let animPath, animCaptures, newBoard;
-  const moverColor = G.turn;
-  if (seq) {
-    // Одиночный ход без многократного взятия (цепочка из одного шага)
-    animPath = [seq[0].from, seq[0].to];
-    animCaptures = seq[0].captures;
-    newBoard = applyStep(G.board, seq[0]);
-  } else {
-    // Многократное взятие: цепочка уже сыграна на midMoveBoard
-    animPath = [midMovePath[0]].concat(midMovePath.slice());
-    animPath.unshift(getOriginOfChain());
-    animCaptures = [];
-    let tb = G.board;
-    for (let j = 0; j < midMovePath.length; j++) {
-      const from = j === 0 ? animPath[0] : midMovePath[j-1];
-      const to = midMovePath[j];
-      const st = getStepsForPiece(tb, from, G.myColor).find(s => s.to === to);
-      if (st && st.captures.length) animCaptures = animCaptures.concat(st.captures);
-      if (st) tb = applyStep(tb, st);
+  // Фикс критического бага «коричневый экран»: вся логика хода обёрнута в try/catch.
+  // Любая ошибка внутри (онлайн-синхронизация, запись в Firebase, анимация) раньше
+  // приводила к тому, что флаг animating оставался true навсегда — клики по доске
+  // игнорировались, экран «змирал», а фон доски (#3e2a1a) был виден целиком.
+  try {
+    let animPath, animCaptures, newBoard;
+    const moverColor = G.turn;
+    if (seq) {
+      // Одиночный ход без многократного взятия (цепочка из одного шага)
+      animPath = [seq[0].from, seq[0].to];
+      animCaptures = seq[0].captures;
+      newBoard = applyStep(G.board, seq[0]);
+    } else {
+      // Многократное взятие: цепочка уже сыграна на midMoveBoard
+      const origin = getOriginOfChain();
+      animPath = [origin].concat(midMovePath.slice());
+      animCaptures = [];
+      let tb = G.board;
+      for (let j = 0; j < midMovePath.length; j++) {
+        const from = j === 0 ? origin : midMovePath[j-1];
+        const to = midMovePath[j];
+        const st = getStepsForPiece(tb, from, G.myColor).find(s => s.to === to);
+        if (st && st.captures.length) animCaptures = animCaptures.concat(st.captures);
+        if (st) tb = applyStep(tb, st);
+      }
+      newBoard = midMoveBoard;
     }
-    newBoard = midMoveBoard;
-  }
-  const nextTurn = moverColor === 'w' ? 'b' : 'w';
-  const lastIdx = animPath[animPath.length-1];
-  const isKingNow = !!(newBoard[lastIdx] && newBoard[lastIdx].king);
-  selected = null; possibleMoves = [];
-  midMoveBoard = null; midMovePiece = null; midMovePath = [];
-  G.moveCount = (G.moveCount||0) + 1;
-  const nextHas = getFullMoves(newBoard, nextTurn).length > 0;
-  let result = null;
-  if (!nextHas) result = moverColor;
-  G.board = newBoard; G.turn = nextTurn;
-  G.timers[moverColor] = TURN_SECONDS;
-  renderBoard();
-  // Фикс «зависшего таймера»: сразу останавливаем тиканье до конца анимации/хода бота,
-  // иначе пока идёт анимация текущий игрок теряет время, а в онлайн-игре оба клиента
-  // одновременно запускали свой таймер и списывали время друг другу.
-  if (G.timerInt) { clearInterval(G.timerInt); G.timerInt = null; }
-  const flipped = G.myColor === 'b' && !G.spectator;
-  animating = true;
-  animatePieceMove(animPath, animCaptures, moverColor, isKingNow, flipped, () => {
+    const nextTurn = moverColor === 'w' ? 'b' : 'w';
+    const lastIdx = animPath[animPath.length-1];
+    const isKingNow = !!(newBoard[lastIdx] && newBoard[lastIdx].king);
+    selected = null; possibleMoves = [];
+    midMoveBoard = null; midMovePiece = null; midMovePath = []; chainOrigin = null;
+    G.moveCount = (G.moveCount||0) + 1;
+    const nextHas = getFullMoves(newBoard, nextTurn).length > 0;
+    let result = null;
+    if (!nextHas) result = moverColor;
+    G.board = newBoard; G.turn = nextTurn;
+    G.timers[moverColor] = TURN_SECONDS;
+    renderBoard();
+    // Синхронизация онлайна ДО анимации: противник получает позицию сразу,
+    // и мы не зависаем в ожидании сетевой ошибки после запуска анимации.
+    if (G.mode === 'online') {
+      try {
+        const upd = { board: JSON.stringify(newBoard), turn: nextTurn, moveCount: G.moveCount, lastMove: { from: animPath[0], to: lastIdx } };
+        if (result) { upd.status = 'finished'; upd.result = result; }
+        await update(ref(db, 'rooms/' + G.roomId), upd);
+      } catch (e) { devLog('move sync error: ' + e.message, 'err'); }
+    }
+    // Фикс «зависшего таймера»: сразу останавливаем тиканье до конца анимации/хода бота,
+    // иначе пока идёт анимация текущий игрок теряет время, а в онлайн-игре оба клиента
+    // одновременно запускали свой таймер и списывали время друг другу.
+    if (G.timerInt) { clearInterval(G.timerInt); G.timerInt = null; }
+    const flipped = G.myColor === 'b' && !G.spectator;
+    animating = true;
+    animatePieceMove(animPath, animCaptures, moverColor, isKingNow, flipped, () => {
+      animating = false;
+      if (result) endGameOrFinish(result, newBoard);
+      else if (G.mode === 'bot') scheduleBotMove(nextTurn, moverColor);
+      if (G && !G.over && G.mode !== 'bot') startTurnTimer();
+    });
+  } catch (err) {
+    // Аварийное восстановление: снимаем блокировки и перерисовываем доску —
+    // игра продолжается, экран никогда не «залипает».
     animating = false;
-    if (result) endGameOrFinish(result, newBoard);
-    else if (G.mode === 'bot') scheduleBotMove(nextTurn, moverColor);
+    midMoveBoard = null; midMovePiece = null; midMovePath = []; chainOrigin = null;
+    selected = null; possibleMoves = [];
+    devLog('Ошибка хода: ' + err.message, 'err');
+    try { renderBoard(); } catch (e2) {}
     if (G && !G.over && G.mode !== 'bot') startTurnTimer();
-  });
-  if (G.mode === 'online') {
-    try {
-      const upd = { board: JSON.stringify(newBoard), turn: nextTurn, moveCount: G.moveCount, lastMove: { from: animPath[0], to: lastIdx } };
-      if (result) { upd.status = 'finished'; upd.result = result; }
-      await update(ref(db, 'rooms/' + G.roomId), upd);
-    } catch (e) { devLog('move sync error: ' + e.message, 'err'); }
   }
 }
 // Клетка, с которой началась цепочка многократного взятия (первый шаг хранит from)
@@ -1824,6 +1849,7 @@ function endGameOrFinish(result, board) {
 function scheduleBotMove(nextTurn, moverColor) {
   setTimeout(() => {
     if (!G || G.over) return;
+    try {
     const seq = botChooseMove(G.board, G.botColor, G.diff);
     if (!seq || !seq.length) { endGame(moverColor, G.board); return; }
     // Применяем ВСЮ цепочку (бот обязан рубить 2+ за один ход целиком)
@@ -1843,6 +1869,13 @@ function scheduleBotMove(nextTurn, moverColor) {
       if (!myHas) endGame(G.botColor, nb);
       else if (G && !G.over) startTurnTimer(); // возобновляем отсчёт времени после хода бота
     });
+    } catch (err) {
+      // Фикс «залипшего экрана» после хода бота: при любой ошибке снимаем блокировки
+      animating = false;
+      devLog('Ошибка хода бота: ' + err.message, 'err');
+      try { renderBoard(); } catch (e2) {}
+      if (G && !G.over) startTurnTimer();
+    }
   }, 450);
 }
 
