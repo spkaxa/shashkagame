@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
-<title>🌿 Шашки Онлайн v1.1.1</title>
+<title>🌿 Шашки Онлайн v1.1</title>
 <style>
 :root{
   --main:#4caf50;
@@ -65,16 +65,16 @@ h2.ptitle{font-size:20px;margin-bottom:16px;display:flex;align-items:center;gap:
 .avatar img{width:100%;height:100%;object-fit:cover}
 .avatar.sm{width:36px;height:36px;font-size:16px;border-width:2px}
 .avatar.md{width:56px;height:56px;font-size:24px}
-.avatar.xs{width:28px;height:28px;font-size:12px;border-width:1px}
+.avatar.xs{width:22px;height:22px;font-size:10px;border-width:1px}
 .pname{font-size:20px;font-weight:700;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .ptag{color:var(--txt2);font-weight:400;font-size:14px}
 .pclan{background:var(--main);color:#fff;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
 .pabout{color:var(--txt2);font-size:13px;margin-top:4px;max-width:400px}
 .rank-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:linear-gradient(90deg,var(--main),#2e7d32);color:#fff}
 .top1-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;background:linear-gradient(90deg,#ffd54f,#ff9800);color:#3e2a1a;box-shadow:0 0 12px rgba(255,213,79,.5)}
-.role-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;margin-left:6px}
-.role-premium{background:linear-gradient(90deg,#ffd700,#ffed4e);color:#3e2a1a}
-.role-moderator{background:linear-gradient(90deg,#5ba8ff,#29b6f6);color:#fff}
+.role-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;color:#fff}
+.role-premium{background:linear-gradient(90deg,#7f5bff,#00d4ff)}
+.role-mod{background:linear-gradient(90deg,#ff9800,#ff5722)}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
 .stat-card{background:var(--bg2);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center}
 .stat-card .v{font-size:20px;font-weight:700;color:var(--gold)}
@@ -100,6 +100,10 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 #game-wrap{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
 #board-box{position:relative}
 #board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(560px,92vw);height:min(560px,92vw);border:6px solid #3e2a1a;border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);background:#3e2a1a;position:relative}
+/* ВАЖНО: стрелки ходов лежат ПОВЕРХ доски абсолютно и не ловят клики,
+   иначе SVG становился элементом grid и сдвигал все клетки (баг дамки) */
+#board svg.move-arrow{position:absolute;left:0;top:0;pointer-events:none;z-index:40;opacity:1;transition:opacity .9s}
+#board svg.move-arrow.fade-out{opacity:0}
 .cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .cell.light{background:#efd9a7}
 .cell.dark{background:#7a5230}
@@ -119,8 +123,6 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .piece.dying{transition:opacity .15s,transform .15s;opacity:0!important;transform:scale(0)!important}
 #capture-alert{position:absolute;top:-40px;left:50%;transform:translateX(-50%);background:var(--red);color:white;padding:6px 16px;border-radius:20px;font-weight:bold;font-size:14px;display:none;z-index:20;white-space:nowrap}
 #capture-alert.show{display:block}
-.move-arrow{position:absolute;top:0;left:0;pointer-events:none;z-index:1;opacity:0.3;transition:opacity 0.9s}
-.move-arrow.fade-out{opacity:0}
 
 .gside{width:300px;display:flex;flex-direction:column;gap:10px}
 .pcard{background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer;transition:.2s}
@@ -144,7 +146,9 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .chat-msg .bubble{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.35;background:var(--bg3);border:1px solid rgba(255,255,255,.07);word-wrap:break-word}
 .chat-msg.own .bubble{background:linear-gradient(135deg,var(--main),#2e7d32);color:#fff}
 .chat-msg.deleted .bubble{opacity:.55;font-style:italic;color:var(--txt2);background:rgba(255,92,92,.1);border:1px dashed rgba(255,92,92,.3)}
-.chat-msg .meta{display:flex;gap:8px;align-items:center;font-size:11px}
+.chat-msg .meta{display:flex;gap:6px;align-items:center;font-size:11px}
+.msg-av{width:22px;height:22px;border-radius:50%;overflow:hidden;background:var(--bg3);border:1px solid rgba(255,255,255,.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px}
+.msg-av img{width:100%;height:100%;object-fit:cover}
 .nick-link{font-weight:700;cursor:pointer;color:var(--blue);text-decoration:underline;background:none;border:none;padding:0;font-size:11px}
 .nick-link:hover{color:var(--gold)}
 .chat-msg.own .nick-link{color:#fff}
@@ -155,6 +159,9 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 #chat-input-row{display:flex;gap:8px}
 .chat-input{flex:1;padding:12px 14px;border-radius:11px;background:var(--bg2);border:1px solid rgba(255,255,255,.12);color:var(--txt);font-size:14px}
 .chat-input:focus{border-color:var(--main)}
+.voice-card{background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;flex:1;min-width:150px;display:flex;flex-direction:column;gap:6px}
+.voice-card.on{border-color:var(--main);box-shadow:0 0 10px rgba(76,175,80,.3)}
+.voice-avs{display:flex;gap:4px;flex-wrap:wrap;min-height:24px}
 
 #game-chat-box{background:var(--bg2);border-radius:10px;height:200px;overflow-y:auto;padding:8px;font-size:13px;display:flex;flex-direction:column;gap:6px;border:1px solid rgba(255,255,255,.08)}
 .gchat-msg{padding:6px 10px;border-radius:8px;background:var(--bg3);word-break:break-word;display:flex;flex-direction:column;gap:2px}
@@ -166,7 +173,7 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .gchat-msg .del-msg{font-size:10px;padding:1px 5px}
 
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s}
-.modal{background:linear-gradient(180deg,var(--card),#121c29);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:26px;max-width:460px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.6);position:relative}
+.modal{background:linear-gradient(180deg,var(--card),#121c29);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:26px;max-width:640px;width:100%;max-height:86vh;overflow-y:auto;box-shadow:0 24px 70px rgba(0,0,0,.6);position:relative}
 .modal .x{position:absolute;top:12px;right:14px;background:none;color:var(--txt2);font-size:20px}
 .modal .x:hover{color:#fff}
 .spinner{width:56px;height:56px;border-radius:50%;margin:0 auto 16px;border:5px solid rgba(255,255,255,.15);border-top-color:var(--main);animation:spin .9s linear infinite}
@@ -197,14 +204,6 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .lb-item:hover,.player-item:hover{background:var(--bg3);border-color:var(--main)}
 .lb-rank{font-weight:800;color:var(--gold);width:32px;font-size:18px;text-align:center}
 .lb-val{margin-left:auto;font-weight:700;color:var(--gold)}
-
-.voice-room{background:var(--bg2);border:1px solid var(--main);border-radius:12px;padding:14px;margin-top:12px}
-.voice-room h3{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.voice-users{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.voice-user{display:flex;flex-direction:column;align-items:center;gap:4px}
-.voice-user .avatar{border-color:var(--main)}
-.voice-user span{font-size:10px;color:var(--txt2)}
-.voice-controls{display:flex;gap:8px;flex-wrap:wrap}
 
 body.ui-mobile #app-header{flex-direction:column;gap:8px;padding:8px}
 body.ui-mobile .logo-row{font-size:17px}
@@ -245,7 +244,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   <div class="logo">
     <div class="logo-row">
       <span class="leaf">🌿</span><span>Шашки Онлайн</span>
-      <span class="ver">v1.1.1</span>
+      <span class="ver">v1.1</span>
       <span class="author" id="creator-link">создатель xxspk (@spkaxa)</span>
     </div>
     <div class="credit">кодил qwen &lt;3</div>
@@ -271,7 +270,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   <div class="panel auth-card">
     <div class="auth-logo">🌿</div>
     <div class="auth-title" id="auth-title">Вход</div>
-    <div class="auth-sub">v1.1.1 · создатель xxspk · кодил qwen &lt;3</div>
+    <div class="auth-sub">v1.1 · создатель xxspk · кодил qwen &lt;3</div>
     <div class="field"><label>Имя</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
     <div class="field"><label>Пароль (мин. 6 символов)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
     <button class="btn big" id="auth-submit">Войти</button>
@@ -280,7 +279,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   </div>
 </section>
 
-<section class="screen hidden" id="screen-profile-view"><div class="panel" id="profile-box"></div></section>
+<section class="screen hidden" id="screen-profile-view"><div class="panel" id="my-profile-box"></div></section>
 
 <section class="screen hidden" id="screen-profile-edit">
   <div class="panel" style="max-width:520px;margin:0 auto">
@@ -392,15 +391,6 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
         <div class="timer" id="me-timer">30</div>
       </div>
       <div class="match-code-box hidden" id="match-code-box">Код матча: <b id="match-code-val">0000</b></div>
-      <div id="voice-room-game" class="voice-room hidden">
-        <h3>🎙 Войс-чат матча</h3>
-        <div class="voice-users" id="voice-users-game"></div>
-        <div class="voice-controls">
-          <button class="btn small" id="voice-join-game">Зайти</button>
-          <button class="btn small secondary" id="voice-leave-game">Выйти</button>
-          <button class="btn small secondary" id="voice-mute-game">🔇 Mute</button>
-        </div>
-      </div>
       <div id="game-chat-box"></div>
       <div id="chat-input-row">
         <input class="chat-input" id="game-chat-input" maxlength="120" placeholder="Сообщение...">
@@ -408,6 +398,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
       </div>
       <div class="row">
         <button class="btn danger small" id="surrender-btn">🏳️ Сдаться</button>
+        <button class="btn secondary small" id="voice-match-btn">🎙 Войс: выкл</button>
         <button class="btn secondary small" id="leave-btn">Выйти</button>
         <span class="spacer"></span>
         <span id="game-timer" style="font-size:12px;color:var(--txt2)">00:00</span>
@@ -419,23 +410,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
 <section class="screen hidden" id="screen-chat" style="max-width:1000px">
   <div class="panel" id="chat-panel">
     <h2 class="ptitle">💬 Общий чат шашистов</h2>
-    <div id="voice-rooms">
-      <div class="voice-room">
-        <h3>🎙 Комната 1 <span id="voice-count-1" style="font-size:12px;color:var(--txt2)">(0)</span></h3>
-        <div class="voice-users" id="voice-users-1"></div>
-        <button class="btn small" id="voice-join-1">Зайти</button>
-      </div>
-      <div class="voice-room">
-        <h3>🎙 Комната 2 <span id="voice-count-2" style="font-size:12px;color:var(--txt2)">(0)</span></h3>
-        <div class="voice-users" id="voice-users-2"></div>
-        <button class="btn small" id="voice-join-2">Зайти</button>
-      </div>
-      <div class="voice-room">
-        <h3>🎙 Комната 3 <span id="voice-count-3" style="font-size:12px;color:var(--txt2)">(0)</span></h3>
-        <div class="voice-users" id="voice-users-3"></div>
-        <button class="btn small" id="voice-join-3">Зайти</button>
-      </div>
-    </div>
+    <div class="row" id="voice-rooms-box" style="margin-bottom:12px"></div>
     <div id="chat-msgs"></div>
     <div id="chat-input-row">
       <input class="chat-input" id="global-chat-input" maxlength="300" placeholder="Написать сообщение...">
@@ -504,7 +479,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, update, onValue, push, query, orderByChild, limitToLast, runTransaction, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, update, onValue, push, query, orderByChild, limitToLast, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -522,37 +497,17 @@ const auth = getAuth(app);
 
 const TURN_SECONDS = 30;
 
-// ================= БЛОКИРОВЩИК DEVTOOLS =================
-(function() {
-  const devtools = { open: false };
-  const threshold = 160;
-  
-  setInterval(() => {
-    const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-    const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-    if (widthThreshold || heightThreshold) {
-      if (!devtools.open) {
-        devtools.open = true;
-        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1720;color:#ff5c5c;font-size:24px;text-align:center;padding:20px">🚫 DevTools обнаружен<br><span style="font-size:16px;color:#9fb0c3;margin-top:10px;display:block">Закройте инструменты разработчика для продолжения</span></div>';
-      }
-    } else {
-      devtools.open = false;
-    }
-  }, 1000);
-  
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
-      e.preventDefault();
-      toast('DevTools заблокирован', 'error');
-      return false;
-    }
-  });
-  
-  document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
+// ================= БЛОКИРОВЩИК F12 / DEVTOOLS =================
+window.addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C','i','j','c'].includes(k)) ||
+      (e.ctrlKey && ['u','U','s','S'].includes(k))) {
+    e.preventDefault(); e.stopPropagation();
+    toast('🚫 Инструменты разработчика отключены', 'error');
     return false;
-  });
-})();
+  }
+}, true);
 
 // ================= УТИЛИТЫ =================
 const $ = (id) => document.getElementById(id);
@@ -609,13 +564,16 @@ function avatarHtml(u, c) {
   if (u.avatar) return '<div class="avatar ' + c + '"><img src="' + esc(u.avatar) + '" onerror="this.parentNode.innerHTML=\'🙂\'"></div>';
   return '<div class="avatar ' + c + '">🙂</div>';
 }
-function roleBadge(role) {
-  if (role === 'premium') return '<span class="role-badge role-premium">⭐ PREMIUM</span>';
-  if (role === 'moderator') return '<span class="role-badge role-moderator">🛡 MOD</span>';
+// Роли premium / moderator (назначаются вручную в Firebase: users/{uid}/role)
+function roleBadge(u) {
+  if (!u || !u.role) return '';
+  if (u.role === 'premium') return '<span class="role-badge role-premium">💎 PREMIUM</span>';
+  if (u.role === 'moderator') return '<span class="role-badge role-mod">🛡 MODERATOR</span>';
   return '';
 }
+function isModerator() { return !!(currentUser && (currentUser.role === 'moderator')); }
 
-// ================= ДОСТИЖЕНИЯ =================
+// ================= ДОСТИЖЕНИЯ (40 штук, навсегда) =================
 const BOT_DIFF_NAMES = { easy:'Лёгкий', normal:'Обычный', hard:'Сложный', impossible:'Невозможный' };
 function buildAchievements() {
   const list = [];
@@ -640,7 +598,7 @@ function buildAchievements() {
   list.push({ id:'chat1', icon:'💬', name:'Собеседник', desc:'Написать сообщение в чат', check:u=>(u.chatMsgs||0)>=1 });
   list.push({ id:'chat10', icon:'💬', name:'Болтун', desc:'Написать 10 сообщений в чат', check:u=>(u.chatMsgs||0)>=10 });
   list.push({ id:'chat100', icon:'💬', name:'Мастер чата', desc:'Написать 100 сообщений в чат', check:u=>(u.chatMsgs||0)>=100 });
-  list.push({ id:'clan', icon:'⚔', name:'Клановец', desc:'Поставить клан в профиле', check:u=>!!(u.clan && u.clan.trim()) });
+  list.push({ id:'clan', icon:'', name:'Клановец', desc:'Поставить клан в профиле', check:u=>!!(u.clan && u.clan.trim()) });
   list.push({ id:'all', icon:'👑', name:'Выполнить все достижения', desc:'Получить все остальные достижения', check:u=>list.every(a => a.id === 'all' || a.check(u)) });
   return list;
 }
@@ -690,7 +648,8 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   const el = $('screen-' + name);
   if (el) el.classList.remove('hidden');
-  if (name === 'chat') renderGlobalChat();
+  if (name === 'chat') { renderGlobalChat(); startVoiceRoomWatch(); renderVoiceUI(); }
+  else stopVoiceRoomWatch();
   if (name === 'settings') renderNickTimer();
   if (name === 'rating') renderRating();
   if (name === 'players') renderPlayers();
@@ -758,6 +717,15 @@ on('auth-toggle', () => {
 });
 on('auth-rules', () => showScreen('rules'));
 
+// Безопасный счётчик ID: если транзакция недоступна — не роняем регистрацию
+async function nextDisplayId() {
+  try {
+    const ctr = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
+    if (ctr.snapshot.exists()) return String(ctr.snapshot.val()).padStart(5, '0');
+  } catch (e) { devLog('userCounter недоступен: ' + e.message, 'warn'); }
+  return String(Math.floor(10000 + Math.random() * 89999));
+}
+
 on('auth-submit', async () => {
   const name = $('auth-name').value.trim();
   const pass = $('auth-pass').value;
@@ -770,10 +738,9 @@ on('auth-submit', async () => {
       if (ns.exists()) { toast('Ник занят', 'error'); return; }
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       const uid = cred.user.uid;
-      const ctr = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
-      const did = String(ctr.snapshot.exists() ? ctr.snapshot.val() : 1).padStart(5, '0');
+      const did = await nextDisplayId();
       const profile = {
-        nick: name, tag: '', avatar: '', bio: '', clan: '', displayId: did, role: 'user',
+        nick: name, tag: '', avatar: '', bio: '', clan: '', displayId: did, role: '',
         elo: 1000, maxElo: 1000,
         botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
         botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
@@ -800,7 +767,7 @@ on('auth-submit', async () => {
   }
 });
 
-on('nav-logout', () => { signOut(auth); currentUser = null; location.reload(); });
+on('nav-logout', async () => { await leaveVoice(); signOut(auth); currentUser = null; location.reload(); });
 
 function enterApp() {
   $('header-nav').classList.remove('hidden');
@@ -814,12 +781,11 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await get(ref(db, 'users/' + user.uid));
     if (snap.exists()) {
       currentUser = Object.assign({ uid: user.uid }, snap.val());
-      const defs = { botElo_easy:1000, botElo_normal:1000, botElo_hard:1000, botElo_impossible:1000, botWins_easy:0, botWins_normal:0, botWins_hard:0, botWins_impossible:0, wins:0, losses:0, winStreak:0, maxWinStreak:0, onlineGames:0, botGames:0, playtime:0, chatMsgs:0, lastNickChange:0, clan:'', deleted:false, elo:1000, maxElo:1000, role:'user' };
+      const defs = { botElo_easy:1000, botElo_normal:1000, botElo_hard:1000, botElo_impossible:1000, botWins_easy:0, botWins_normal:0, botWins_hard:0, botWins_impossible:0, wins:0, losses:0, winStreak:0, maxWinStreak:0, onlineGames:0, botGames:0, playtime:0, chatMsgs:0, lastNickChange:0, clan:'', role:'', deleted:false, elo:1000, maxElo:1000 };
       const up = {};
       for (const k in defs) { if (currentUser[k] === undefined) { currentUser[k] = defs[k]; up[k] = defs[k]; } }
       if (!currentUser.displayId || currentUser.displayId === '00000') {
-        const r = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
-        if (r.snapshot.exists()) currentUser.displayId = String(r.snapshot.val()).padStart(5, '0');
+        currentUser.displayId = await nextDisplayId();
         up.displayId = currentUser.displayId;
       }
       if (Object.keys(up).length) update(ref(db, 'users/' + user.uid), up).catch(() => {});
@@ -894,19 +860,17 @@ on('nick-btn', async () => {
   toast('Ник изменён ✔', 'success');
 });
 
-// ================= ПРОФИЛЬ (ЕДИНЫЙ ДИЗАЙН) =================
+// ================= ПРОФИЛЬ (единый вид для своего и чужого) =================
 function eloLine(l, u, d) {
   return '<div class="elo-row"><span class="lab">' + l + '</span><span><b style="color:var(--gold)">' + (u['botElo_'+d]||1000) + '</b> · <span style="color:var(--green)">' + (u['botWins_'+d]||0) + 'W</span></span></div>';
 }
-
-function renderProfileHTML(u, isMe, slotId) {
+function profileHTML(u, isMe, slotId) {
   const tot = calcTotalBotElo(u), rk = getRank(u.elo || 1000);
   const bw = (u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
   const kd = u.losses === 0 ? (u.wins||0) : ((u.wins||0)/u.losses).toFixed(2);
-  
   return '<div class="profile-head">' + avatarHtml(u, '') +
     '<div style="flex:1;min-width:200px">' +
-    '<div class="pname">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + (u.clan ? ' <span class="pclan">⚔ ' + esc(u.clan) + '</span>' : '') + ' <span id="' + slotId + '"></span>' + roleBadge(u.role) + ' <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ' + (u.displayId||'00000') + '</span></div>' +
+    '<div class="pname">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + (u.clan ? ' <span class="pclan">⚔ ' + esc(u.clan) + '</span>' : '') + ' ' + roleBadge(u) + ' <span id="' + slotId + '"></span> <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ' + (u.displayId||'00000') + '</span></div>' +
     '<div style="margin:6px 0"><span class="rank-badge">' + rk.icon + ' ' + rk.n + ' · ' + (u.elo||1000) + ' Elo</span></div>' +
     '<div style="margin:6px 0;font-size:13px">🤖 Общий BotElo: <b style="color:var(--gold);font-size:16px">' + tot + '</b></div>' +
     '<div class="pabout">' + (u.bio ? esc(u.bio) : '<i style="opacity:.5">Нет описания</i>') + '</div></div>' +
@@ -925,10 +889,9 @@ function renderProfileHTML(u, isMe, slotId) {
     '<div style="margin-top:14px">' + eloLine('🟢 Лёгкий бот', u, 'easy') + eloLine('🔵 Обычный бот', u, 'normal') + eloLine('🟠 Сложный бот', u, 'hard') + eloLine('🔥 Невозможный бот', u, 'impossible') + '</div>' +
     achievementsHTML(u);
 }
-
 function renderMyProfile() {
   if (!currentUser) return;
-  $('profile-box').innerHTML = renderProfileHTML(currentUser, true, 'top1-slot-main');
+  $('my-profile-box').innerHTML = profileHTML(currentUser, true, 'top1-slot-main');
   fillProfileTop1(currentUser.uid, 'top1-slot-main');
   on('open-edit-btn', () => {
     $('edit-tag').value = currentUser.tag || '';
@@ -965,7 +928,7 @@ on('delete-account-btn', async () => {
   location.reload();
 });
 
-// ================= МОДАЛКА ПРОФИЛЯ =================
+// ================= МОДАЛКА ПРОФИЛЯ (теперь тот же вид, что и свой) =================
 function openModal(html) {
   $('modal-content').innerHTML = '<button class="x" id="modal-x">✕</button>' + html;
   $('modal-bg').classList.remove('hidden');
@@ -979,8 +942,7 @@ async function showProfile(uid) {
   const snap = await get(ref(db, 'users/' + uid));
   if (!snap.exists()) { toast('Игрок не найден', 'error'); return; }
   const u = snap.val();
-  const html = renderProfileHTML(u, false, 'top1-slot-modal');
-  openModal(html);
+  openModal(profileHTML(u, false, 'top1-slot-modal'));
   fillProfileTop1(uid, 'top1-slot-modal');
 }
 function openProfileModal(uid) { showProfile(uid); }
@@ -992,67 +954,45 @@ function bindChatClicks(container, isGlobal) {
     const delEl = e.target.closest('.del-msg');
     if (delEl) {
       const key = delEl.dataset.key;
-      if (isGlobal) update(ref(db, 'globalChat/' + key), { deleted: true }).catch(e => devLog('Delete msg error: ' + e.message, 'err'));
-      else if (G && G.roomId) update(ref(db, 'rooms/' + G.roomId + '/chat/' + key), { deleted: true }).catch(e => devLog('Delete msg error: ' + e.message, 'err'));
+      if (isGlobal) update(ref(db, 'globalChat/' + key), { deleted: true }).catch(err => devLog('del: ' + err.message, 'err'));
+      else if (G && G.roomId) update(ref(db, 'rooms/' + G.roomId + '/chat/' + key), { deleted: true }).catch(() => {});
     }
   });
 }
 
-// ================= ГЛОБАЛЬНЫЙ ЧАТ (С АВАТАРКАМИ) =================
+// ================= ГЛОБАЛЬНЫЙ ЧАТ (аватарки, роли, удаление) =================
 let globalChatUnsub = null;
-let userCache = {};
-
-async function getUserData(uid) {
-  if (userCache[uid]) return userCache[uid];
-  try {
-    const snap = await get(ref(db, 'users/' + uid));
-    if (snap.exists()) {
-      userCache[uid] = snap.val();
-      return userCache[uid];
-    }
-  } catch (e) {}
-  return null;
-}
-
 bindChatClicks($('chat-msgs'), true);
-
-async function renderGlobalChat() {
+function renderGlobalChat() {
   if (globalChatUnsub) globalChatUnsub();
   const q = query(ref(db, 'globalChat'), orderByChild('ts'), limitToLast(100));
-  globalChatUnsub = onValue(q, async snap => {
+  globalChatUnsub = onValue(q, snap => {
     const box = $('chat-msgs');
     box.innerHTML = '';
     const msgs = Object.entries(snap.val() || {}).sort((a, b) => a[1].ts - b[1].ts);
-    
-    for (const [key, m] of msgs) {
+    msgs.forEach(([key, m]) => {
       const own = m.uid === (currentUser ? currentUser.uid : null);
-      const userData = await getUserData(m.uid);
-      const avatar = userData && userData.avatar ? '<img src="' + esc(userData.avatar) + '" onerror="this.parentNode.innerHTML=\'🙂\'">' : '🙂';
-      
+      const canDel = (own || isModerator()) && !m.deleted;
       const d = document.createElement('div');
       d.className = 'chat-msg' + (own ? ' own' : '') + (m.deleted ? ' deleted' : '');
-      d.style.flexDirection = 'row';
-      d.style.alignItems = 'flex-start';
-      d.style.gap = '8px';
-      
-      let html = '<div class="avatar xs">' + avatar + '</div><div style="flex:1"><div class="meta"><button class="nick-link" data-uid="' + esc(m.uid) + '">' + esc(m.nick) + '</button>' + (userData ? roleBadge(userData.role) : '') + '<span class="time">' + fmtTimeHM(m.ts) + '</span>';
-      if (own && !m.deleted) html += '<button class="del-msg" data-key="' + key + '">🗑</button>';
+      const av = m.avatar ? '<img src="' + esc(m.avatar) + '">' : esc((m.nick || '?')[0].toUpperCase());
+      let html = '<div class="meta"><span class="msg-av">' + av + '</span><button class="nick-link" data-uid="' + esc(m.uid) + '">' + esc(m.nick) + '</button>' + roleBadge(m) + '<span class="time">' + fmtTimeHM(m.ts) + '</span>';
+      if (canDel) html += '<button class="del-msg" data-key="' + key + '">🗑</button>';
       html += '</div>';
-      html += m.deleted ? '<div class="bubble">🚫 Сообщение удалено</div>' : '<div class="bubble">' + esc(m.text) + '</div></div>';
+      html += m.deleted ? '<div class="bubble">🚫 Сообщение удалено</div>' : '<div class="bubble">' + esc(m.text) + '</div>';
       d.innerHTML = html;
       box.appendChild(d);
-    }
+    });
     box.scrollTop = box.scrollHeight;
   });
 }
-
 function bumpChatCounter() {
   if (currentUser) runTransaction(ref(db, 'users/' + currentUser.uid + '/chatMsgs'), c => (c || 0) + 1).catch(() => {});
 }
 async function sendGlobalChat() {
   const t = $('global-chat-input').value.trim();
   if (!t || !currentUser) return;
-  await push(ref(db, 'globalChat'), { uid: currentUser.uid, nick: currentUser.nick, text: t, ts: Date.now(), deleted: false });
+  await push(ref(db, 'globalChat'), { uid: currentUser.uid, nick: currentUser.nick, text: t, ts: Date.now(), deleted: false, avatar: currentUser.avatar || '', role: currentUser.role || '' });
   bumpChatCounter();
   $('global-chat-input').value = '';
 }
@@ -1088,7 +1028,7 @@ async function renderRating() {
       '<div class="lb-item" data-uid="' + u.uid + '">' +
       '<div class="lb-rank">#' + (i+1) + '</div>' +
       '<div class="avatar sm">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nick ? u.nick[0].toUpperCase() : '?')) + '</div>' +
-      '<div style="flex:1"><div style="font-weight:700">' + esc(u.nick || '') + roleBadge(u.role) + '</div>' +
+      '<div style="flex:1"><div style="font-weight:700">' + esc(u.nick || '') + ' ' + roleBadge(u) + '</div>' +
       '<div style="font-size:11px;color:var(--txt2)">' + (u.clan ? '[' + esc(u.clan) + '] ' : '') + fmtTimeAgo(u.lastSeen) + '</div></div>' +
       '<div class="lb-val">' + val(u) + '</div></div>'
     ).join('');
@@ -1112,7 +1052,7 @@ async function renderPlayers() {
       return '<div class="player-item" data-uid="' + uid + '">' +
         '<span class="online-dot ' + (isOnline ? 'on' : 'off') + '"></span>' +
         '<div class="avatar sm">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nick ? u.nick[0].toUpperCase() : '?')) + '</div>' +
-        '<div style="flex:1"><div style="font-weight:700">' + esc(u.nick||'') + roleBadge(u.role) + (uid === (currentUser?currentUser.uid:'') ? ' <span style="color:var(--main);font-size:11px">(ты)</span>' : '') + '</div>' +
+        '<div style="flex:1"><div style="font-weight:700">' + esc(u.nick||'') + ' ' + roleBadge(u) + (uid === (currentUser?currentUser.uid:'') ? ' <span style="color:var(--main);font-size:11px">(ты)</span>' : '') + '</div>' +
         '<div style="font-size:11px;color:var(--txt2)">' + (u.clan ? '[' + esc(u.clan) + '] ' : '') + fmtTimeAgo(u.lastSeen) + '</div></div>' +
         '<div class="lb-val">' + (u.elo||1000) + '</div></div>';
     }).join('');
@@ -1122,7 +1062,7 @@ async function renderPlayers() {
   }
 }
 
-// ================= ДВИЖОК ШАШЕК (ИСПРАВЛЕННАЯ ЛОГИКА ДАМОК) =================
+// ================= ДВИЖОК ШАШЕК =================
 let currentKingRules = 'flying';
 function initBoard() {
   const b = new Array(64).fill(null);
@@ -1134,34 +1074,30 @@ function cloneBoard(b) { return b.map(p => p ? Object.assign({}, p) : null); }
 function idx(r, c) { return r*8+c; }
 function rc(i) { return [Math.floor(i/8), i%8]; }
 function inside(r, c) { return r>=0 && r<8 && c>=0 && c<8; }
-
 function isPromotionRow(color, r) { return (color === 'w' && r === 0) || (color === 'b' && r === 7); }
 
-// ИСПРАВЛЕННАЯ ЛОГИКА: дамка всегда может двигаться!
 function getStepsForPiece(board, from, color) {
   const p = board[from];
   if (!p || p.color !== color) return [];
   const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
   const [r, c] = rc(from);
   const steps = [];
-  
-  // ДАМКА (летающая или короткая)
-  if (p.king) {
-    if (currentKingRules === 'short') {
-      // КОРОТКАЯ ДАМКА: бьёт через 1 клетку, ходит на 1
-      for (const [dr, dc] of dirs) {
-        const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
-        if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
-          steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: false });
-      }
-      if (steps.length) return steps;
-      for (const [dr, dc] of dirs) {
-        const nr = r+dr, nc = c+dc;
-        if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: false });
-      }
-      return steps;
+  if (p.king && currentKingRules === 'short') {
+    // короткая дамка: бьёт через 1, ходит на 1
+    for (const [dr, dc] of dirs) {
+      const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
+      if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
+        steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: false });
     }
-    // ЛЕТАЮЩАЯ ДАМКА: бьёт на любое расстояние
+    if (steps.length) return steps;
+    for (const [dr, dc] of dirs) {
+      const nr = r+dr, nc = c+dc;
+      if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: false });
+    }
+    return steps;
+  }
+  if (p.king) {
+    // летающая дамка: бьёт на любое расстояние, ходит на любое свободное
     for (const [dr, dc] of dirs) {
       let nr = r+dr, nc = c+dc;
       while (inside(nr,nc) && !board[idx(nr,nc)]) { nr += dr; nc += dc; }
@@ -1174,7 +1110,6 @@ function getStepsForPiece(board, from, color) {
       }
     }
     if (steps.length) return steps;
-    // Летающая дамка: ходит на любое свободное расстояние
     for (const [dr, dc] of dirs) {
       let nr = r+dr, nc = c+dc;
       while (inside(nr,nc) && !board[idx(nr,nc)]) {
@@ -1184,15 +1119,28 @@ function getStepsForPiece(board, from, color) {
     }
     return steps;
   }
-  
-  // ПРОСТАЯ ШАШКА: бьёт вперёд и назад через 1 клетку
+  if (currentKingRules === 'short') {
+    // простая в режиме ребаланса: бьёт через 1 вперёд/назад, ходит вперёд
+    for (const [dr, dc] of dirs) {
+      const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
+      if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
+        steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: isPromotionRow(color, tr) });
+    }
+    if (steps.length) return steps;
+    const fwd = color === 'w' ? -1 : 1;
+    for (const dc of [-1, 1]) {
+      const nr = r+fwd, nc = c+dc;
+      if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: isPromotionRow(color, nr) });
+    }
+    return steps;
+  }
+  // простая шашка: бьёт вперёд и назад через 1 клетку
   for (const [dr, dc] of dirs) {
     const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
     if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
       steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: isPromotionRow(color, tr) });
   }
   if (steps.length) return steps;
-  // Простая шашка: ходит только вперёд
   const fwd = color === 'w' ? -1 : 1;
   for (const dc of [-1, 1]) {
     const nr = r+fwd, nc = c+dc;
@@ -1200,7 +1148,6 @@ function getStepsForPiece(board, from, color) {
   }
   return steps;
 }
-
 function mustCapture(board, color) {
   for (let i = 0; i < 64; i++) {
     if (board[i] && board[i].color === color) {
@@ -1209,7 +1156,6 @@ function mustCapture(board, color) {
   }
   return false;
 }
-
 function applyStep(board, step) {
   const nb = cloneBoard(board);
   const p = nb[step.from];
@@ -1219,7 +1165,7 @@ function applyStep(board, step) {
   return nb;
 }
 
-// ================= БОТ (ИСПРАВЛЕН: ПРИМЕНЯЕТ ВСЮ ЦЕПОЧКУ) =================
+// ================= БОТ =================
 function getFullMoves(board, color) {
   const sequences = [];
   function fc(cb, start, path) {
@@ -1231,14 +1177,14 @@ function getFullMoves(board, color) {
     if (board[i] && board[i].color === color) {
       const all = getStepsForPiece(board, i, color);
       const caps = all.filter(s => s.captures.length > 0);
-      if (caps.length) { fc(board, i, []); }
+      if (caps.length) fc(board, i, []);
       else for (const st of all) sequences.push([st]);
     }
   }
   const captureSeqs = sequences.filter(sq => sq.some(st => st.captures.length > 0));
   return captureSeqs.length ? captureSeqs : sequences;
 }
-
+function getBotSequences(board, color) { return getFullMoves(board, color); }
 function evalFor(b, c) {
   let s = 0;
   for (let i = 0; i < 64; i++) {
@@ -1251,10 +1197,9 @@ function evalFor(b, c) {
   }
   return s;
 }
-
 function minimax(b, d, a, bt, isMax, bc) {
   const cur = isMax ? bc : (bc === 'w' ? 'b' : 'w');
-  const seqs = getFullMoves(b, cur);
+  const seqs = getBotSequences(b, cur);
   if (!seqs.length) return isMax ? -100000 - d*100 : 100000 + d*100;
   if (d === 0) return evalFor(b, bc);
   if (isMax) {
@@ -1278,13 +1223,10 @@ function minimax(b, d, a, bt, isMax, bc) {
   }
   return mn;
 }
-
 function capsOf(seq) { return seq.reduce((s, st) => s + st.captures.length, 0); }
-
 function botChooseMove(board, color, diff) {
   const seqs = getFullMoves(board, color);
   if (!seqs.length) return null;
-  
   if (diff === 'easy') {
     if (Math.random() < 0.75) {
       const quiet = seqs.filter(s => capsOf(s) === 0);
@@ -1326,7 +1268,7 @@ function botChooseMove(board, color, diff) {
   return best;
 }
 
-// ================= АНИМАЦИЯ СО СТРЕЛКАМИ ДЛЯ ЦЕПОЧЕК =================
+// ================= АНИМАЦИЯ + СТРЕЛКИ =================
 let arrowFadeTimers = [];
 function clearMoveArrows() {
   const bd = $('board');
@@ -1334,14 +1276,11 @@ function clearMoveArrows() {
   arrowFadeTimers.forEach(t => clearTimeout(t));
   arrowFadeTimers = [];
 }
-
+// Полупрозрачная чёрная стрелка сегмента хода from->to (видно всю цепочку взятий)
 function drawMoveArrow(from, to) {
   const bd = $('board');
   const cs = bd.clientWidth / 8;
-  function center(i) {
-    const [r, c] = rc(i);
-    return { x: c*cs + cs/2, y: r*cs + cs/2 };
-  }
+  function center(i) { const [r, c] = rc(i); return { x: c*cs + cs/2, y: r*cs + cs/2 }; }
   const a = center(from), b = center(to);
   const dx = b.x - a.x, dy = b.y - a.y;
   const len = Math.hypot(dx, dy) || 1;
@@ -1357,13 +1296,12 @@ function drawMoveArrow(from, to) {
   svg.setAttribute('class', 'move-arrow');
   svg.style.width = bd.clientWidth + 'px';
   svg.style.height = bd.clientHeight + 'px';
-  const line = '<line x1="' + sx + '" y1="' + sy + '" x2="' + bx + '" y2="' + by + '" stroke="black" stroke-opacity="0.28" stroke-width="' + w + '" stroke-linecap="round"/>' +
+  svg.innerHTML = '<line x1="' + sx + '" y1="' + sy + '" x2="' + bx + '" y2="' + by + '" stroke="black" stroke-opacity="0.28" stroke-width="' + w + '" stroke-linecap="round"/>' +
     '<polygon points="' + ex + ',' + ey + ' ' + (bx + px*head*0.55) + ',' + (by + py*head*0.55) + ' ' + (bx - px*head*0.55) + ',' + (by - py*head*0.55) + '" fill="black" fill-opacity="0.3"/>';
-  svg.innerHTML = line;
   bd.appendChild(svg);
   arrowFadeTimers.push(setTimeout(() => {
     svg.classList.add('fade-out');
-    arrowFadeTimers.push(setTimeout(() => svg.remove(), 900));
+    arrowFadeTimers.push(setTimeout(() => svg.remove(), 950));
   }, 8000));
 }
 
@@ -1375,10 +1313,7 @@ function animatePieceMove(path, captures, color, isKing, flipped, callback) {
     return { x: dc*cs + cs*0.11, y: dr*cs + cs*0.11 };
   }
   clearMoveArrows();
-  // Рисуем стрелки для ВСЕХ сегментов пути (включая множественные взятия)
-  for (let s = 0; s < path.length - 1; s++) {
-    drawMoveArrow(path[s], path[s+1]);
-  }
+  for (let s = 0; s < path.length - 1; s++) drawMoveArrow(path[s], path[s+1]);
   const lastEl = bd.querySelector('.cell[data-idx="' + path[path.length-1] + '"] .piece');
   if (lastEl) lastEl.style.visibility = 'hidden';
   const firstEl = bd.querySelector('.cell[data-idx="' + path[0] + '"] .piece');
@@ -1424,7 +1359,13 @@ function setCard(prefix, data) {
   $(prefix + '-rank').textContent = getRank(data.elo||1000).n;
   $(prefix + '-streak').textContent = '🔥' + (data.winStreak||0);
   const roleEl = $(prefix + '-role');
-  if (roleEl) roleEl.innerHTML = roleBadge(data.role);
+  if (roleEl) roleEl.innerHTML = roleBadge(data);
+}
+
+function resetMoveState() {
+  midMoveBoard = null; midMovePiece = null; midMovePath = [];
+  selected = null; possibleMoves = []; chainOrigin = null;
+  clearMoveArrows();
 }
 
 function startBotGame(diff) {
@@ -1435,17 +1376,17 @@ function startBotGame(diff) {
   if (G && G.timerInt) clearInterval(G.timerInt);
   if (G && G._clockInt) clearInterval(G._clockInt);
   if (roomUnsub) { roomUnsub(); roomUnsub = null; }
-  midMoveBoard = null; midMovePiece = null; midMovePath = []; selected = null; possibleMoves = [];
+  resetMoveState();
+  animating = false;
   currentKingRules = 'flying';
   G = { mode:'bot', diff, board:initBoard(), turn:'w', myColor:'w', botColor:'b', timers:{w:TURN_SECONDS,b:TURN_SECONDS}, timerInt:null, over:false, eloUp:false, moveCount:0, startTime:Date.now(), oppUid:null, roomId:null, spectator:false, matchCode:null, whiteUid:null };
-  setCard('me', { nick: currentUser.nick, elo: currentUser.elo, winStreak: currentUser.winStreak, avatar: currentUser.avatar, role: currentUser.role });
+  setCard('me', currentUser);
   $('me-av').innerHTML = currentUser.avatar ? '<img src="' + esc(currentUser.avatar) + '">' : '🙂';
-  setCard('opp', { nick: BOT_META[diff].n, elo: BOT_META[diff].elo, winStreak: 0, role: 'user' });
+  setCard('opp', { nick: BOT_META[diff].n, elo: BOT_META[diff].elo, winStreak: 0 });
   $('opp-av').innerHTML = '🤖';
   $('game-chat-box').innerHTML = '';
   $('match-code-box').classList.add('hidden');
   $('spectator-badge').classList.add('hidden');
-  $('voice-room-game').classList.add('hidden');
   showScreen('game');
   renderBoard();
   fillGameTop1();
@@ -1457,7 +1398,7 @@ on('diff-normal', () => startBotGame('normal'));
 on('diff-hard', () => startBotGame('hard'));
 on('diff-impossible', () => startBotGame('impossible'));
 
-// ================= МАТЧМЕЙКИНГ =================
+// ================= МАТЧМЕЙКИНГ v1.1 =================
 let isSearching = false, queueListener = null, matchListener = null;
 let heartbeatInt = null, guestWatchdog = null, myKingRules = 'flying';
 
@@ -1485,7 +1426,7 @@ async function startOnlineSearch() {
   if (G && G.timerInt) clearInterval(G.timerInt);
   if (G && G._clockInt) clearInterval(G._clockInt);
   if (roomUnsub) { roomUnsub(); roomUnsub = null; }
-  midMoveBoard = null; midMovePiece = null; midMovePath = []; selected = null; possibleMoves = [];
+  resetMoveState();
   G = null;
   isSearching = true;
   const uid = currentUser.uid;
@@ -1502,6 +1443,9 @@ async function startOnlineSearch() {
     for (const id of Object.keys(q0)) if (id !== uid && !isAlive(q0[id], now0)) sweep['matchmaking/' + id] = null;
     if (Object.keys(sweep).length) await update(ref(db, sweep));
   } catch (e) {}
+
+  // чистим своё возможное старое приглашение
+  await set(ref(db, 'match_request/' + uid), null).catch(() => {});
 
   matchListener = onValue(ref(db, 'match_request/' + uid), async snap => {
     const req = snap.val();
@@ -1640,6 +1584,8 @@ function showRoulette(roomId, myColor, oppProfile) {
 
 function joinOnlineGame(roomId, myColor, oppProfile) {
   if (roomUnsub) roomUnsub();
+  resetMoveState();
+  animating = false;
   roomUnsub = onValue(ref(db, 'rooms/' + roomId), snap => {
     const data = snap.val();
     if (!data) return;
@@ -1647,17 +1593,17 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
     const oppUid = myColor === 'w' ? data.black : data.white;
     if (!G || G.roomId !== roomId) {
       G = { mode:'online', roomId, myColor, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over:false, timerInt:null, oppUid, oppProfile, eloUp:false, moveCount: data.moveCount||0, startTime: Date.now(), spectator:false, matchCode: data.matchCode||null, diff:'normal', botColor:null, whiteUid: data.white };
-      setCard('me', { nick: currentUser.nick, elo: currentUser.elo, winStreak: currentUser.winStreak, avatar: currentUser.avatar, role: currentUser.role });
+      setCard('me', currentUser);
       $('me-av').innerHTML = currentUser.avatar ? '<img src="' + esc(currentUser.avatar) + '">' : '🙂';
       setCard('opp', Object.assign({ uid: oppUid }, oppProfile));
       $('opp-av').innerHTML = oppProfile.avatar ? '<img src="' + esc(oppProfile.avatar) + '">' : '😎';
       $('game-chat-box').innerHTML = '';
       $('spectator-badge').classList.add('hidden');
-      $('voice-room-game').classList.remove('hidden');
       if (G.matchCode) { $('match-code-box').classList.remove('hidden'); $('match-code-val').textContent = G.matchCode; }
       showScreen('game');
       renderBoard();
       fillGameTop1();
+      renderVoiceUI();
       startTurnTimer();
     } else {
       G.board = JSON.parse(data.board);
@@ -1666,7 +1612,7 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
       G.moveCount = data.moveCount || G.moveCount;
     }
     if (data.status === 'finished') { handleGameOver(data.result); return; }
-    if (!midMoveBoard && !G.over) renderBoard();
+    if (!midMoveBoard && !animating && !G.over) renderBoard();
     renderGameChat(data.chat || {});
   });
 }
@@ -1687,6 +1633,7 @@ on('spectate-btn', async () => {
   const bs = await get(ref(db, 'users/' + data.black));
   const wp = ws.exists() ? ws.val() : { nick: 'Белый', elo: 1000 };
   const bp = bs.exists() ? bs.val() : { nick: 'Чёрный', elo: 1000 };
+  resetMoveState(); animating = false;
   G = { mode:'spectate', roomId, myColor:null, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over: data.status==='finished', timerInt:null, eloUp:true, moveCount: data.moveCount||0, startTime: Date.now(), spectator:true, matchCode: data.matchCode||code, oppUid: data.black, oppProfile: bp, diff:'normal', botColor:null, whiteUid: data.white };
   setCard('me', wp); $('me-av').innerHTML = wp.avatar ? '<img src="' + esc(wp.avatar) + '">' : '⚪';
   setCard('opp', bp); $('opp-av').innerHTML = bp.avatar ? '<img src="' + esc(bp.avatar) + '">' : '⚫';
@@ -1694,10 +1641,10 @@ on('spectate-btn', async () => {
   $('match-code-box').classList.remove('hidden');
   $('match-code-val').textContent = G.matchCode;
   $('game-chat-box').innerHTML = '';
-  $('voice-room-game').classList.add('hidden');
   showScreen('game');
   renderBoard();
   fillGameTop1();
+  renderVoiceUI();
   startTurnTimer();
   renderGameChat(data.chat || {});
   toast('Наблюдение за матчем ' + code, 'success');
@@ -1787,8 +1734,7 @@ function onCellClick(i) {
       const next = getStepsForPiece(midMoveBoard, midMovePiece, G.myColor).filter(s => s.captures.length > 0);
       if (next.length) { possibleMoves = next; renderBoard(); } else executeFullMove();
     } else {
-      midMoveBoard = null; midMovePiece = null; midMovePath = []; chainOrigin = null;
-      selected = null; possibleMoves = []; renderBoard();
+      resetMoveState(); renderBoard();
     }
     return;
   }
@@ -1824,8 +1770,8 @@ async function executeFullMove(seq) {
     animCaptures = seq[0].captures;
     newBoard = applyStep(G.board, seq[0]);
   } else {
-    animPath = [midMovePath[0]].concat(midMovePath.slice());
-    animPath.unshift(getOriginOfChain());
+    // корректный путь цепочки: [origin, to1, to2, ...] без дублей
+    animPath = [chainOrigin !== null ? chainOrigin : midMovePath[0]].concat(midMovePath);
     animCaptures = [];
     let tb = G.board;
     for (let j = 0; j < midMovePath.length; j++) {
@@ -1840,8 +1786,7 @@ async function executeFullMove(seq) {
   const nextTurn = moverColor === 'w' ? 'b' : 'w';
   const lastIdx = animPath[animPath.length-1];
   const isKingNow = !!(newBoard[lastIdx] && newBoard[lastIdx].king);
-  selected = null; possibleMoves = [];
-  midMoveBoard = null; midMovePiece = null; midMovePath = [];
+  resetMoveState();
   G.moveCount = (G.moveCount||0) + 1;
   const nextHas = getFullMoves(newBoard, nextTurn).length > 0;
   let result = null;
@@ -1866,20 +1811,17 @@ async function executeFullMove(seq) {
     } catch (e) { devLog('move sync error: ' + e.message, 'err'); }
   }
 }
-
-function getOriginOfChain() { return chainOrigin !== null ? chainOrigin : midMovePath[0]; }
-
 function endGameOrFinish(result, board) {
   if (!G) return;
   if (G.mode === 'bot') endGame(result, board);
   else handleGameOver(result, board);
 }
-
 function scheduleBotMove(nextTurn, moverColor) {
   setTimeout(() => {
     if (!G || G.over) return;
     const seq = botChooseMove(G.board, G.botColor, G.diff);
     if (!seq || !seq.length) { endGame(moverColor, G.board); return; }
+    // бот исполняет ВСЮ цепочку взятий за один ход
     let nb = G.board;
     const bPath = [seq[0].from], bCaps = [];
     for (const st of seq) { nb = applyStep(nb, st); bPath.push(st.to); if (st.captures.length) bCaps.push(...st.captures); }
@@ -1909,7 +1851,6 @@ function endGame(result, finalBoard) {
   updateBotElo(result === G.myColor, G.diff);
   scheduleAutoExit();
 }
-
 function scheduleAutoExit() {
   if (exitTimerInt) clearInterval(exitTimerInt);
   let sec = 4;
@@ -1922,7 +1863,6 @@ function scheduleAutoExit() {
     else banner.textContent = 'Возврат в меню через ' + sec + '...';
   }, 1000);
 }
-
 async function handleGameOver(result, finalBoard) {
   if (!G || G.eloUp) return;
   G.eloUp = true; G.over = true;
@@ -1975,7 +1915,6 @@ async function updateBotElo(won, diff) {
   const total = (diff==='easy'?newE:(u.botElo_easy||1000)) + (diff==='normal'?newE:(u.botElo_normal||1000)) + (diff==='hard'?newE:(u.botElo_hard||1000)) + (diff==='impossible'?newE:(u.botElo_impossible||1000)) - 3000;
   toast('BotElo (' + diff + '): ' + (delta>0?'+':'') + delta + ' → ' + newE + ' (общий: ' + total + ')', delta > 0 ? 'success' : 'error');
 }
-
 async function updateOnlineElo(won, stats) {
   if (!currentUser) return;
   if (stats.moveCount < 5) { toast('Слишком коротко — Elo не изменён', 'error'); return; }
@@ -2010,7 +1949,7 @@ function startTurnTimer() {
   if (!G) return;
   if (G.timerInt) clearInterval(G.timerInt);
   G.timerInt = setInterval(async () => {
-    if (!G || G.over || midMoveBoard) return;
+    if (!G || G.over || midMoveBoard || animating) return;
     const color = G.turn;
     if (G.timers[color] > 0) G.timers[color]--;
     renderBoard();
@@ -2079,15 +2018,15 @@ on('surrender-btn', async () => {
     handleGameOver(winner, G.board);
   }
 });
-
 function leaveGame(force) {
   if (!force && G && !G.over && !G.spectator && !confirm('Выйти? Игра не засчитается.')) return;
+  if (voice.room && voice.room.startsWith('match_')) leaveVoice();
   if (exitTimerInt) { clearInterval(exitTimerInt); exitTimerInt = null; }
   if (G && G.timerInt) clearInterval(G.timerInt);
   if (G && G._clockInt) clearInterval(G._clockInt);
   if (roomUnsub) { roomUnsub(); roomUnsub = null; }
   if (G && G.matchCode && G.mode !== 'spectate') set(ref(db, 'matchCodes/' + G.matchCode), null).catch(() => {});
-  G = null; midMoveBoard = null; selected = null; possibleMoves = [];
+  G = null; resetMoveState(); animating = false;
   showScreen('mode');
 }
 on('leave-btn', () => leaveGame(false));
@@ -2103,7 +2042,7 @@ function renderGameChat(chatObj) {
     const own = m.uid === (currentUser ? currentUser.uid : null) && !(G && G.spectator);
     const d = document.createElement('div');
     d.className = 'gchat-msg' + (own ? ' own' : '') + (m.deleted ? ' deleted' : '');
-    let html = '<div class="gm-header"><button class="nick-link" data-uid="' + esc(m.uid) + '">' + esc(m.nick) + '</button><span class="gm-time">' + fmtTimeHM(m.ts) + '</span>';
+    let html = '<div class="gm-header"><button class="nick-link" data-uid="' + esc(m.uid) + '">' + esc(m.nick) + '</button>' + roleBadge(m) + '<span class="gm-time">' + fmtTimeHM(m.ts) + '</span>';
     if (own && !m.deleted) html += '<button class="del-msg" data-key="' + key + '">🗑</button>';
     html += '</div>';
     html += m.deleted ? '<div>🚫 Сообщение удалено</div>' : '<div>' + esc(m.text) + '</div>';
@@ -2116,7 +2055,7 @@ async function sendGameChat() {
   const t = $('game-chat-input').value.trim();
   if (!t || !currentUser || !G || G.spectator) return;
   if (G.mode === 'online' && G.roomId) {
-    await push(ref(db, 'rooms/' + G.roomId + '/chat'), { uid: currentUser.uid, nick: currentUser.nick, text: t, ts: Date.now(), deleted: false });
+    await push(ref(db, 'rooms/' + G.roomId + '/chat'), { uid: currentUser.uid, nick: currentUser.nick, text: t, ts: Date.now(), deleted: false, avatar: currentUser.avatar || '', role: currentUser.role || '' });
     bumpChatCounter();
   } else {
     const box = $('game-chat-box');
@@ -2131,84 +2070,149 @@ async function sendGameChat() {
 on('game-chat-send', sendGameChat);
 $('game-chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendGameChat(); });
 
-// ================= ВОЙС-ЧАТ (БАЗОВАЯ РЕАЛИЗАЦИЯ) =================
-let localStream = null;
-let peerConnections = {};
-let currentVoiceRoom = null;
-let voiceUnsub = null;
-
-async function joinVoiceRoom(roomId) {
-  if (!currentUser) { toast('Войдите в аккаунт', 'error'); return; }
-  
-  try {
-    localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    currentVoiceRoom = roomId;
-    
-    await set(ref(db, 'voiceRooms/' + roomId + '/' + currentUser.uid), {
-      nick: currentUser.nick,
-      avatar: currentUser.avatar || '',
-      joinedAt: Date.now()
-    });
-    onDisconnect(ref(db, 'voiceRooms/' + roomId + '/' + currentUser.uid)).remove();
-    
-    if (voiceUnsub) voiceUnsub();
-    voiceUnsub = onValue(ref(db, 'voiceRooms/' + roomId), snap => {
-      const users = snap.val() || {};
-      const container = roomId.startsWith('game_') ? $('voice-users-game') : $('voice-users-' + roomId.split('_')[1]);
-      const countEl = roomId.startsWith('game_') ? null : $('voice-count-' + roomId.split('_')[1]);
-      
-      if (container) {
-        container.innerHTML = '';
-        Object.entries(users).forEach(([uid, u]) => {
-          const div = document.createElement('div');
-          div.className = 'voice-user';
-          div.innerHTML = '<div class="avatar xs">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : '🙂') + '</div><span>' + esc(u.nick) + '</span>';
-          container.appendChild(div);
-        });
-      }
-      if (countEl) countEl.textContent = '(' + Object.keys(users).length + ')';
-    });
-    
-    toast('Подключено к войс-чату', 'success');
-  } catch (e) {
-    toast('Не удалось получить доступ к микрофону', 'error');
-    devLog('Voice error: ' + e.message, 'err');
-  }
+// ================= ВОЙС-ЧАТ (WebRTC mesh + сигнализация через Firebase) =================
+let voice = { room:null, stream:null, pcs:{}, unsubUsers:null, unsubSignal:null, unsubRooms:[], stats:{} };
+const GLOBAL_VOICE = [{id:'voice_1',n:'Войс 1'},{id:'voice_2',n:'Войс 2'},{id:'voice_3',n:'Войс 3'}];
+async function ensureMic() {
+  if (!voice.stream) voice.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  return voice.stream;
 }
-
-async function leaveVoiceRoom() {
-  if (!currentVoiceRoom || !currentUser) return;
-  
-  await set(ref(db, 'voiceRooms/' + currentVoiceRoom + '/' + currentUser.uid), null);
-  
-  if (localStream) {
-    localStream.getTracks().forEach(t => t.stop());
-    localStream = null;
-  }
-  
-  Object.values(peerConnections).forEach(pc => pc.close());
-  peerConnections = {};
-  
-  if (voiceUnsub) { voiceUnsub(); voiceUnsub = null; }
-  currentVoiceRoom = null;
-  
-  toast('Отключено от войс-чата', 'success');
+function playVoiceStream(uid, stream) {
+  stopVoiceAudio(uid);
+  const a = document.createElement('audio');
+  a.autoplay = true; a.id = 'va_' + uid; a.srcObject = stream;
+  document.body.appendChild(a);
 }
-
-on('voice-join-1', () => joinVoiceRoom('room_1'));
-on('voice-join-2', () => joinVoiceRoom('room_2'));
-on('voice-join-3', () => joinVoiceRoom('room_3'));
-on('voice-join-game', () => { if (G && G.roomId) joinVoiceRoom('game_' + G.roomId); });
-on('voice-leave-game', leaveVoiceRoom);
-
-on('voice-mute-game', () => {
-  if (localStream) {
-    const audioTrack = localStream.getAudioTracks()[0];
-    if (audioTrack) {
-      audioTrack.enabled = !audioTrack.enabled;
-      $('voice-mute-game').textContent = audioTrack.enabled ? '🔇 Mute' : '🔊 Unmute';
+function stopVoiceAudio(uid) { const a = $('va_' + uid); if (a) a.remove(); }
+function createPC(key, uid, isCaller) {
+  const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+  voice.pcs[uid] = pc;
+  if (voice.stream) voice.stream.getTracks().forEach(t => pc.addTrack(t, voice.stream));
+  pc.onicecandidate = e => {
+    if (e.candidate) set(ref(db, `voiceRooms/${key}/signal/${uid}/${currentUser.uid}/ice/${Date.now()}_${Math.random().toString(36).slice(2,6)}`), e.candidate.toJSON()).catch(() => {});
+  };
+  pc.ontrack = e => playVoiceStream(uid, e.streams[0]);
+  pc.onconnectionstatechange = () => {
+    if (['failed','closed','disconnected'].includes(pc.connectionState)) {
+      pc.close(); delete voice.pcs[uid]; stopVoiceAudio(uid);
     }
+  };
+  if (isCaller) {
+    pc.createOffer()
+      .then(o => pc.setLocalDescription(o))
+      .then(() => set(ref(db, `voiceRooms/${key}/signal/${uid}/${currentUser.uid}/offer`), { t: Date.now(), sdp: pc.localDescription.sdp }))
+      .catch(() => {});
   }
+  return pc;
+}
+async function handleVoiceSignal(key, inbox) {
+  for (const from of Object.keys(inbox || {})) {
+    if (from === currentUser.uid) continue;
+    const s = inbox[from] || {};
+    let pc = voice.pcs[from];
+    if (!pc) pc = createPC(key, from, false);
+    try {
+      if (s.offer && s.offer.t && pc._offerT !== s.offer.t) {
+        pc._offerT = s.offer.t;
+        await pc.setRemoteDescription({ type: 'offer', sdp: s.offer.sdp });
+        const ans = await pc.createAnswer();
+        await pc.setLocalDescription(ans);
+        await set(ref(db, `voiceRooms/${key}/signal/${from}/${currentUser.uid}/answer`), { t: Date.now(), sdp: ans.sdp });
+      }
+      if (s.answer && s.answer.t && pc._ansT !== s.answer.t && pc.signalingState === 'have-local-offer') {
+        pc._ansT = s.answer.t;
+        await pc.setRemoteDescription({ type: 'answer', sdp: s.answer.sdp });
+      }
+      if (pc.remoteDescription) {
+        for (const ik of Object.keys(s.ice || {})) {
+          const c = s.ice[ik];
+          if (c) { try { await pc.addIceCandidate(c); } catch (e) {} }
+        }
+      }
+    } catch (e) { devLog('voice signal: ' + e.message, 'err'); }
+  }
+}
+async function syncVoicePeers(key, users) {
+  const ids = Object.keys(users || {});
+  for (const uid of ids) {
+    if (uid !== currentUser.uid && !voice.pcs[uid]) createPC(key, uid, currentUser.uid < uid);
+  }
+  for (const uid of Object.keys(voice.pcs)) {
+    if (!users || !users[uid]) { voice.pcs[uid].close(); delete voice.pcs[uid]; stopVoiceAudio(uid); }
+  }
+}
+async function joinVoice(key) {
+  if (!currentUser) { toast('Войдите', 'error'); return; }
+  if (voice.room === key) return;
+  await leaveVoice();
+  try { await ensureMic(); } catch (e) { toast('Нет доступа к микрофону', 'error'); return; }
+  voice.room = key;
+  await set(ref(db, `voiceRooms/${key}/users/${currentUser.uid}`), { nick: currentUser.nick, avatar: currentUser.avatar || '', role: currentUser.role || '', joinedAt: Date.now() });
+  onDisconnect(ref(db, `voiceRooms/${key}/users/${currentUser.uid}`)).remove();
+  voice.unsubUsers = onValue(ref(db, `voiceRooms/${key}/users`), snap => {
+    const u = snap.val() || {};
+    voice.stats[key] = u;
+    syncVoicePeers(key, u);
+    renderVoiceUI();
+  });
+  voice.unsubSignal = onValue(ref(db, `voiceRooms/${key}/signal/${currentUser.uid}`), snap => { handleVoiceSignal(key, snap.val() || {}); });
+  toast('🎙 Войс подключён', 'success');
+  renderVoiceUI();
+}
+async function leaveVoice() {
+  if (voice.unsubUsers) { voice.unsubUsers(); voice.unsubUsers = null; }
+  if (voice.unsubSignal) { voice.unsubSignal(); voice.unsubSignal = null; }
+  if (voice.room && currentUser) {
+    set(ref(db, `voiceRooms/${voice.room}/users/${currentUser.uid}`), null).catch(() => {});
+    set(ref(db, `voiceRooms/${voice.room}/signal/${currentUser.uid}`), null).catch(() => {});
+  }
+  for (const uid of Object.keys(voice.pcs)) { voice.pcs[uid].close(); stopVoiceAudio(uid); }
+  voice.pcs = {};
+  if (voice.stream) { voice.stream.getTracks().forEach(t => t.stop()); voice.stream = null; }
+  voice.room = null;
+  renderVoiceUI();
+}
+function startVoiceRoomWatch() {
+  stopVoiceRoomWatch();
+  GLOBAL_VOICE.forEach(v => {
+    voice.unsubRooms.push(onValue(ref(db, 'voiceRooms/' + v.id + '/users'), snap => {
+      voice.stats[v.id] = snap.val() || {};
+      renderVoiceUI();
+    }));
+  });
+}
+function stopVoiceRoomWatch() {
+  voice.unsubRooms.forEach(u => u());
+  voice.unsubRooms = [];
+}
+function renderVoiceUI() {
+  const box = $('voice-rooms-box');
+  if (box) {
+    box.innerHTML = GLOBAL_VOICE.map(v => {
+      const u = voice.stats[v.id] || {};
+      const ids = Object.keys(u);
+      const inIt = voice.room === v.id;
+      return '<div class="voice-card' + (inIt ? ' on' : '') + '">' +
+        '<div style="font-weight:700;font-size:13px">🎙 ' + v.n + ' · ' + ids.length + '</div>' +
+        '<div class="voice-avs">' + ids.slice(0, 6).map(id => '<div class="avatar xs" title="' + esc(u[id].nick || '') + '">' + (u[id].avatar ? '<img src="' + esc(u[id].avatar) + '">' : esc((u[id].nick || '?')[0].toUpperCase())) + '</div>').join('') + '</div>' +
+        '<button class="btn small ' + (inIt ? 'danger' : 'secondary') + '" data-voice="' + v.id + '">' + (inIt ? 'Выйти' : 'Зайти') + '</button></div>';
+    }).join('');
+    box.querySelectorAll('[data-voice]').forEach(b => b.onclick = () => {
+      const k = b.dataset.voice;
+      if (voice.room === k) leaveVoice(); else joinVoice(k);
+    });
+  }
+  const mb = $('voice-match-btn');
+  if (mb) {
+    const inMatch = voice.room && voice.room.startsWith('match_');
+    mb.textContent = inMatch ? '🎙 Войс: вкл' : '🎙 Войс: выкл';
+    mb.classList.toggle('danger', !!inMatch);
+  }
+}
+on('voice-match-btn', () => {
+  if (!G || !G.roomId) { toast('Войс доступен только в онлайн-матче', 'error'); return; }
+  const key = 'match_' + G.roomId;
+  if (voice.room === key) leaveVoice(); else joinVoice(key);
 });
 
 // ================= ЗВУКИ =================
@@ -2237,11 +2241,8 @@ function renderRanksBox() {
 setUI(localStorage.getItem('uiMode') || 'pc');
 renderRanksBox();
 applySettings();
-devLog('🌿 Шашки v1.1.1 готовы. M — консоль', 'info');
-
-window.addEventListener('beforeunload', () => {
-  if (currentVoiceRoom) leaveVoiceRoom();
-});
+renderVoiceUI();
+devLog('🌿 Шашки v1.1 готовы. M — консоль', 'info');
 </script>
 </body>
 </html>
