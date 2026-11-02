@@ -253,7 +253,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   </nav>
 </header>
 
-<section class="screen" id="screen-auth">
+<section class="screen hidden" id="screen-auth">
   <div class="panel auth-card">
     <div class="auth-logo">🌿</div>
     <div class="auth-title" id="auth-title">Вход</div>
@@ -330,7 +330,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   </div>
 </section>
 
-<section class="screen hidden" id="screen-mode">
+<section class="screen" id="screen-mode">
   <div class="panel" style="max-width:560px;margin:0 auto">
     <h2 class="ptitle">Выберите режим</h2>
     <div style="display:flex;flex-direction:column;gap:10px">
@@ -550,7 +550,7 @@ function buildAchievements() {
     [50,'🌐','Онлайн-победа V','Выиграть 50 онлайн игр'],
     [100,'🌐','Онлайн-победа VI','Выиграть 100 онлайн игр']
   ];
-  for (const [n, ic, nm, ds] of ow) list.push({ id:'ow'+n, icon:ic, name:nm, desc:ds, check:u=>(u.wins||0)>=n });
+  for (const [n, ic, nm, ds] of ow) list.push({ id:'ow'+n, icon:ic, name:nm, desc:ds, check:(nn => u => (u.wins||0) >= nn)(n) });
   RANKS.forEach((r, i) => list.push({ id:'rank'+i, icon:r.icon, name:'Ранг: '+r.n, desc:'Достичь ранга "'+r.n+'"', check:u=>rankIndex(u.maxElo||1000)>=i }));
   list.push({ id:'first', icon:'🎮', name:'Первая игра', desc:'Сыграть игру с ботом или онлайн', check:u=>((u.onlineGames||0)+(u.botGames||0))>=1 });
   for (const d of ['easy','normal','hard','impossible']) {
@@ -774,7 +774,7 @@ on('nav-settings', () => showScreen('settings'));
 on('nav-rules', () => showScreen('rules'));
 on('rating-back-btn', () => showScreen('mode'));
 on('players-back-btn', () => showScreen('mode'));
-on('mode-back-btn', () => showScreen('mode'));
+on('mode-back-btn', () => { if (currentUser) showScreen('mode'); else showScreen('auth'); });
 on('chat-back-btn', () => showScreen('mode'));
 on('rules-back-btn', () => { if (currentUser) showScreen('mode'); else showScreen('auth'); });
 on('settings-back-btn', () => showScreen('mode'));
@@ -825,6 +825,9 @@ function renderProfileInto(u, isMe, slotId) {
   const tot = calcTotalBotElo(u), rk = getRank(u.elo || 1000);
   const bw = (u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
   const kd = u.losses === 0 ? (u.wins||0) : ((u.wins||0)/u.losses).toFixed(2);
+  // Кнопка «Редактировать» встраивается только когда профиль свой: иначе дублировалась
+  const headBtn = (isMe && u.uid === (currentUser ? currentUser.uid : null))
+    ? '<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>' : '';
   $('my-profile-box').innerHTML =
     '<div class="profile-head">' + avatarHtml(u, '') +
     '<div style="flex:1;min-width:200px">' +
@@ -1274,6 +1277,15 @@ function setCard(prefix, data) {
 
 function startBotGame(diff) {
   if (!currentUser) { toast('Войдите', 'error'); return; }
+  // Очистка состояния предыдущей игры/поиска (иначе после онлайн-матча могли
+  // оставаться подписки, таймеры и «середина хода»)
+  stopWatchdog(); cleanupSearch(); isSearching = false;
+  $('search-overlay').classList.add('hidden');
+  if (exitTimerInt) { clearInterval(exitTimerInt); exitTimerInt = null; }
+  if (G && G.timerInt) clearInterval(G.timerInt);
+  if (G && G._clockInt) clearInterval(G._clockInt);
+  if (roomUnsub) { roomUnsub(); roomUnsub = null; }
+  midMoveBoard = null; midMovePiece = null; midMovePath = []; selected = null; possibleMoves = [];
   currentKingRules = 'flying';
   G = { mode:'bot', diff, board:initBoard(), turn:'w', myColor:'w', botColor:'b', timers:{w:TURN_SECONDS,b:TURN_SECONDS}, timerInt:null, over:false, eloUp:false, moveCount:0, startTime:Date.now(), oppUid:null, roomId:null, spectator:false, matchCode:null, whiteUid:null };
   setCard('me', { nick: currentUser.nick, elo: currentUser.elo, winStreak: currentUser.winStreak, avatar: currentUser.avatar });
@@ -1317,6 +1329,14 @@ on('play-online-btn', () => {
 
 async function startOnlineSearch() {
   if (!currentUser || isSearching) return;
+  // Если уже была открыта игра — корректно её закрываем перед новым матчем
+  if (G && !G.over && !G.spectator && !confirm('Выйти из текущей игры? Игра не засчитается.')) return;
+  if (exitTimerInt) { clearInterval(exitTimerInt); exitTimerInt = null; }
+  if (G && G.timerInt) clearInterval(G.timerInt);
+  if (G && G._clockInt) clearInterval(G._clockInt);
+  if (roomUnsub) { roomUnsub(); roomUnsub = null; }
+  midMoveBoard = null; midMovePiece = null; midMovePath = []; selected = null; possibleMoves = [];
+  G = null;
   isSearching = true;
   const uid = currentUser.uid;
   myKingRules = $('chk-king-rules').checked ? 'short' : 'flying';
@@ -1502,7 +1522,9 @@ function joinOnlineGame(roomId, myColor, oppProfile) {
       G.moveCount = data.moveCount || G.moveCount;
     }
     if (data.status === 'finished') { handleGameOver(data.result); return; }
-    renderBoard();
+    // Не перерисовываем доску в разгар собственного многократного взятия и не
+    // перезаписываем локальные таймеры во время анимации хода (иначе скачут цифры)
+    if (!midMoveBoard && !G.over) renderBoard();
     renderGameChat(data.chat || {});
   });
 }
@@ -1674,15 +1696,22 @@ async function executeFullMove(singleMove) {
   G.board = newBoard; G.turn = nextTurn;
   G.timers[moverColor] = TURN_SECONDS;
   renderBoard();
+  // Фикс «зависшего таймера»: сразу останавливаем тиканье до конца анимации/хода бота,
+  // иначе пока идёт анимация текущий игрок теряет время, а в онлайн-игре оба клиента
+  // одновременно запускали свой таймер и списывали время друг другу.
+  if (G.timerInt) { clearInterval(G.timerInt); G.timerInt = null; }
   const flipped = G.myColor === 'b' && !G.spectator;
   animatePieceMove(animPath, animCaptures, moverColor, isKingNow, flipped, () => {
     if (result) endGameOrFinish(result, newBoard);
     else if (G.mode === 'bot') scheduleBotMove(nextTurn, moverColor);
+    if (G && !G.over) startTurnTimer();
   });
   if (G.mode === 'online') {
-    const upd = { board: JSON.stringify(newBoard), turn: nextTurn, ['timers/' + moverColor]: TURN_SECONDS, ['timers/' + nextTurn]: TURN_SECONDS, moveCount: G.moveCount, lastMove: { from: animPath[0], to: lastIdx } };
-    if (result) { upd.status = 'finished'; upd.result = result; }
-    await update(ref(db, 'rooms/' + G.roomId), upd);
+    try {
+      const upd = { board: JSON.stringify(newBoard), turn: nextTurn, moveCount: G.moveCount, lastMove: { from: animPath[0], to: lastIdx } };
+      if (result) { upd.status = 'finished'; upd.result = result; }
+      await update(ref(db, 'rooms/' + G.roomId), upd);
+    } catch (e) { devLog('move sync error: ' + e.message, 'err'); }
   }
 }
 function endGameOrFinish(result, board) {
@@ -1703,14 +1732,15 @@ function scheduleBotMove(nextTurn, moverColor) {
     animatePieceMove([bm.from, bm.to], bm.captures, G.botColor, isKingNow, false, () => {
       const myHas = Array.from({length:64}, (_, i) => getStepsForPiece(nb, i, moverColor)).some(s => s.length > 0);
       if (!myHas) endGame(G.botColor, nb);
+      else if (G && !G.over) startTurnTimer(); // возобновляем отсчёт времени после хода бота
     });
   }, 450);
 }
 
 function endGame(result, finalBoard) {
-  if (G.eloUp) return;
+  if (!G || G.eloUp) return;
   G.eloUp = true; G.over = true;
-  if (G.timerInt) clearInterval(G.timerInt);
+  if (G.timerInt) { clearInterval(G.timerInt); G.timerInt = null; }
   if (result === G.myColor) { toast('🏆 Победа!', 'success'); playSound('win'); }
   else { toast('Поражение', 'error'); playSound('lose'); }
   renderBoard();
@@ -1732,7 +1762,19 @@ function scheduleAutoExit() {
 async function handleGameOver(result, finalBoard) {
   if (!G || G.eloUp) return;
   G.eloUp = true; G.over = true;
-  if (G.timerInt) clearInterval(G.timerInt);
+  if (G.timerInt) { clearInterval(G.timerInt); G.timerInt = null; }
+  if (G.mode === 'online' && G.roomId) {
+    // Страховка: если матч завершился по таймауту/сдаче соперника (не нашим ходом),
+    // помечаем комнату finished, чтобы оба игрока гарантированно получили результат.
+    try {
+      await runTransaction(ref(db, 'rooms/' + G.roomId), room => {
+        if (!room || room.status === 'finished') return;
+        room.status = 'finished';
+        room.result = result;
+        return room;
+      });
+    } catch (e) {}
+  }
   if (result === G.myColor) { toast('🏆 Победа!', 'success'); playSound('win'); }
   else if (result === 'draw') toast('Ничья');
   else { toast('Поражение', 'error'); playSound('lose'); }
@@ -1772,6 +1814,7 @@ async function updateBotElo(won, diff) {
   toast('BotElo (' + diff + '): ' + (delta>0?'+':'') + delta + ' → ' + newE + ' (общий: ' + total + ')', delta > 0 ? 'success' : 'error');
 }
 async function updateOnlineElo(won, stats) {
+  if (!currentUser) return;
   if (stats.moveCount < 5) { toast('Слишком коротко — Elo не изменён', 'error'); return; }
   const userRef = ref(db, 'users/' + currentUser.uid);
   const snap = await get(userRef);
@@ -1804,7 +1847,7 @@ function startTurnTimer() {
   if (!G) return;
   if (G.timerInt) clearInterval(G.timerInt);
   G.timerInt = setInterval(async () => {
-    if (!G || G.over) { if (G && G.timerInt) clearInterval(G.timerInt); return; }
+    if (!G || G.over || midMoveBoard) return; // во время многократного взятия время не тикает
     const color = G.turn;
     if (G.timers[color] > 0) G.timers[color]--;
     renderBoard();
