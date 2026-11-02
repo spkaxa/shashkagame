@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
-<title>🌿 Шашки Онлайн v1.1</title>
+<title>🌿 Шашки Онлайн v1.1.1</title>
 <style>
 :root{
-  --main:#4caf50;
-  --bg:#0f1720; --bg2:#16212e; --bg3:#1d2b3c; --card:#182435;
-  --txt:#e8eef5; --txt2:#9fb0c3; --gold:#ffd54f; --red:#ff5c5c;
-  --green:#69db7c; --blue:#5ba8ff; --radius:14px;
+  --main:#4caf50; --bg:#0f1720; --bg2:#16212e; --bg3:#1d2b3c; --card:#182435;
+  --txt:#e8eef5; --txt2:#9fb0c3; --gold:#ffd54f; --red:#ff5c5c; --green:#69db7c; --blue:#5ba8ff; --radius:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%}
@@ -19,7 +17,10 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 input,textarea,select{font-family:inherit;outline:none}
 .hidden{display:none!important}
 
-#app-header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 18px;background:rgba(10,16,24,.85);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:50;backdrop-filter:blur(8px)}
+#top-banner{background:linear-gradient(90deg,var(--main),#2e7d32);color:#fff;text-align:center;padding:8px 12px;font-size:13px;font-weight:600;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+#top-banner a{color:#fff;text-decoration:underline;font-weight:800}
+
+#app-header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 18px;background:rgba(10,16,24,.85);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:34px;z-index:50;backdrop-filter:blur(8px)}
 .logo{display:flex;flex-direction:column}
 .logo-row{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
 .logo .leaf{font-size:26px;filter:drop-shadow(0 0 6px rgba(90,220,120,.5))}
@@ -100,8 +101,6 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 #game-wrap{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
 #board-box{position:relative}
 #board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(560px,92vw);height:min(560px,92vw);border:6px solid #3e2a1a;border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);background:#3e2a1a;position:relative}
-/* ВАЖНО: стрелки ходов лежат ПОВЕРХ доски абсолютно и не ловят клики,
-   иначе SVG становился элементом grid и сдвигал все клетки (баг дамки) */
 #board svg.move-arrow{position:absolute;left:0;top:0;pointer-events:none;z-index:40;opacity:1;transition:opacity .9s}
 #board svg.move-arrow.fade-out{opacity:0}
 .cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -205,22 +204,24 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .lb-rank{font-weight:800;color:var(--gold);width:32px;font-size:18px;text-align:center}
 .lb-val{margin-left:auto;font-weight:700;color:var(--gold)}
 
-body.ui-mobile #app-header{flex-direction:column;gap:8px;padding:8px}
-body.ui-mobile .logo-row{font-size:17px}
-body.ui-mobile #header-nav{margin-left:0;width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-body.ui-mobile .navbtn{justify-content:center;padding:10px 6px;font-size:12px}
+/* ===== МОБИЛЬНЫЙ ИНТЕРФЕЙС (КОМПАКТНЫЙ, НЕ РАСТЯНУТЫЙ) ===== */
+body.ui-mobile #top-banner{font-size:12px;padding:6px}
+body.ui-mobile #app-header{flex-direction:column;gap:6px;padding:6px;top:28px}
+body.ui-mobile .logo-row{font-size:16px}
+body.ui-mobile #header-nav{margin-left:0;width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+body.ui-mobile .navbtn{justify-content:center;padding:8px 4px;font-size:11px}
 body.ui-mobile #ui-switch{margin:0 auto;width:100%}
-body.ui-mobile #ui-switch button{flex:1;padding:11px}
-body.ui-mobile .screen{margin:8px auto;padding:0 6px}
+body.ui-mobile #ui-switch button{flex:1;padding:8px;font-size:12px}
+body.ui-mobile .screen{margin:8px auto;padding:0 8px}
 body.ui-mobile .panel{padding:12px;border-radius:12px}
-body.ui-mobile #board{width:min(92vw,380px);height:min(92vw,380px);border-width:4px}
-body.ui-mobile #game-wrap{flex-direction:column;align-items:center;gap:6px;padding:0}
+body.ui-mobile #board{width:min(96vw, 400px);height:min(96vw, 400px);border-width:4px}
+body.ui-mobile #game-wrap{flex-direction:column;align-items:center;gap:8px;padding:0}
 body.ui-mobile #board-box{width:100%;display:flex;justify-content:center}
-body.ui-mobile .gside{width:100%;max-width:400px;gap:6px}
+body.ui-mobile .gside{width:100%;max-width:400px;gap:6px;padding:0}
 body.ui-mobile .btn{padding:12px 16px;font-size:14px}
 body.ui-mobile .btn.big{padding:14px;font-size:15px}
 body.ui-mobile .field input,body.ui-mobile .field textarea{padding:12px;font-size:15px}
-body.ui-mobile #chat-panel{height:60vh}
+body.ui-mobile #chat-panel{height:65vh}
 body.ui-mobile .chat-msg{max-width:92%}
 body.ui-mobile .pcard{padding:8px;gap:8px}
 body.ui-mobile .pcard .nm{font-size:13px}
@@ -231,20 +232,27 @@ body.ui-mobile .stat-grid{grid-template-columns:repeat(2,1fr);gap:6px}
 body.ui-mobile .stat-card{padding:8px}
 body.ui-mobile .stat-card .v{font-size:16px}
 body.ui-mobile .modal{padding:18px;max-width:95vw}
-body.ui-mobile #game-chat-box{height:140px}
+body.ui-mobile #game-chat-box{height:140px;flex-shrink:0} /* Чат всегда виден */
 body.ui-mobile #turn-banner{padding:8px;font-size:13px}
 body.ui-mobile #capture-alert{font-size:12px;padding:5px 12px;top:-32px}
 body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
-@media(max-width:760px){#header-nav{width:100%;margin-left:0}#game-wrap{flex-direction:column;align-items:center}.gside{width:100%;max-width:560px}}
+
+@media(max-width:760px){
+  #header-nav{width:100%;margin-left:0}
+  #game-wrap{flex-direction:column;align-items:center}
+  .gside{width:100%;max-width:560px}
+}
 </style>
 </head>
 <body>
+
+<div id="top-banner">📢 Тг канал <a href="https://t.me/spkaxa" target="_blank">@spkaxa</a> - больше игр, сайтов, и новостей</div>
 
 <header id="app-header">
   <div class="logo">
     <div class="logo-row">
       <span class="leaf">🌿</span><span>Шашки Онлайн</span>
-      <span class="ver">v1.1</span>
+      <span class="ver">v1.1.1</span>
       <span class="author" id="creator-link">создатель xxspk (@spkaxa)</span>
     </div>
     <div class="credit">кодил qwen &lt;3</div>
@@ -270,7 +278,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   <div class="panel auth-card">
     <div class="auth-logo">🌿</div>
     <div class="auth-title" id="auth-title">Вход</div>
-    <div class="auth-sub">v1.1 · создатель xxspk · кодил qwen &lt;3</div>
+    <div class="auth-sub">v1.1.1 · создатель xxspk · кодил qwen &lt;3</div>
     <div class="field"><label>Имя</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
     <div class="field"><label>Пароль (мин. 6 символов)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
     <button class="btn big" id="auth-submit">Войти</button>
@@ -309,6 +317,10 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
     <div class="field"><label>Смена ника (раз в 12 часов)</label>
       <div class="row"><input id="set-newnick" maxlength="20" placeholder="Новый ник" style="flex:1"><button class="btn small" id="nick-btn">Сменить</button></div>
       <div id="nick-timer" style="font-size:12px;color:var(--txt2);margin-top:5px"></div>
+    </div>
+    <div class="field"><label>Клавиша отключения микрофона (войс)</label>
+      <div class="row"><input id="mute-key-input" maxlength="20" placeholder="Например: PageUp" style="flex:1"><button class="btn small" id="save-mute-key-btn">Сохранить</button></div>
+      <div style="font-size:11px;color:var(--txt2);margin-top:4px">По умолчанию: PageUp. Нажмите нужную клавишу в поле выше.</div>
     </div>
     <div class="field" style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)">
       <label>👁 Наблюдение за матчем</label>
@@ -355,7 +367,11 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
       <div style="height:8px"></div>
       <label class="checkbox-row">
         <input type="checkbox" id="chk-king-rules">
-        <span>👑 Изменение правил дамки (ребаланс)<span class="hint-text">Дамка бьёт только через 1 клетку. Подбор соперников отдельно от классических правил!</span></span>
+        <span>👑 Ребаланс дамки<span class="hint-text">Дамка бьёт только через 1 клетку.</span></span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="chk-any-rules" checked>
+        <span>🔀 Искать с любыми правилами<span class="hint-text">Если у соперника включен ребаланс, игра начнется с ним. Иначе — по классике.</span></span>
       </label>
       <button class="btn big" id="play-online-btn">🌐 Играть онлайн <span id="search-count" style="font-size:12px;opacity:.8"></span></button>
     </div>
@@ -399,6 +415,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
       <div class="row">
         <button class="btn danger small" id="surrender-btn">🏳️ Сдаться</button>
         <button class="btn secondary small" id="voice-match-btn">🎙 Войс: выкл</button>
+        <button class="btn secondary small hidden" id="bot-control-btn">🎮 Управление обеими</button>
         <button class="btn secondary small" id="leave-btn">Выйти</button>
         <span class="spacer"></span>
         <span id="game-timer" style="font-size:12px;color:var(--txt2)">00:00</span>
@@ -434,7 +451,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
       <li>Победа: у соперника нет шашек / нет ходов / сдача.</li>
       <li>Ничья: 20 минут игры / повторение позиции 3 раза.</li>
       <li>⏱ Время на ход: <b>30 секунд</b>, иначе удаляется шашка.</li>
-      <li>⚙️ <b>Режим "короткой дамки" (ребаланс):</b> дамка ходит и бьёт только через 1 клетку. Подбор соперников отдельный!</li>
+      <li>⚙️ <b>Режим "короткой дамки" (ребаланс):</b> дамка ходит и бьёт только через 1 клетку.</li>
     </ul>
     <h3 style="font-size:15px;margin:16px 0 8px">🏆 Система рангов</h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px" id="ranks-box"></div>
@@ -455,6 +472,16 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   </div>
 </section>
 
+<!-- Модалка выбора режима бота -->
+<div class="modal-bg hidden" id="bot-mode-modal">
+  <div class="modal" style="text-align:center;max-width:400px">
+    <h3 style="margin-bottom:16px">Выберите режим игры с ботом</h3>
+    <button class="btn big" id="bot-with-elo-btn" style="margin-bottom:10px">🏆 С изменением Elo</button>
+    <button class="btn big secondary" id="bot-no-elo-btn">🎮 Без Elo (свободная игра)</button>
+    <button class="btn small" id="bot-cancel-btn" style="margin-top:16px">Отмена</button>
+  </div>
+</div>
+
 <div class="modal-bg hidden" id="modal-bg">
   <div class="modal" id="modal-content"></div>
 </div>
@@ -463,7 +490,7 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
     <div class="spinner"></div>
     <div style="font-size:17px;font-weight:700">Ищем противника...</div>
     <div id="modal-search-count" style="font-size:13px;color:var(--gold);margin-top:6px">Ищут игру: ...</div>
-    <div style="font-size:12px;color:var(--txt2);margin-top:8px">Подбор только с таким же режимом дамки</div>
+    <div style="font-size:12px;color:var(--txt2);margin-top:8px">Подбор с учётом ваших предпочтений правил</div>
     <button class="btn secondary small" id="cancel-search-btn" style="margin-top:16px">Отменить</button>
   </div>
 </div>
@@ -497,12 +524,10 @@ const auth = getAuth(app);
 
 const TURN_SECONDS = 30;
 
-// ================= БЛОКИРОВЩИК F12 / DEVTOOLS =================
+// ================= БЛОКИРОВЩИК F12 =================
 window.addEventListener('keydown', e => {
   const k = e.key;
-  if (k === 'F12' ||
-      (e.ctrlKey && e.shiftKey && ['I','J','C','i','j','c'].includes(k)) ||
-      (e.ctrlKey && ['u','U','s','S'].includes(k))) {
+  if (k === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C','i','j','c'].includes(k)) || (e.ctrlKey && ['u','U','s','S'].includes(k))) {
     e.preventDefault(); e.stopPropagation();
     toast('🚫 Инструменты разработчика отключены', 'error');
     return false;
@@ -511,11 +536,7 @@ window.addEventListener('keydown', e => {
 
 // ================= УТИЛИТЫ =================
 const $ = (id) => document.getElementById(id);
-function on(id, fn) {
-  const el = $(id);
-  if (el) el.addEventListener('click', fn);
-  else addLog('err', 'Элемент не найден: #' + id);
-}
+function on(id, fn) { const el = $(id); if (el) el.addEventListener('click', fn); else addLog('err', 'Элемент не найден: #' + id); }
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmtTime(s) { s = Math.floor(s); return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0'); }
 function fmtTimeHM(ts) { if (!ts) return ''; const d = new Date(ts); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
@@ -528,20 +549,14 @@ function fmtTimeAgo(ts) {
   return Math.floor(d/864e5) + ' дн назад';
 }
 function toast(m, t) {
-  const el = $('toast');
-  el.textContent = m;
-  el.className = 'show ' + (t || '');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => { el.className = ''; }, 2600);
+  const el = $('toast'); el.textContent = m; el.className = 'show ' + (t || '');
+  clearTimeout(el._t); el._t = setTimeout(() => { el.className = ''; }, 2600);
 }
 function addLog(type, msg) {
-  const b = $('dev-log');
-  if (!b) return;
-  const d = document.createElement('div');
-  d.className = type;
+  const b = $('dev-log'); if (!b) return;
+  const d = document.createElement('div'); d.className = type;
   d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
-  b.appendChild(d);
-  b.scrollTop = b.scrollHeight;
+  b.appendChild(d); b.scrollTop = b.scrollHeight;
 }
 function devLog(m, c) { addLog(c || 'info', m); }
 
@@ -557,14 +572,11 @@ const RANKS = [
 ];
 function getRank(e) { return RANKS.find(r => e >= r.min && e <= r.max) || RANKS[0]; }
 function rankIndex(e) { let idx = 0; RANKS.forEach((r, i) => { if (e >= r.min) idx = i; }); return idx; }
-function calcTotalBotElo(u) {
-  return (u.botElo_easy||1000) + (u.botElo_normal||1000) + (u.botElo_hard||1000) + (u.botElo_impossible||1000) - 3000;
-}
+function calcTotalBotElo(u) { return (u.botElo_easy||1000) + (u.botElo_normal||1000) + (u.botElo_hard||1000) + (u.botElo_impossible||1000) - 3000; }
 function avatarHtml(u, c) {
   if (u.avatar) return '<div class="avatar ' + c + '"><img src="' + esc(u.avatar) + '" onerror="this.parentNode.innerHTML=\'🙂\'"></div>';
   return '<div class="avatar ' + c + '">🙂</div>';
 }
-// Роли premium / moderator (назначаются вручную в Firebase: users/{uid}/role)
 function roleBadge(u) {
   if (!u || !u.role) return '';
   if (u.role === 'premium') return '<span class="role-badge role-premium">💎 PREMIUM</span>';
@@ -573,32 +585,23 @@ function roleBadge(u) {
 }
 function isModerator() { return !!(currentUser && (currentUser.role === 'moderator')); }
 
-// ================= ДОСТИЖЕНИЯ (40 штук, навсегда) =================
+// ================= ДОСТИЖЕНИЯ =================
 const BOT_DIFF_NAMES = { easy:'Лёгкий', normal:'Обычный', hard:'Сложный', impossible:'Невозможный' };
 function buildAchievements() {
   const list = [];
-  const ow = [
-    [1,'🌐','Онлайн-победа I','Выиграть 1 онлайн игру'],
-    [5,'🌐','Онлайн-победа II','Выиграть 5 онлайн игр'],
-    [10,'🌐','Онлайн-победа III','Выиграть 10 онлайн игр'],
-    [25,'🌐','Онлайн-победа IV','Выиграть 25 онлайн игр'],
-    [50,'🌐','Онлайн-победа V','Выиграть 50 онлайн игр'],
-    [100,'🌐','Онлайн-победа VI','Выиграть 100 онлайн игр']
-  ];
+  const ow = [[1,'🌐','Онлайн-победа I','Выиграть 1 онлайн игру'],[5,'🌐','Онлайн-победа II','Выиграть 5 онлайн игр'],[10,'🌐','Онлайн-победа III','Выиграть 10 онлайн игр'],[25,'🌐','Онлайн-победа IV','Выиграть 25 онлайн игр'],[50,'🌐','Онлайн-победа V','Выиграть 50 онлайн игр'],[100,'🌐','Онлайн-победа VI','Выиграть 100 онлайн игр']];
   for (const [n, ic, nm, ds] of ow) list.push({ id:'ow'+n, icon:ic, name:nm, desc:ds, check:(nn => u => (u.wins||0) >= nn)(n) });
   RANKS.forEach((r, i) => list.push({ id:'rank'+i, icon:r.icon, name:'Ранг: '+r.n, desc:'Достичь ранга "'+r.n+'"', check:u=>rankIndex(u.maxElo||1000)>=i }));
   list.push({ id:'first', icon:'🎮', name:'Первая игра', desc:'Сыграть игру с ботом или онлайн', check:u=>((u.onlineGames||0)+(u.botGames||0))>=1 });
   for (const d of ['easy','normal','hard','impossible']) {
     const dn = BOT_DIFF_NAMES[d];
     list.push({ id:'bw1_'+d, icon:'🤖', name:'Победить бота "'+dn+'"', desc:'Выиграть 1 раз у бота '+dn, check:u=>(u['botWins_'+d]||0)>=1 });
-    for (const n of [5,10,25,50]) {
-      list.push({ id:'bw'+n+'_'+d, icon:'🤖', name:dn+' ×'+n, desc:'Выиграть '+n+' раз у бота '+dn, check:u=>(u['botWins_'+d]||0)>=n });
-    }
+    for (const n of [5,10,25,50]) list.push({ id:'bw'+n+'_'+d, icon:'🤖', name:dn+' ×'+n, desc:'Выиграть '+n+' раз у бота '+dn, check:u=>(u['botWins_'+d]||0)>=n });
   }
   list.push({ id:'chat1', icon:'💬', name:'Собеседник', desc:'Написать сообщение в чат', check:u=>(u.chatMsgs||0)>=1 });
   list.push({ id:'chat10', icon:'💬', name:'Болтун', desc:'Написать 10 сообщений в чат', check:u=>(u.chatMsgs||0)>=10 });
   list.push({ id:'chat100', icon:'💬', name:'Мастер чата', desc:'Написать 100 сообщений в чат', check:u=>(u.chatMsgs||0)>=100 });
-  list.push({ id:'clan', icon:'', name:'Клановец', desc:'Поставить клан в профиле', check:u=>!!(u.clan && u.clan.trim()) });
+  list.push({ id:'clan', icon:'⚔', name:'Клановец', desc:'Поставить клан в профиле', check:u=>!!(u.clan && u.clan.trim()) });
   list.push({ id:'all', icon:'👑', name:'Выполнить все достижения', desc:'Получить все остальные достижения', check:u=>list.every(a => a.id === 'all' || a.check(u)) });
   return list;
 }
@@ -627,9 +630,7 @@ async function getTop1() {
   } catch (e) {}
   return top1Cache;
 }
-function top1BadgeHTML(t, uid) {
-  return (t.uid === uid && t.elo > 1000) ? '<span class="top1-badge">👑 TOP 1 ELO</span>' : '';
-}
+function top1BadgeHTML(t, uid) { return (t.uid === uid && t.elo > 1000) ? '<span class="top1-badge">👑 TOP 1 ELO</span>' : ''; }
 async function fillProfileTop1(uid, slotId) {
   const t = await getTop1();
   const el = $(slotId);
@@ -665,14 +666,10 @@ function applySettings() {
   $('vol-val').textContent = Math.round(vol * 100) + '%';
   const mus = localStorage.getItem('musicOn') !== 'false';
   $('nav-music').textContent = mus ? '🎵 Музыка: вкл' : '🎵 Музыка: выкл';
-  const bgm = $('bg-music');
-  bgm.volume = vol;
+  const bgm = $('bg-music'); bgm.volume = vol;
   if (mus) bgm.play().catch(() => {}); else bgm.pause();
 }
-$('set-color').addEventListener('input', e => {
-  document.documentElement.style.setProperty('--main', e.target.value);
-  localStorage.setItem('themeColor', e.target.value);
-});
+$('set-color').addEventListener('input', e => { document.documentElement.style.setProperty('--main', e.target.value); localStorage.setItem('themeColor', e.target.value); });
 $('set-vol').addEventListener('input', e => {
   $('vol-val').textContent = e.target.value + '%';
   localStorage.setItem('musicVol', e.target.value / 100);
@@ -717,7 +714,6 @@ on('auth-toggle', () => {
 });
 on('auth-rules', () => showScreen('rules'));
 
-// Безопасный счётчик ID: если транзакция недоступна — не роняем регистрацию
 async function nextDisplayId() {
   try {
     const ctr = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
@@ -739,15 +735,7 @@ on('auth-submit', async () => {
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       const uid = cred.user.uid;
       const did = await nextDisplayId();
-      const profile = {
-        nick: name, tag: '', avatar: '', bio: '', clan: '', displayId: did, role: '',
-        elo: 1000, maxElo: 1000,
-        botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
-        botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
-        wins: 0, losses: 0, winStreak: 0, maxWinStreak: 0,
-        onlineGames: 0, botGames: 0, playtime: 0, chatMsgs: 0,
-        lastSeen: Date.now(), lastNickChange: 0, createdAt: Date.now(), deleted: false
-      };
+      const profile = { nick: name, tag: '', avatar: '', bio: '', clan: '', displayId: did, role: '', elo: 1000, maxElo: 1000, botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000, botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0, wins: 0, losses: 0, winStreak: 0, maxWinStreak: 0, onlineGames: 0, botGames: 0, playtime: 0, chatMsgs: 0, lastSeen: Date.now(), lastNickChange: 0, createdAt: Date.now(), deleted: false };
       await set(ref(db, 'users/' + uid), profile);
       await set(ref(db, 'nicknames/' + name.toLowerCase()), uid);
       currentUser = Object.assign({ uid }, profile);
@@ -784,10 +772,7 @@ onAuthStateChanged(auth, async (user) => {
       const defs = { botElo_easy:1000, botElo_normal:1000, botElo_hard:1000, botElo_impossible:1000, botWins_easy:0, botWins_normal:0, botWins_hard:0, botWins_impossible:0, wins:0, losses:0, winStreak:0, maxWinStreak:0, onlineGames:0, botGames:0, playtime:0, chatMsgs:0, lastNickChange:0, clan:'', role:'', deleted:false, elo:1000, maxElo:1000 };
       const up = {};
       for (const k in defs) { if (currentUser[k] === undefined) { currentUser[k] = defs[k]; up[k] = defs[k]; } }
-      if (!currentUser.displayId || currentUser.displayId === '00000') {
-        currentUser.displayId = await nextDisplayId();
-        up.displayId = currentUser.displayId;
-      }
+      if (!currentUser.displayId || currentUser.displayId === '00000') { currentUser.displayId = await nextDisplayId(); up.displayId = currentUser.displayId; }
       if (Object.keys(up).length) update(ref(db, 'users/' + user.uid), up).catch(() => {});
       update(ref(db, 'users/' + user.uid), { lastSeen: Date.now() }).catch(() => {});
       enterApp();
@@ -849,33 +834,45 @@ on('nick-btn', async () => {
   if (nn.length < 2) { toast('Ник слишком короткий'); return; }
   const s = await get(ref(db, 'nicknames/' + nn.toLowerCase()));
   if (s.exists()) { toast('Ник занят', 'error'); return; }
-  await update(ref(db), {
-    ['users/' + u.uid + '/nick']: nn,
-    ['users/' + u.uid + '/lastNickChange']: now,
-    ['nicknames/' + u.nick.toLowerCase()]: null,
-    ['nicknames/' + nn.toLowerCase()]: u.uid
-  });
+  await update(ref(db), { ['users/' + u.uid + '/nick']: nn, ['users/' + u.uid + '/lastNickChange']: now, ['nicknames/' + u.nick.toLowerCase()]: null, ['nicknames/' + nn.toLowerCase()]: u.uid });
   u.nick = nn; u.lastNickChange = now;
   $('set-newnick').value = '';
   toast('Ник изменён ✔', 'success');
 });
 
-// ================= ПРОФИЛЬ (единый вид для своего и чужого) =================
-function eloLine(l, u, d) {
-  return '<div class="elo-row"><span class="lab">' + l + '</span><span><b style="color:var(--gold)">' + (u['botElo_'+d]||1000) + '</b> · <span style="color:var(--green)">' + (u['botWins_'+d]||0) + 'W</span></span></div>';
-}
+// Настройка клавиши мута
+let muteKeyCode = localStorage.getItem('muteKeyCode') || 'PageUp';
+$('mute-key-input').value = muteKeyCode;
+on('mute-key-input', () => {
+  $('mute-key-input').addEventListener('keydown', e => {
+    e.preventDefault();
+    muteKeyCode = e.code;
+    $('mute-key-input').value = e.key === ' ' ? 'Space' : e.key;
+  });
+});
+on('save-mute-key-btn', () => {
+  localStorage.setItem('muteKeyCode', muteKeyCode);
+  toast('Клавиша сохранена: ' + muteKeyCode, 'success');
+});
+window.addEventListener('keydown', e => {
+  if (e.code === muteKeyCode && !['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) {
+    e.preventDefault();
+    toggleMicMute();
+  }
+});
+
+// ================= ПРОФИЛЬ =================
+function eloLine(l, u, d) { return '<div class="elo-row"><span class="lab">' + l + '</span><span><b style="color:var(--gold)">' + (u['botElo_'+d]||1000) + '</b> · <span style="color:var(--green)">' + (u['botWins_'+d]||0) + 'W</span></span></div>'; }
 function profileHTML(u, isMe, slotId) {
   const tot = calcTotalBotElo(u), rk = getRank(u.elo || 1000);
   const bw = (u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
   const kd = u.losses === 0 ? (u.wins||0) : ((u.wins||0)/u.losses).toFixed(2);
-  return '<div class="profile-head">' + avatarHtml(u, '') +
-    '<div style="flex:1;min-width:200px">' +
+  return '<div class="profile-head">' + avatarHtml(u, '') + '<div style="flex:1;min-width:200px">' +
     '<div class="pname">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + (u.clan ? ' <span class="pclan">⚔ ' + esc(u.clan) + '</span>' : '') + ' ' + roleBadge(u) + ' <span id="' + slotId + '"></span> <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ' + (u.displayId||'00000') + '</span></div>' +
     '<div style="margin:6px 0"><span class="rank-badge">' + rk.icon + ' ' + rk.n + ' · ' + (u.elo||1000) + ' Elo</span></div>' +
     '<div style="margin:6px 0;font-size:13px">🤖 Общий BotElo: <b style="color:var(--gold);font-size:16px">' + tot + '</b></div>' +
     '<div class="pabout">' + (u.bio ? esc(u.bio) : '<i style="opacity:.5">Нет описания</i>') + '</div></div>' +
-    (isMe ? '<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>' : '') +
-    '</div>' +
+    (isMe ? '<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>' : '') + '</div>' +
     '<div class="stat-grid">' +
     '<div class="stat-card"><div class="v">' + (u.elo||1000) + '</div><div class="l">Онлайн Elo (макс ' + (u.maxElo||1000) + ')</div></div>' +
     '<div class="stat-card"><div class="v">' + (u.wins||0) + '</div><div class="l">🌐 Побед онлайн</div></div>' +
@@ -885,64 +882,45 @@ function profileHTML(u, isMe, slotId) {
     '<div class="stat-card"><div class="v">' + (u.winStreak||0) + '</div><div class="l">Винстрик (макс ' + (u.maxWinStreak||0) + ')</div></div>' +
     '<div class="stat-card"><div class="v">' + fmtTime(u.playtime||0) + '</div><div class="l">Плейтайм</div></div>' +
     '<div class="stat-card"><div class="v">' + ((u.onlineGames||0)+(u.botGames||0)) + '</div><div class="l">Всего игр</div></div>' +
-    '</div>' +
-    '<div style="margin-top:14px">' + eloLine('🟢 Лёгкий бот', u, 'easy') + eloLine('🔵 Обычный бот', u, 'normal') + eloLine('🟠 Сложный бот', u, 'hard') + eloLine('🔥 Невозможный бот', u, 'impossible') + '</div>' +
-    achievementsHTML(u);
+    '</div>' + '<div style="margin-top:14px">' + eloLine('🟢 Лёгкий бот', u, 'easy') + eloLine('🔵 Обычный бот', u, 'normal') + eloLine('🟠 Сложный бот', u, 'hard') + eloLine('🔥 Невозможный бот', u, 'impossible') + '</div>' + achievementsHTML(u);
 }
 function renderMyProfile() {
   if (!currentUser) return;
   $('my-profile-box').innerHTML = profileHTML(currentUser, true, 'top1-slot-main');
   fillProfileTop1(currentUser.uid, 'top1-slot-main');
   on('open-edit-btn', () => {
-    $('edit-tag').value = currentUser.tag || '';
-    $('edit-clan').value = currentUser.clan || '';
-    $('edit-about').value = currentUser.bio || '';
+    $('edit-tag').value = currentUser.tag || ''; $('edit-clan').value = currentUser.clan || ''; $('edit-about').value = currentUser.bio || '';
     $('edit-avatar-url').value = (currentUser.avatar && currentUser.avatar.startsWith('http')) ? currentUser.avatar : '';
     showScreen('profile-edit');
   });
 }
-
 $('edit-avatar-file').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => { $('edit-avatar-url').value = ev.target.result; toast('Аватар загружен'); };
-  r.readAsDataURL(f);
+  const r = new FileReader(); r.onload = ev => { $('edit-avatar-url').value = ev.target.result; toast('Аватар загружен'); }; r.readAsDataURL(f);
 });
 on('save-profile-btn', async () => {
   if (!currentUser) return;
-  const a = $('edit-avatar-url').value.trim();
-  const t = $('edit-tag').value.trim().slice(0, 20);
-  const c = $('edit-clan').value.trim().slice(0, 20);
-  const b = $('edit-about').value.trim().slice(0, 160);
+  const a = $('edit-avatar-url').value.trim(), t = $('edit-tag').value.trim().slice(0, 20), c = $('edit-clan').value.trim().slice(0, 20), b = $('edit-about').value.trim().slice(0, 160);
   await update(ref(db, 'users/' + currentUser.uid), { avatar: a, tag: t, clan: c, bio: b });
   Object.assign(currentUser, { avatar: a, tag: t, clan: c, bio: b });
-  toast('Профиль сохранён ✔', 'success');
-  showScreen('profile-view'); renderMyProfile();
+  toast('Профиль сохранён ✔', 'success'); showScreen('profile-view'); renderMyProfile();
 });
 on('delete-account-btn', async () => {
   if (!confirm('Удалить аккаунт навсегда?')) return;
   const u = currentUser;
   await update(ref(db, 'users/' + u.uid), { deleted: true, nick: 'Аккаунт удален', avatar: '', bio: '', tag: '', clan: '' });
-  await set(ref(db, 'nicknames/' + u.nick.toLowerCase()), null);
-  await signOut(auth);
-  location.reload();
+  await set(ref(db, 'nicknames/' + u.nick.toLowerCase()), null); await signOut(auth); location.reload();
 });
 
-// ================= МОДАЛКА ПРОФИЛЯ (теперь тот же вид, что и свой) =================
-function openModal(html) {
-  $('modal-content').innerHTML = '<button class="x" id="modal-x">✕</button>' + html;
-  $('modal-bg').classList.remove('hidden');
-  on('modal-x', closeModal);
-}
+// ================= МОДАЛКА ПРОФИЛЯ =================
+function openModal(html) { $('modal-content').innerHTML = '<button class="x" id="modal-x">✕</button>' + html; $('modal-bg').classList.remove('hidden'); on('modal-x', closeModal); }
 function closeModal() { $('modal-bg').classList.add('hidden'); }
 $('modal-bg').addEventListener('click', e => { if (e.target.id === 'modal-bg') closeModal(); });
-
 async function showProfile(uid) {
   if (!uid) return;
   const snap = await get(ref(db, 'users/' + uid));
   if (!snap.exists()) { toast('Игрок не найден', 'error'); return; }
-  const u = snap.val();
-  openModal(profileHTML(u, false, 'top1-slot-modal'));
+  openModal(profileHTML(snap.val(), false, 'top1-slot-modal'));
   fillProfileTop1(uid, 'top1-slot-modal');
 }
 function openProfileModal(uid) { showProfile(uid); }
@@ -954,21 +932,20 @@ function bindChatClicks(container, isGlobal) {
     const delEl = e.target.closest('.del-msg');
     if (delEl) {
       const key = delEl.dataset.key;
-      if (isGlobal) update(ref(db, 'globalChat/' + key), { deleted: true }).catch(err => devLog('del: ' + err.message, 'err'));
+      if (isGlobal) update(ref(db, 'globalChat/' + key), { deleted: true }).catch(() => {});
       else if (G && G.roomId) update(ref(db, 'rooms/' + G.roomId + '/chat/' + key), { deleted: true }).catch(() => {});
     }
   });
 }
 
-// ================= ГЛОБАЛЬНЫЙ ЧАТ (аватарки, роли, удаление) =================
+// ================= ГЛОБАЛЬНЫЙ ЧАТ =================
 let globalChatUnsub = null;
 bindChatClicks($('chat-msgs'), true);
 function renderGlobalChat() {
   if (globalChatUnsub) globalChatUnsub();
   const q = query(ref(db, 'globalChat'), orderByChild('ts'), limitToLast(100));
   globalChatUnsub = onValue(q, snap => {
-    const box = $('chat-msgs');
-    box.innerHTML = '';
+    const box = $('chat-msgs'); box.innerHTML = '';
     const msgs = Object.entries(snap.val() || {}).sort((a, b) => a[1].ts - b[1].ts);
     msgs.forEach(([key, m]) => {
       const own = m.uid === (currentUser ? currentUser.uid : null);
@@ -980,26 +957,21 @@ function renderGlobalChat() {
       if (canDel) html += '<button class="del-msg" data-key="' + key + '">🗑</button>';
       html += '</div>';
       html += m.deleted ? '<div class="bubble">🚫 Сообщение удалено</div>' : '<div class="bubble">' + esc(m.text) + '</div>';
-      d.innerHTML = html;
-      box.appendChild(d);
+      d.innerHTML = html; box.appendChild(d);
     });
     box.scrollTop = box.scrollHeight;
   });
 }
-function bumpChatCounter() {
-  if (currentUser) runTransaction(ref(db, 'users/' + currentUser.uid + '/chatMsgs'), c => (c || 0) + 1).catch(() => {});
-}
+function bumpChatCounter() { if (currentUser) runTransaction(ref(db, 'users/' + currentUser.uid + '/chatMsgs'), c => (c || 0) + 1).catch(() => {}); }
 async function sendGlobalChat() {
-  const t = $('global-chat-input').value.trim();
-  if (!t || !currentUser) return;
+  const t = $('global-chat-input').value.trim(); if (!t || !currentUser) return;
   await push(ref(db, 'globalChat'), { uid: currentUser.uid, nick: currentUser.nick, text: t, ts: Date.now(), deleted: false, avatar: currentUser.avatar || '', role: currentUser.role || '' });
-  bumpChatCounter();
-  $('global-chat-input').value = '';
+  bumpChatCounter(); $('global-chat-input').value = '';
 }
 on('global-chat-send', sendGlobalChat);
 $('global-chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendGlobalChat(); });
 
-// ================= РЕЙТИНГ =================
+// ================= РЕЙТИНГ И ИГРОКИ =================
 let ratingFilter = 'total';
 document.querySelectorAll('#rating-filter .chip').forEach(chip => {
   chip.addEventListener('click', () => {
@@ -1009,8 +981,7 @@ document.querySelectorAll('#rating-filter .chip').forEach(chip => {
   });
 });
 async function renderRating() {
-  const box = $('rating-box');
-  box.innerHTML = 'Загрузка...';
+  const box = $('rating-box'); box.innerHTML = 'Загрузка...';
   try {
     const snap = await get(ref(db, 'users'));
     const users = snap.val() || {};
@@ -1021,45 +992,24 @@ async function renderRating() {
       if (ratingFilter === 'maxElo') return u.maxElo || 1000;
       return u['botElo_' + ratingFilter] || 1000;
     };
-    list.sort((a, b) => val(b) - val(a));
-    list = list.slice(0, 50);
+    list.sort((a, b) => val(b) - val(a)); list = list.slice(0, 50);
     if (!list.length) { box.innerHTML = '<div style="text-align:center;color:var(--txt2)">Нет данных</div>'; return; }
-    box.innerHTML = list.map((u, i) =>
-      '<div class="lb-item" data-uid="' + u.uid + '">' +
-      '<div class="lb-rank">#' + (i+1) + '</div>' +
-      '<div class="avatar sm">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nick ? u.nick[0].toUpperCase() : '?')) + '</div>' +
-      '<div style="flex:1"><div style="font-weight:700">' + esc(u.nick || '') + ' ' + roleBadge(u) + '</div>' +
-      '<div style="font-size:11px;color:var(--txt2)">' + (u.clan ? '[' + esc(u.clan) + '] ' : '') + fmtTimeAgo(u.lastSeen) + '</div></div>' +
-      '<div class="lb-val">' + val(u) + '</div></div>'
-    ).join('');
+    box.innerHTML = list.map((u, i) => '<div class="lb-item" data-uid="' + u.uid + '"><div class="lb-rank">#' + (i+1) + '</div><div class="avatar sm">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nick ? u.nick[0].toUpperCase() : '?')) + '</div><div style="flex:1"><div style="font-weight:700">' + esc(u.nick || '') + ' ' + roleBadge(u) + '</div><div style="font-size:11px;color:var(--txt2)">' + (u.clan ? '[' + esc(u.clan) + '] ' : '') + fmtTimeAgo(u.lastSeen) + '</div></div><div class="lb-val">' + val(u) + '</div></div>').join('');
     box.querySelectorAll('.lb-item').forEach(el => el.addEventListener('click', () => openProfileModal(el.dataset.uid)));
-  } catch (e) {
-    devLog('Rating error: ' + e.message, 'err');
-    box.innerHTML = 'Ошибка: ' + esc(e.message);
-  }
+  } catch (e) { box.innerHTML = 'Ошибка: ' + esc(e.message); }
 }
-
-// ================= ИГРОКИ =================
 async function renderPlayers() {
-  const box = $('players-box');
-  box.innerHTML = 'Загрузка...';
+  const box = $('players-box'); box.innerHTML = 'Загрузка...';
   try {
     const snap = await get(ref(db, 'users'));
     const users = snap.val() || {};
     const list = Object.entries(users).filter(([_, u]) => !u.deleted).sort((a, b) => (b[1].lastSeen||0) - (a[1].lastSeen||0));
     box.innerHTML = list.map(([uid, u]) => {
       const isOnline = Date.now() - (u.lastSeen||0) < 3e5;
-      return '<div class="player-item" data-uid="' + uid + '">' +
-        '<span class="online-dot ' + (isOnline ? 'on' : 'off') + '"></span>' +
-        '<div class="avatar sm">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nick ? u.nick[0].toUpperCase() : '?')) + '</div>' +
-        '<div style="flex:1"><div style="font-weight:700">' + esc(u.nick||'') + ' ' + roleBadge(u) + (uid === (currentUser?currentUser.uid:'') ? ' <span style="color:var(--main);font-size:11px">(ты)</span>' : '') + '</div>' +
-        '<div style="font-size:11px;color:var(--txt2)">' + (u.clan ? '[' + esc(u.clan) + '] ' : '') + fmtTimeAgo(u.lastSeen) + '</div></div>' +
-        '<div class="lb-val">' + (u.elo||1000) + '</div></div>';
+      return '<div class="player-item" data-uid="' + uid + '"><span class="online-dot ' + (isOnline ? 'on' : 'off') + '"></span><div class="avatar sm">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : (u.nick ? u.nick[0].toUpperCase() : '?')) + '</div><div style="flex:1"><div style="font-weight:700">' + esc(u.nick||'') + ' ' + roleBadge(u) + (uid === (currentUser?currentUser.uid:'') ? ' <span style="color:var(--main);font-size:11px">(ты)</span>' : '') + '</div><div style="font-size:11px;color:var(--txt2)">' + (u.clan ? '[' + esc(u.clan) + '] ' : '') + fmtTimeAgo(u.lastSeen) + '</div></div><div class="lb-val">' + (u.elo||1000) + '</div></div>';
     }).join('');
     box.querySelectorAll('.player-item').forEach(el => el.addEventListener('click', () => openProfileModal(el.dataset.uid)));
-  } catch (e) {
-    box.innerHTML = 'Ошибка: ' + esc(e.message);
-  }
+  } catch (e) { box.innerHTML = 'Ошибка: ' + esc(e.message); }
 }
 
 // ================= ДВИЖОК ШАШЕК =================
@@ -1077,89 +1027,56 @@ function inside(r, c) { return r>=0 && r<8 && c>=0 && c<8; }
 function isPromotionRow(color, r) { return (color === 'w' && r === 0) || (color === 'b' && r === 7); }
 
 function getStepsForPiece(board, from, color) {
-  const p = board[from];
-  if (!p || p.color !== color) return [];
+  const p = board[from]; if (!p || p.color !== color) return [];
   const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
-  const [r, c] = rc(from);
-  const steps = [];
+  const [r, c] = rc(from); const steps = [];
   if (p.king && currentKingRules === 'short') {
-    // короткая дамка: бьёт через 1, ходит на 1
     for (const [dr, dc] of dirs) {
       const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
-      if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
-        steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: false });
+      if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)]) steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: false });
     }
     if (steps.length) return steps;
-    for (const [dr, dc] of dirs) {
-      const nr = r+dr, nc = c+dc;
-      if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: false });
-    }
+    for (const [dr, dc] of dirs) { const nr = r+dr, nc = c+dc; if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: false }); }
     return steps;
   }
   if (p.king) {
-    // летающая дамка: бьёт на любое расстояние, ходит на любое свободное
     for (const [dr, dc] of dirs) {
       let nr = r+dr, nc = c+dc;
       while (inside(nr,nc) && !board[idx(nr,nc)]) { nr += dr; nc += dc; }
       if (inside(nr,nc) && board[idx(nr,nc)].color !== color) {
         let er = nr+dr, ec = nc+dc;
-        while (inside(er,ec) && !board[idx(er,ec)]) {
-          steps.push({ from, to: idx(er,ec), captures: [idx(nr,nc)], promote: false });
-          er += dr; ec += dc;
-        }
+        while (inside(er,ec) && !board[idx(er,ec)]) { steps.push({ from, to: idx(er,ec), captures: [idx(nr,nc)], promote: false }); er += dr; ec += dc; }
       }
     }
     if (steps.length) return steps;
-    for (const [dr, dc] of dirs) {
-      let nr = r+dr, nc = c+dc;
-      while (inside(nr,nc) && !board[idx(nr,nc)]) {
-        steps.push({ from, to: idx(nr,nc), captures: [], promote: false });
-        nr += dr; nc += dc;
-      }
-    }
+    for (const [dr, dc] of dirs) { let nr = r+dr, nc = c+dc; while (inside(nr,nc) && !board[idx(nr,nc)]) { steps.push({ from, to: idx(nr,nc), captures: [], promote: false }); nr += dr; nc += dc; } }
     return steps;
   }
   if (currentKingRules === 'short') {
-    // простая в режиме ребаланса: бьёт через 1 вперёд/назад, ходит вперёд
     for (const [dr, dc] of dirs) {
       const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
-      if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
-        steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: isPromotionRow(color, tr) });
+      if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)]) steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: isPromotionRow(color, tr) });
     }
     if (steps.length) return steps;
     const fwd = color === 'w' ? -1 : 1;
-    for (const dc of [-1, 1]) {
-      const nr = r+fwd, nc = c+dc;
-      if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: isPromotionRow(color, nr) });
-    }
+    for (const dc of [-1, 1]) { const nr = r+fwd, nc = c+dc; if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: isPromotionRow(color, nr) }); }
     return steps;
   }
-  // простая шашка: бьёт вперёд и назад через 1 клетку
   for (const [dr, dc] of dirs) {
     const mr = r+dr, mc = c+dc, tr = r+2*dr, tc = c+2*dc;
-    if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)])
-      steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: isPromotionRow(color, tr) });
+    if (inside(tr,tc) && board[idx(mr,mc)] && board[idx(mr,mc)].color !== color && !board[idx(tr,tc)]) steps.push({ from, to: idx(tr,tc), captures: [idx(mr,mc)], promote: isPromotionRow(color, tr) });
   }
   if (steps.length) return steps;
   const fwd = color === 'w' ? -1 : 1;
-  for (const dc of [-1, 1]) {
-    const nr = r+fwd, nc = c+dc;
-    if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: isPromotionRow(color, nr) });
-  }
+  for (const dc of [-1, 1]) { const nr = r+fwd, nc = c+dc; if (inside(nr,nc) && !board[idx(nr,nc)]) steps.push({ from, to: idx(nr,nc), captures: [], promote: isPromotionRow(color, nr) }); }
   return steps;
 }
 function mustCapture(board, color) {
-  for (let i = 0; i < 64; i++) {
-    if (board[i] && board[i].color === color) {
-      if (getStepsForPiece(board, i, color).some(s => s.captures.length > 0)) return true;
-    }
-  }
+  for (let i = 0; i < 64; i++) { if (board[i] && board[i].color === color && getStepsForPiece(board, i, color).some(s => s.captures.length > 0)) return true; }
   return false;
 }
 function applyStep(board, step) {
-  const nb = cloneBoard(board);
-  const p = nb[step.from];
-  nb[step.from] = null;
+  const nb = cloneBoard(board); const p = nb[step.from]; nb[step.from] = null;
   for (const c of step.captures) nb[c] = null;
   nb[step.to] = { color: p.color, king: p.king || step.promote };
   return nb;
@@ -1184,7 +1101,6 @@ function getFullMoves(board, color) {
   const captureSeqs = sequences.filter(sq => sq.some(st => st.captures.length > 0));
   return captureSeqs.length ? captureSeqs : sequences;
 }
-function getBotSequences(board, color) { return getFullMoves(board, color); }
 function evalFor(b, c) {
   let s = 0;
   for (let i = 0; i < 64; i++) {
@@ -1199,34 +1115,21 @@ function evalFor(b, c) {
 }
 function minimax(b, d, a, bt, isMax, bc) {
   const cur = isMax ? bc : (bc === 'w' ? 'b' : 'w');
-  const seqs = getBotSequences(b, cur);
+  const seqs = getFullMoves(b, cur);
   if (!seqs.length) return isMax ? -100000 - d*100 : 100000 + d*100;
   if (d === 0) return evalFor(b, bc);
   if (isMax) {
     let mx = -Infinity;
-    for (const sq of seqs) {
-      let nb = b; for (const st of sq) nb = applyStep(nb, st);
-      const sc = minimax(nb, d-1, a, bt, false, bc);
-      if (sc > mx) mx = sc;
-      if (mx > a) a = mx;
-      if (bt <= a) break;
-    }
+    for (const sq of seqs) { let nb = b; for (const st of sq) nb = applyStep(nb, st); const sc = minimax(nb, d-1, a, bt, false, bc); if (sc > mx) mx = sc; if (mx > a) a = mx; if (bt <= a) break; }
     return mx;
   }
   let mn = Infinity;
-  for (const sq of seqs) {
-    let nb = b; for (const st of sq) nb = applyStep(nb, st);
-    const sc = minimax(nb, d-1, a, bt, true, bc);
-    if (sc < mn) mn = sc;
-    if (mn < bt) bt = mn;
-    if (bt <= a) break;
-  }
+  for (const sq of seqs) { let nb = b; for (const st of sq) nb = applyStep(nb, st); const sc = minimax(nb, d-1, a, bt, true, bc); if (sc < mn) mn = sc; if (mn < bt) bt = mn; if (bt <= a) break; }
   return mn;
 }
 function capsOf(seq) { return seq.reduce((s, st) => s + st.captures.length, 0); }
 function botChooseMove(board, color, diff) {
-  const seqs = getFullMoves(board, color);
-  if (!seqs.length) return null;
+  const seqs = getFullMoves(board, color); if (!seqs.length) return null;
   if (diff === 'easy') {
     if (Math.random() < 0.75) {
       const quiet = seqs.filter(s => capsOf(s) === 0);
@@ -1260,8 +1163,7 @@ function botChooseMove(board, color, diff) {
       if (performance.now() > deadline) break;
       let nb = board; for (const st of sq) nb = applyStep(nb, st);
       const sc = minimax(nb, d-1, a, Infinity, false, color);
-      if (sc > cs) { cs = sc; cb = sq; }
-      if (sc > a) a = sc;
+      if (sc > cs) { cs = sc; cb = sq; } if (sc > a) a = sc;
     }
     if (cb) best = cb;
   }
@@ -1271,47 +1173,29 @@ function botChooseMove(board, color, diff) {
 // ================= АНИМАЦИЯ + СТРЕЛКИ =================
 let arrowFadeTimers = [];
 function clearMoveArrows() {
-  const bd = $('board');
-  if (bd) bd.querySelectorAll('svg.move-arrow').forEach(s => s.remove());
-  arrowFadeTimers.forEach(t => clearTimeout(t));
-  arrowFadeTimers = [];
+  const bd = $('board'); if (bd) bd.querySelectorAll('svg.move-arrow').forEach(s => s.remove());
+  arrowFadeTimers.forEach(t => clearTimeout(t)); arrowFadeTimers = [];
 }
-// Полупрозрачная чёрная стрелка сегмента хода from->to (видно всю цепочку взятий)
 function drawMoveArrow(from, to) {
-  const bd = $('board');
-  const cs = bd.clientWidth / 8;
+  const bd = $('board'); const cs = bd.clientWidth / 8;
   function center(i) { const [r, c] = rc(i); return { x: c*cs + cs/2, y: r*cs + cs/2 }; }
   const a = center(from), b = center(to);
-  const dx = b.x - a.x, dy = b.y - a.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const ux = dx/len, uy = dy/len;
-  const inset = cs * 0.34;
+  const dx = b.x - a.x, dy = b.y - a.y; const len = Math.hypot(dx, dy) || 1;
+  const ux = dx/len, uy = dy/len; const inset = cs * 0.34;
   const sx = a.x + ux*inset, sy = a.y + uy*inset;
-  const ex = b.x - ux*inset, ey = b.y - uy*inset;
-  const head = cs * 0.20;
-  const bx = ex - ux*head, by = ey - uy*head;
-  const px = -uy, py = ux;
-  const w = Math.max(3, cs*0.07);
+  const ex = b.x - ux*inset, ey = b.y - uy*inset; const head = cs * 0.20;
+  const bx = ex - ux*head, by = ey - uy*head; const px = -uy, py = ux; const w = Math.max(3, cs*0.07);
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', 'move-arrow');
-  svg.style.width = bd.clientWidth + 'px';
-  svg.style.height = bd.clientHeight + 'px';
+  svg.setAttribute('class', 'move-arrow'); svg.style.width = bd.clientWidth + 'px'; svg.style.height = bd.clientHeight + 'px';
   svg.innerHTML = '<line x1="' + sx + '" y1="' + sy + '" x2="' + bx + '" y2="' + by + '" stroke="black" stroke-opacity="0.28" stroke-width="' + w + '" stroke-linecap="round"/>' +
     '<polygon points="' + ex + ',' + ey + ' ' + (bx + px*head*0.55) + ',' + (by + py*head*0.55) + ' ' + (bx - px*head*0.55) + ',' + (by - py*head*0.55) + '" fill="black" fill-opacity="0.3"/>';
   bd.appendChild(svg);
-  arrowFadeTimers.push(setTimeout(() => {
-    svg.classList.add('fade-out');
-    arrowFadeTimers.push(setTimeout(() => svg.remove(), 950));
-  }, 8000));
+  arrowFadeTimers.push(setTimeout(() => { svg.classList.add('fade-out'); arrowFadeTimers.push(setTimeout(() => svg.remove(), 950)); }, 8000));
 }
 
 function animatePieceMove(path, captures, color, isKing, flipped, callback) {
   const bd = $('board'), cs = bd.clientWidth / 8;
-  function gp(i) {
-    const [r, c] = rc(i);
-    const dr = flipped ? 7-r : r, dc = flipped ? 7-c : c;
-    return { x: dc*cs + cs*0.11, y: dr*cs + cs*0.11 };
-  }
+  function gp(i) { const [r, c] = rc(i); const dr = flipped ? 7-r : r, dc = flipped ? 7-c : c; return { x: dc*cs + cs*0.11, y: dr*cs + cs*0.11 }; }
   clearMoveArrows();
   for (let s = 0; s < path.length - 1; s++) drawMoveArrow(path[s], path[s+1]);
   const lastEl = bd.querySelector('.cell[data-idx="' + path[path.length-1] + '"] .piece');
@@ -1320,26 +1204,18 @@ function animatePieceMove(path, captures, color, isKing, flipped, callback) {
   if (firstEl) firstEl.remove();
   const anim = document.createElement('div');
   anim.className = 'piece anim-piece ' + (color === 'w' ? 'white' : 'black') + (isKing ? ' king' : '');
-  anim.style.width = cs*0.78 + 'px';
-  anim.style.height = cs*0.78 + 'px';
-  const sp = gp(path[0]);
-  anim.style.left = sp.x + 'px'; anim.style.top = sp.y + 'px';
+  anim.style.width = cs*0.78 + 'px'; anim.style.height = cs*0.78 + 'px';
+  const sp = gp(path[0]); anim.style.left = sp.x + 'px'; anim.style.top = sp.y + 'px';
   bd.appendChild(anim);
   let step = 0;
   function doStep() {
     step++;
-    if (step >= path.length) {
-      anim.remove();
-      if (lastEl) lastEl.style.visibility = '';
-      if (callback) callback();
-      return;
-    }
+    if (step >= path.length) { anim.remove(); if (lastEl) lastEl.style.visibility = ''; if (callback) callback(); return; }
     if (captures && step-1 < captures.length) {
       const capEl = bd.querySelector('.cell[data-idx="' + captures[step-1] + '"] .piece');
       if (capEl) { capEl.classList.add('dying'); setTimeout(() => capEl.remove(), 200); }
     }
-    const pos = gp(path[step]);
-    anim.style.left = pos.x + 'px'; anim.style.top = pos.y + 'px';
+    const pos = gp(path[step]); anim.style.left = pos.x + 'px'; anim.style.top = pos.y + 'px';
     setTimeout(doStep, 200);
   }
   setTimeout(doStep, 50);
@@ -1348,8 +1224,7 @@ function animatePieceMove(path, captures, color, isKing, flipped, callback) {
 // ================= ИГРА =================
 let G = null, selected = null, possibleMoves = [], roomUnsub = null;
 let midMoveBoard = null, midMovePiece = null, midMovePath = [], exitTimerInt = null;
-let chainOrigin = null;
-let animating = false;
+let chainOrigin = null, animating = false, botControlEnabled = false;
 const BOT_META = { easy:{n:'Лёгкий бот 🟢',elo:800}, normal:{n:'Обычный бот 🔵',elo:1500}, hard:{n:'Сложный бот 🟠',elo:2200}, impossible:{n:'Невозможный бот 🔥',elo:3500} };
 
 function setCard(prefix, data) {
@@ -1358,28 +1233,33 @@ function setCard(prefix, data) {
   $(prefix + '-sub').textContent = (data.elo||1000) + ' Elo';
   $(prefix + '-rank').textContent = getRank(data.elo||1000).n;
   $(prefix + '-streak').textContent = '🔥' + (data.winStreak||0);
-  const roleEl = $(prefix + '-role');
-  if (roleEl) roleEl.innerHTML = roleBadge(data);
+  const roleEl = $(prefix + '-role'); if (roleEl) roleEl.innerHTML = roleBadge(data);
 }
+function resetMoveState() { midMoveBoard = null; midMovePiece = null; midMovePath = []; selected = null; possibleMoves = []; chainOrigin = null; clearMoveArrows(); }
 
-function resetMoveState() {
-  midMoveBoard = null; midMovePiece = null; midMovePath = [];
-  selected = null; possibleMoves = []; chainOrigin = null;
-  clearMoveArrows();
+let pendingBotDiff = null;
+function showBotModeSelect(diff) {
+  pendingBotDiff = diff;
+  $('bot-mode-modal').classList.remove('hidden');
 }
+on('diff-easy', () => showBotModeSelect('easy'));
+on('diff-normal', () => showBotModeSelect('normal'));
+on('diff-hard', () => showBotModeSelect('hard'));
+on('diff-impossible', () => showBotModeSelect('impossible'));
+on('bot-cancel-btn', () => { $('bot-mode-modal').classList.add('hidden'); pendingBotDiff = null; });
 
-function startBotGame(diff) {
+function startBotGame(diff, noElo) {
   if (!currentUser) { toast('Войдите', 'error'); return; }
+  $('bot-mode-modal').classList.add('hidden');
   stopWatchdog(); cleanupSearch(); isSearching = false;
   $('search-overlay').classList.add('hidden');
   if (exitTimerInt) { clearInterval(exitTimerInt); exitTimerInt = null; }
   if (G && G.timerInt) clearInterval(G.timerInt);
   if (G && G._clockInt) clearInterval(G._clockInt);
   if (roomUnsub) { roomUnsub(); roomUnsub = null; }
-  resetMoveState();
-  animating = false;
+  resetMoveState(); animating = false; botControlEnabled = false;
   currentKingRules = 'flying';
-  G = { mode:'bot', diff, board:initBoard(), turn:'w', myColor:'w', botColor:'b', timers:{w:TURN_SECONDS,b:TURN_SECONDS}, timerInt:null, over:false, eloUp:false, moveCount:0, startTime:Date.now(), oppUid:null, roomId:null, spectator:false, matchCode:null, whiteUid:null };
+  G = { mode:'bot', diff, noElo: !!noElo, board:initBoard(), turn:'w', myColor:'w', botColor:'b', timers:{w:TURN_SECONDS,b:TURN_SECONDS}, timerInt:null, over:false, eloUp:false, moveCount:0, startTime:Date.now(), oppUid:null, roomId:null, spectator:false, matchCode:null, whiteUid:null };
   setCard('me', currentUser);
   $('me-av').innerHTML = currentUser.avatar ? '<img src="' + esc(currentUser.avatar) + '">' : '🙂';
   setCard('opp', { nick: BOT_META[diff].n, elo: BOT_META[diff].elo, winStreak: 0 });
@@ -1387,20 +1267,24 @@ function startBotGame(diff) {
   $('game-chat-box').innerHTML = '';
   $('match-code-box').classList.add('hidden');
   $('spectator-badge').classList.add('hidden');
-  showScreen('game');
-  renderBoard();
-  fillGameTop1();
-  startTurnTimer();
-  devLog('Bot game: ' + diff, 'ok');
+  $('bot-control-btn').classList.toggle('hidden', !noElo);
+  $('bot-control-btn').textContent = '🎮 Управление обеими: выкл';
+  showScreen('game'); renderBoard(); fillGameTop1(); startTurnTimer();
+  devLog('Bot game: ' + diff + (noElo ? ' (No Elo)' : ''), 'ok');
 }
-on('diff-easy', () => startBotGame('easy'));
-on('diff-normal', () => startBotGame('normal'));
-on('diff-hard', () => startBotGame('hard'));
-on('diff-impossible', () => startBotGame('impossible'));
+on('bot-with-elo-btn', () => { if (pendingBotDiff) startBotGame(pendingBotDiff, false); });
+on('bot-no-elo-btn', () => { if (pendingBotDiff) startBotGame(pendingBotDiff, true); });
 
-// ================= МАТЧМЕЙКИНГ v1.1 =================
+on('bot-control-btn', () => {
+  if (!G || !G.noElo) return;
+  botControlEnabled = !botControlEnabled;
+  $('bot-control-btn').textContent = botControlEnabled ? '🎮 Управление обеими: вкл' : '🎮 Управление обеими: выкл';
+  $('bot-control-btn').classList.toggle('danger', botControlEnabled);
+});
+
+// ================= МАТЧМЕЙКИНГ v1.1.1 (ИСПРАВЛЕННЫЙ) =================
 let isSearching = false, queueListener = null, matchListener = null;
-let heartbeatInt = null, guestWatchdog = null, myKingRules = 'flying';
+let heartbeatInt = null, guestWatchdog = null, myKingRules = 'flying', myAnyRules = true;
 
 function isAlive(entry, now) {
   if (!entry) return false;
@@ -1426,34 +1310,20 @@ async function startOnlineSearch() {
   if (G && G.timerInt) clearInterval(G.timerInt);
   if (G && G._clockInt) clearInterval(G._clockInt);
   if (roomUnsub) { roomUnsub(); roomUnsub = null; }
-  resetMoveState();
-  G = null;
+  resetMoveState(); G = null;
   isSearching = true;
   const uid = currentUser.uid;
   myKingRules = $('chk-king-rules').checked ? 'short' : 'flying';
+  myAnyRules = $('chk-any-rules').checked;
   const myJoinedAt = Date.now();
 
   $('search-overlay').classList.remove('hidden');
-
-  try {
-    const qSnap = await get(ref(db, 'matchmaking'));
-    const q0 = qSnap.val() || {};
-    const now0 = Date.now();
-    const sweep = {};
-    for (const id of Object.keys(q0)) if (id !== uid && !isAlive(q0[id], now0)) sweep['matchmaking/' + id] = null;
-    if (Object.keys(sweep).length) await update(ref(db, sweep));
-  } catch (e) {}
-
-  // чистим своё возможное старое приглашение
   await set(ref(db, 'match_request/' + uid), null).catch(() => {});
 
   matchListener = onValue(ref(db, 'match_request/' + uid), async snap => {
-    const req = snap.val();
-    if (!req || !isSearching) return;
+    const req = snap.val(); if (!req || !isSearching) return;
     devLog('Получен match_request от ' + req.fromUid, 'ok');
-    isSearching = false;
-    stopWatchdog();
-    cleanupSearch();
+    isSearching = false; stopWatchdog(); cleanupSearch();
     await set(ref(db, 'match_request/' + uid), null);
     await set(ref(db, 'matchmaking/' + uid), null);
     const oppSnap = await get(ref(db, 'users/' + req.fromUid));
@@ -1463,15 +1333,11 @@ async function startOnlineSearch() {
     showRoulette(req.roomId, req.myColor, oppProfile);
   });
 
-  await set(ref(db, 'matchmaking/' + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: myJoinedAt, kingRules: myKingRules, heartbeat: Date.now() });
+  await set(ref(db, 'matchmaking/' + uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: myJoinedAt, kingRules: myKingRules, anyRules: myAnyRules, heartbeat: Date.now() });
   onDisconnect(ref(db, 'matchmaking/' + uid)).remove();
   heartbeatInt = setInterval(() => {
     if (!isSearching) return;
-    runTransaction(ref(db, 'matchmaking/' + uid), cur => {
-      if (!cur) return;
-      cur.heartbeat = Date.now();
-      return cur;
-    }).catch(() => {});
+    runTransaction(ref(db, 'matchmaking/' + uid), cur => { if (!cur) return; cur.heartbeat = Date.now(); return cur; }).catch(() => {});
   }, 4000);
 
   queueListener = onValue(ref(db, 'matchmaking'), async snap => {
@@ -1483,32 +1349,44 @@ async function startOnlineSearch() {
     const me = q[uid];
     if (!me) { startWatchdog(); return; }
     stopWatchdog();
-    const candidates = Object.entries(q).filter(([id, e]) => id !== uid && isAlive(e, Date.now()) && (e.kingRules || 'flying') === myKingRules);
+    
+    // ИСПРАВЛЕННАЯ ЛОГИКА ПОДБОРА: ищем любого живого, с которым совпадают правила ИЛИ у кого-то стоит "anyRules"
+    const candidates = Object.entries(q).filter(([id, e]) => {
+      if (id === uid || !isAlive(e, Date.now())) return false;
+      const rulesMatch = me.anyRules || e.anyRules || (me.kingRules === e.kingRules);
+      return rulesMatch;
+    });
+    
     if (!candidates.length) return;
     candidates.sort((a, b) => (a[1].joinedAt || 0) - (b[1].joinedAt || 0));
     const [oppUid, oppData] = candidates[0];
     const iAmHost = (me.joinedAt < oppData.joinedAt) || (me.joinedAt === oppData.joinedAt && uid < oppUid);
-    if (!iAmHost) return;
-    devLog('Я хост, создаю матч с ' + oppData.nick + ' (rules=' + myKingRules + ')', 'ok');
-    isSearching = false;
-    stopWatchdog();
-    cleanupSearch();
+    if (!iAmHost) return; // Ждём, пока хост создаст игру
+    
+    devLog('Я хост, создаю матч с ' + oppData.nick, 'ok');
+    isSearching = false; stopWatchdog(); cleanupSearch();
+    
     const roomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
     const matchCode = String(Math.floor(1000 + Math.random() * 9000));
     const iAmWhite = Math.random() < 0.5;
     const myColor = iAmWhite ? 'w' : 'b';
     const oppColor = iAmWhite ? 'b' : 'w';
+    
+    // Если хотя бы у одного включен ребаланс, играем с ребалансом
+    const finalKingRules = (me.kingRules === 'short' || oppData.kingRules === 'short') ? 'short' : 'flying';
+    
     await set(ref(db, 'match_request/' + oppUid), { roomId, fromUid: uid, myColor: oppColor });
     await set(ref(db, 'rooms/' + roomId), {
       white: iAmWhite ? uid : oppUid, black: iAmWhite ? oppUid : uid,
       board: JSON.stringify(initBoard()), turn: 'w',
       timers: { w: TURN_SECONDS, b: TURN_SECONDS },
       status: 'playing', createdAt: Date.now(), chat: {}, moveCount: 0,
-      kingRules: myKingRules, matchCode
+      kingRules: finalKingRules, matchCode
     });
     await set(ref(db, 'matchCodes/' + matchCode), roomId);
     await set(ref(db, 'matchmaking/' + uid), null);
     await set(ref(db, 'matchmaking/' + oppUid), null);
+    
     const oppSnap = await get(ref(db, 'users/' + oppUid));
     const oppProfile = oppSnap.exists() ? oppSnap.val() : { nick: oppData.nick, elo: oppData.elo };
     oppProfile.uid = oppUid;
@@ -1525,14 +1403,12 @@ function startWatchdog() {
     try {
       const reqSnap = await get(ref(db, 'match_request/' + currentUser.uid));
       if (reqSnap.exists()) return;
-      devLog('Watchdog: приглашение не пришло, возвращаюсь в очередь', 'warn');
-      await set(ref(db, 'matchmaking/' + currentUser.uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: Date.now(), kingRules: myKingRules, heartbeat: Date.now() });
+      devLog('Watchdog: возвращаюсь в очередь', 'warn');
+      await set(ref(db, 'matchmaking/' + currentUser.uid), { nick: currentUser.nick, elo: currentUser.elo, joinedAt: Date.now(), kingRules: myKingRules, anyRules: myAnyRules, heartbeat: Date.now() });
     } catch (e) {}
   }, 8000);
 }
-function stopWatchdog() {
-  if (guestWatchdog) { clearTimeout(guestWatchdog); guestWatchdog = null; }
-}
+function stopWatchdog() { if (guestWatchdog) { clearTimeout(guestWatchdog); guestWatchdog = null; } }
 function cleanupSearch() {
   if (queueListener) { queueListener(); queueListener = null; }
   if (matchListener) { matchListener(); matchListener = null; }
@@ -1540,15 +1416,12 @@ function cleanupSearch() {
 }
 on('cancel-search-btn', async () => {
   if (!isSearching) return;
-  isSearching = false;
-  stopWatchdog();
-  cleanupSearch();
+  isSearching = false; stopWatchdog(); cleanupSearch();
   if (currentUser) {
     await set(ref(db, 'matchmaking/' + currentUser.uid), null).catch(() => {});
     setTimeout(() => { if (currentUser) set(ref(db, 'matchmaking/' + currentUser.uid), null).catch(() => {}); }, 500);
   }
-  $('search-overlay').classList.add('hidden');
-  $('search-count').textContent = '';
+  $('search-overlay').classList.add('hidden'); $('search-count').textContent = '';
   toast('Поиск отменён');
 });
 
@@ -1569,47 +1442,31 @@ setInterval(async () => {
 }, 5000);
 
 function showRoulette(roomId, myColor, oppProfile) {
-  $('roulette-screen').classList.add('active');
-  $('roulette-text').textContent = 'Бросаем жребий...';
-  playSound('tick');
+  $('roulette-screen').classList.add('active'); $('roulette-text').textContent = 'Бросаем жребий...'; playSound('tick');
   setTimeout(() => {
     $('roulette-text').innerHTML = myColor === 'w' ? '⚪ Вам выпали БЕЛЫЕ!' : '⚫ Вам выпали ЧЁРНЫЕ!';
     playSound('win');
-    setTimeout(() => {
-      $('roulette-screen').classList.remove('active');
-      joinOnlineGame(roomId, myColor, oppProfile);
-    }, 1500);
+    setTimeout(() => { $('roulette-screen').classList.remove('active'); joinOnlineGame(roomId, myColor, oppProfile); }, 1500);
   }, 1800);
 }
 
 function joinOnlineGame(roomId, myColor, oppProfile) {
   if (roomUnsub) roomUnsub();
-  resetMoveState();
-  animating = false;
+  resetMoveState(); animating = false;
   roomUnsub = onValue(ref(db, 'rooms/' + roomId), snap => {
-    const data = snap.val();
-    if (!data) return;
+    const data = snap.val(); if (!data) return;
     currentKingRules = data.kingRules || 'flying';
     const oppUid = myColor === 'w' ? data.black : data.white;
     if (!G || G.roomId !== roomId) {
-      G = { mode:'online', roomId, myColor, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over:false, timerInt:null, oppUid, oppProfile, eloUp:false, moveCount: data.moveCount||0, startTime: Date.now(), spectator:false, matchCode: data.matchCode||null, diff:'normal', botColor:null, whiteUid: data.white };
-      setCard('me', currentUser);
-      $('me-av').innerHTML = currentUser.avatar ? '<img src="' + esc(currentUser.avatar) + '">' : '🙂';
-      setCard('opp', Object.assign({ uid: oppUid }, oppProfile));
-      $('opp-av').innerHTML = oppProfile.avatar ? '<img src="' + esc(oppProfile.avatar) + '">' : '😎';
-      $('game-chat-box').innerHTML = '';
-      $('spectator-badge').classList.add('hidden');
+      G = { mode:'online', roomId, myColor, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over:false, timerInt:null, oppUid, oppProfile, eloUp:false, moveCount: data.moveCount||0, startTime: Date.now(), spectator:false, matchCode: data.matchCode||null, diff:'normal', botColor:null, whiteUid: data.white, noElo: false };
+      setCard('me', currentUser); $('me-av').innerHTML = currentUser.avatar ? '<img src="' + esc(currentUser.avatar) + '">' : '🙂';
+      setCard('opp', Object.assign({ uid: oppUid }, oppProfile)); $('opp-av').innerHTML = oppProfile.avatar ? '<img src="' + esc(oppProfile.avatar) + '">' : '😎';
+      $('game-chat-box').innerHTML = ''; $('spectator-badge').classList.add('hidden');
       if (G.matchCode) { $('match-code-box').classList.remove('hidden'); $('match-code-val').textContent = G.matchCode; }
-      showScreen('game');
-      renderBoard();
-      fillGameTop1();
-      renderVoiceUI();
-      startTurnTimer();
+      $('bot-control-btn').classList.add('hidden');
+      showScreen('game'); renderBoard(); fillGameTop1(); renderVoiceUI(); startTurnTimer();
     } else {
-      G.board = JSON.parse(data.board);
-      G.turn = data.turn;
-      G.timers = data.timers || G.timers;
-      G.moveCount = data.moveCount || G.moveCount;
+      G.board = JSON.parse(data.board); G.turn = data.turn; G.timers = data.timers || G.timers; G.moveCount = data.moveCount || G.moveCount;
     }
     if (data.status === 'finished') { handleGameOver(data.result); return; }
     if (!midMoveBoard && !animating && !G.over) renderBoard();
@@ -1627,39 +1484,26 @@ on('spectate-btn', async () => {
   const roomId = cs.val();
   const rs = await get(ref(db, 'rooms/' + roomId));
   if (!rs.exists()) { toast('Комната не найдена', 'error'); return; }
-  const data = rs.val();
-  currentKingRules = data.kingRules || 'flying';
+  const data = rs.val(); currentKingRules = data.kingRules || 'flying';
   const ws = await get(ref(db, 'users/' + data.white));
   const bs = await get(ref(db, 'users/' + data.black));
   const wp = ws.exists() ? ws.val() : { nick: 'Белый', elo: 1000 };
   const bp = bs.exists() ? bs.val() : { nick: 'Чёрный', elo: 1000 };
   resetMoveState(); animating = false;
-  G = { mode:'spectate', roomId, myColor:null, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over: data.status==='finished', timerInt:null, eloUp:true, moveCount: data.moveCount||0, startTime: Date.now(), spectator:true, matchCode: data.matchCode||code, oppUid: data.black, oppProfile: bp, diff:'normal', botColor:null, whiteUid: data.white };
+  G = { mode:'spectate', roomId, myColor:null, board: JSON.parse(data.board), turn: data.turn, timers: data.timers || {w:TURN_SECONDS,b:TURN_SECONDS}, over: data.status==='finished', timerInt:null, eloUp:true, moveCount: data.moveCount||0, startTime: Date.now(), spectator:true, matchCode: data.matchCode||code, oppUid: data.black, oppProfile: bp, diff:'normal', botColor:null, whiteUid: data.white, noElo: false };
   setCard('me', wp); $('me-av').innerHTML = wp.avatar ? '<img src="' + esc(wp.avatar) + '">' : '⚪';
   setCard('opp', bp); $('opp-av').innerHTML = bp.avatar ? '<img src="' + esc(bp.avatar) + '">' : '⚫';
-  $('spectator-badge').classList.remove('hidden');
-  $('match-code-box').classList.remove('hidden');
-  $('match-code-val').textContent = G.matchCode;
-  $('game-chat-box').innerHTML = '';
-  showScreen('game');
-  renderBoard();
-  fillGameTop1();
-  renderVoiceUI();
-  startTurnTimer();
-  renderGameChat(data.chat || {});
+  $('spectator-badge').classList.remove('hidden'); $('match-code-box').classList.remove('hidden');
+  $('match-code-val').textContent = G.matchCode; $('game-chat-box').innerHTML = '';
+  $('bot-control-btn').classList.add('hidden');
+  showScreen('game'); renderBoard(); fillGameTop1(); renderVoiceUI(); startTurnTimer(); renderGameChat(data.chat || {});
   toast('Наблюдение за матчем ' + code, 'success');
   if (roomUnsub) roomUnsub();
   roomUnsub = onValue(ref(db, 'rooms/' + roomId), s2 => {
-    const d = s2.val();
-    if (!d || !G || !G.spectator) return;
-    G.board = JSON.parse(d.board); G.turn = d.turn;
-    G.timers = d.timers || G.timers; G.moveCount = d.moveCount || G.moveCount;
-    G.over = d.status === 'finished';
+    const d = s2.val(); if (!d || !G || !G.spectator) return;
+    G.board = JSON.parse(d.board); G.turn = d.turn; G.timers = d.timers || G.timers; G.moveCount = d.moveCount || G.moveCount; G.over = d.status === 'finished';
     renderBoard(); renderGameChat(d.chat || {});
-    if (d.status === 'finished') {
-      $('turn-banner').textContent = '🏁 Матч завершён';
-      setTimeout(() => { if (G && G.spectator) leaveGame(true); }, 5000);
-    }
+    if (d.status === 'finished') { $('turn-banner').textContent = '🏁 Матч завершён'; setTimeout(() => { if (G && G.spectator) leaveGame(true); }, 5000); }
   });
 });
 
@@ -1695,17 +1539,14 @@ function renderBoard() {
   if (G && !G.over) {
     if (G.spectator) {
       $('opp-timer').textContent = G.timers.b; $('me-timer').textContent = G.timers.w;
-      $('opp-card').classList.toggle('turn', G.turn === 'b');
-      $('me-card').classList.toggle('turn', G.turn === 'w');
+      $('opp-card').classList.toggle('turn', G.turn === 'b'); $('me-card').classList.toggle('turn', G.turn === 'w');
       $('turn-banner').textContent = G.turn === 'w' ? '⚪ Ход белых' : '⚫ Ход чёрных';
     } else {
       const topT = G.timers[G.myColor === 'w' ? 'b' : 'w'];
       const botT = G.timers[G.myColor];
       $('opp-timer').textContent = topT; $('me-timer').textContent = botT;
-      $('opp-timer').classList.toggle('low', topT <= 5);
-      $('me-timer').classList.toggle('low', botT <= 5);
-      $('opp-card').classList.toggle('turn', G.turn !== G.myColor);
-      $('me-card').classList.toggle('turn', G.turn === G.myColor);
+      $('opp-timer').classList.toggle('low', topT <= 5); $('me-timer').classList.toggle('low', botT <= 5);
+      $('opp-card').classList.toggle('turn', G.turn !== G.myColor); $('me-card').classList.toggle('turn', G.turn === G.myColor);
       $('turn-banner').textContent = G.turn === G.myColor ? '✨ Ваш ход' : '⏳ Ход противника';
       $('turn-banner').style.color = '';
     }
@@ -1720,24 +1561,29 @@ function getMovesForSelectedPiece(board, from, color) {
 
 function onCellClick(i) {
   if (!G || G.over || G.spectator) return;
-  if (G.turn !== G.myColor) return;
   if (animating) return;
+  
+  // Логика "Управление обеими сторонами" для No-Elo
+  const canControlBoth = G.noElo && botControlEnabled;
+  const effectiveMyColor = canControlBoth ? G.turn : G.myColor;
+  
+  if (!canControlBoth && G.turn !== G.myColor) return;
+  
   const active = midMoveBoard || G.board;
-  const hasMand = mustCapture(active, G.myColor);
+  const hasMand = mustCapture(active, effectiveMyColor);
+  
   if (midMoveBoard) {
     const mv = possibleMoves.find(m => m.to === i);
     if (mv) {
       playSound('capture');
       midMoveBoard = applyStep(midMoveBoard, mv);
-      midMovePiece = mv.to;
-      midMovePath.push(mv.to);
-      const next = getStepsForPiece(midMoveBoard, midMovePiece, G.myColor).filter(s => s.captures.length > 0);
+      midMovePiece = mv.to; midMovePath.push(mv.to);
+      const next = getStepsForPiece(midMoveBoard, midMovePiece, effectiveMyColor).filter(s => s.captures.length > 0);
       if (next.length) { possibleMoves = next; renderBoard(); } else executeFullMove();
-    } else {
-      resetMoveState(); renderBoard();
-    }
+    } else { resetMoveState(); renderBoard(); }
     return;
   }
+  
   const p = active[i];
   if (selected !== null) {
     const mv = possibleMoves.find(m => m.to === i);
@@ -1747,14 +1593,15 @@ function onCellClick(i) {
         chainOrigin = selected;
         midMoveBoard = applyStep(active, mv);
         midMovePiece = mv.to; midMovePath = [mv.to];
-        const next = getStepsForPiece(midMoveBoard, midMovePiece, G.myColor).filter(s => s.captures.length > 0);
+        const next = getStepsForPiece(midMoveBoard, midMovePiece, effectiveMyColor).filter(s => s.captures.length > 0);
         if (next.length) { possibleMoves = next; selected = null; renderBoard(); } else executeFullMove();
       } else { playSound('move'); executeFullMove([mv]); }
       return;
     }
   }
-  if (p && p.color === G.myColor) {
-    const steps = getMovesForSelectedPiece(active, i, G.myColor);
+  
+  if (p && p.color === effectiveMyColor) {
+    const steps = getMovesForSelectedPiece(active, i, effectiveMyColor);
     if (steps.length) {
       if (hasMand && !steps.some(s => s.captures.length > 0)) { toast('⚠️ Обязательное взятие!', 'error'); return; }
       selected = i; possibleMoves = steps; renderBoard();
@@ -1770,14 +1617,13 @@ async function executeFullMove(seq) {
     animCaptures = seq[0].captures;
     newBoard = applyStep(G.board, seq[0]);
   } else {
-    // корректный путь цепочки: [origin, to1, to2, ...] без дублей
     animPath = [chainOrigin !== null ? chainOrigin : midMovePath[0]].concat(midMovePath);
     animCaptures = [];
     let tb = G.board;
     for (let j = 0; j < midMovePath.length; j++) {
       const from = j === 0 ? animPath[0] : midMovePath[j-1];
       const to = midMovePath[j];
-      const st = getStepsForPiece(tb, from, G.myColor).find(s => s.to === to);
+      const st = getStepsForPiece(tb, from, G.turn).find(s => s.to === to);
       if (st && st.captures.length) animCaptures = animCaptures.concat(st.captures);
       if (st) tb = applyStep(tb, st);
     }
@@ -1811,17 +1657,12 @@ async function executeFullMove(seq) {
     } catch (e) { devLog('move sync error: ' + e.message, 'err'); }
   }
 }
-function endGameOrFinish(result, board) {
-  if (!G) return;
-  if (G.mode === 'bot') endGame(result, board);
-  else handleGameOver(result, board);
-}
+function endGameOrFinish(result, board) { if (!G) return; if (G.mode === 'bot') endGame(result, board); else handleGameOver(result, board); }
 function scheduleBotMove(nextTurn, moverColor) {
   setTimeout(() => {
     if (!G || G.over) return;
     const seq = botChooseMove(G.board, G.botColor, G.diff);
     if (!seq || !seq.length) { endGame(moverColor, G.board); return; }
-    // бот исполняет ВСЮ цепочку взятий за один ход
     let nb = G.board;
     const bPath = [seq[0].from], bCaps = [];
     for (const st of seq) { nb = applyStep(nb, st); bPath.push(st.to); if (st.captures.length) bCaps.push(...st.captures); }
@@ -1848,7 +1689,7 @@ function endGame(result, finalBoard) {
   if (result === G.myColor) { toast('🏆 Победа!', 'success'); playSound('win'); }
   else { toast('Поражение', 'error'); playSound('lose'); }
   renderBoard();
-  updateBotElo(result === G.myColor, G.diff);
+  if (!G.noElo) updateBotElo(result === G.myColor, G.diff);
   scheduleAutoExit();
 }
 function scheduleAutoExit() {
@@ -1871,9 +1712,7 @@ async function handleGameOver(result, finalBoard) {
     try {
       await runTransaction(ref(db, 'rooms/' + G.roomId), room => {
         if (!room || room.status === 'finished') return;
-        room.status = 'finished';
-        room.result = result;
-        return room;
+        room.status = 'finished'; room.result = result; return room;
       });
     } catch (e) {}
   }
@@ -1881,11 +1720,11 @@ async function handleGameOver(result, finalBoard) {
   else if (result === 'draw') toast('Ничья');
   else { toast('Поражение', 'error'); playSound('lose'); }
   renderBoard();
-  if (currentUser && G.mode === 'online') {
+  if (currentUser && G.mode === 'online' && !G.noElo) {
     runTransaction(ref(db, 'users/' + currentUser.uid + '/onlineGames'), c => (c || 0) + 1).catch(() => {});
     currentUser.onlineGames = (currentUser.onlineGames || 0) + 1;
   }
-  if (result !== 'draw' && currentUser && G.mode === 'online') {
+  if (result !== 'draw' && currentUser && G.mode === 'online' && !G.noElo) {
     const board = finalBoard || G.board;
     let myP = 0, myK = 0, opP = 0, opK = 0;
     const opC = G.myColor === 'w' ? 'b' : 'w';
@@ -1902,8 +1741,7 @@ async function handleGameOver(result, finalBoard) {
 async function updateBotElo(won, diff) {
   if (!currentUser) return;
   const userRef = ref(db, 'users/' + currentUser.uid);
-  const snap = await get(userRef);
-  if (!snap.exists()) return;
+  const snap = await get(userRef); if (!snap.exists()) return;
   const u = snap.val();
   const base = { easy:8, normal:15, hard:22, impossible:35 };
   const delta = won ? base[diff] : -Math.floor(base[diff]/2);
@@ -1919,12 +1757,10 @@ async function updateOnlineElo(won, stats) {
   if (!currentUser) return;
   if (stats.moveCount < 5) { toast('Слишком коротко — Elo не изменён', 'error'); return; }
   const userRef = ref(db, 'users/' + currentUser.uid);
-  const snap = await get(userRef);
-  if (!snap.exists()) return;
+  const snap = await get(userRef); if (!snap.exists()) return;
   const u = snap.val();
   const r = getRank(u.elo);
-  let delta = 0;
-  const eloDiff = stats.oppElo - u.elo;
+  let delta = 0; const eloDiff = stats.oppElo - u.elo;
   if (won) {
     delta = r.w + stats.opLost + stats.myKings*2;
     if (eloDiff > 0) delta += Math.min(20, Math.floor(eloDiff/50));
@@ -1939,8 +1775,7 @@ async function updateOnlineElo(won, stats) {
   const newE = Math.max(100, u.elo + delta);
   const newSt = won ? (u.winStreak||0)+1 : 0;
   await update(userRef, { elo: newE, maxElo: Math.max(u.maxElo||1000, newE), wins: (u.wins||0)+(won?1:0), losses: (u.losses||0)+(won?0:1), winStreak: newSt, maxWinStreak: Math.max(u.maxWinStreak||0, newSt) });
-  currentUser.elo = newE;
-  top1Cache.ts = 0;
+  currentUser.elo = newE; top1Cache.ts = 0;
   toast('Elo: ' + (delta>0?'+':'') + delta + ' → ' + newE, delta > 0 ? 'success' : 'error');
 }
 
@@ -1955,15 +1790,13 @@ function startTurnTimer() {
     renderBoard();
     if (G.timers[color] <= 5 && G.timers[color] > 0) playSound('tick');
     if (G.timers[color] <= 0) {
-      clearInterval(G.timerInt);
-      G.timerInt = null;
+      clearInterval(G.timerInt); G.timerInt = null;
       await handleTimeout(color);
     }
   }, 1000);
   clearInterval(G._clockInt);
   G._clockInt = setInterval(() => { if (G && !G.over) $('game-timer').textContent = fmtTime((Date.now()-G.startTime)/1000); }, 1000);
 }
-
 async function handleTimeout(color) {
   try {
     if (!G || G.over) return;
@@ -1978,8 +1811,7 @@ async function handleTimeout(color) {
         const simple = pieces.filter(i => !board[i].king);
         const pool = simple.length ? simple : pieces;
         board[pool[Math.floor(Math.random()*pool.length)]] = null;
-        room.board = JSON.stringify(board);
-        room.turn = other;
+        room.board = JSON.stringify(board); room.turn = other;
         room.timers = { w: TURN_SECONDS, b: TURN_SECONDS };
         room.moveCount = (room.moveCount || 0) + 1;
         return room;
@@ -1994,17 +1826,13 @@ async function handleTimeout(color) {
       const pool = simple.length ? simple : pieces;
       G.board[pool[Math.floor(Math.random()*pool.length)]] = null;
       const next = color === 'w' ? 'b' : 'w';
-      G.turn = next;
-      G.timers = { w: TURN_SECONDS, b: TURN_SECONDS };
+      G.turn = next; G.timers = { w: TURN_SECONDS, b: TURN_SECONDS };
       G.moveCount = (G.moveCount||0)+1;
       renderBoard();
       toast('⏱ Время вышло! Удалена шашка', 'error');
     }
-  } catch (e) {
-    devLog('timeout error: ' + e.message, 'err');
-  } finally {
-    if (G && !G.over) startTurnTimer();
-  }
+  } catch (e) { devLog('timeout error: ' + e.message, 'err'); }
+  finally { if (G && !G.over) startTurnTimer(); }
 }
 
 on('surrender-btn', async () => {
@@ -2026,7 +1854,7 @@ function leaveGame(force) {
   if (G && G._clockInt) clearInterval(G._clockInt);
   if (roomUnsub) { roomUnsub(); roomUnsub = null; }
   if (G && G.matchCode && G.mode !== 'spectate') set(ref(db, 'matchCodes/' + G.matchCode), null).catch(() => {});
-  G = null; resetMoveState(); animating = false;
+  G = null; resetMoveState(); animating = false; botControlEnabled = false;
   showScreen('mode');
 }
 on('leave-btn', () => leaveGame(false));
@@ -2036,8 +1864,7 @@ on('me-card', () => { if (currentUser && (!G || !G.spectator)) openProfileModal(
 // ================= ЧАТ В ИГРЕ =================
 bindChatClicks($('game-chat-box'), false);
 function renderGameChat(chatObj) {
-  const box = $('game-chat-box');
-  box.innerHTML = '';
+  const box = $('game-chat-box'); box.innerHTML = '';
   Object.entries(chatObj || {}).sort((a, b) => a[1].ts - b[1].ts).forEach(([key, m]) => {
     const own = m.uid === (currentUser ? currentUser.uid : null) && !(G && G.spectator);
     const d = document.createElement('div');
@@ -2046,8 +1873,7 @@ function renderGameChat(chatObj) {
     if (own && !m.deleted) html += '<button class="del-msg" data-key="' + key + '">🗑</button>';
     html += '</div>';
     html += m.deleted ? '<div>🚫 Сообщение удалено</div>' : '<div>' + esc(m.text) + '</div>';
-    d.innerHTML = html;
-    box.appendChild(d);
+    d.innerHTML = html; box.appendChild(d);
   });
   box.scrollTop = box.scrollHeight;
 }
@@ -2062,25 +1888,20 @@ async function sendGameChat() {
     const d = document.createElement('div');
     d.className = 'gchat-msg own';
     d.innerHTML = '<div class="gm-header"><span style="font-weight:700">' + esc(currentUser.nick) + '</span><span class="gm-time">' + fmtTimeHM(Date.now()) + '</span></div><div>' + esc(t) + '</div>';
-    box.appendChild(d);
-    box.scrollTop = box.scrollHeight;
+    box.appendChild(d); box.scrollTop = box.scrollHeight;
   }
   $('game-chat-input').value = '';
 }
 on('game-chat-send', sendGameChat);
 $('game-chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendGameChat(); });
 
-// ================= ВОЙС-ЧАТ (WebRTC mesh + сигнализация через Firebase) =================
-let voice = { room:null, stream:null, pcs:{}, unsubUsers:null, unsubSignal:null, unsubRooms:[], stats:{} };
+// ================= ВОЙС-ЧАТ =================
+let voice = { room:null, stream:null, pcs:{}, unsubUsers:null, unsubSignal:null, unsubRooms:[], stats:{}, isMuted: false };
 const GLOBAL_VOICE = [{id:'voice_1',n:'Войс 1'},{id:'voice_2',n:'Войс 2'},{id:'voice_3',n:'Войс 3'}];
-async function ensureMic() {
-  if (!voice.stream) voice.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  return voice.stream;
-}
+async function ensureMic() { if (!voice.stream) voice.stream = await navigator.mediaDevices.getUserMedia({ audio: true }); return voice.stream; }
 function playVoiceStream(uid, stream) {
   stopVoiceAudio(uid);
-  const a = document.createElement('audio');
-  a.autoplay = true; a.id = 'va_' + uid; a.srcObject = stream;
+  const a = document.createElement('audio'); a.autoplay = true; a.id = 'va_' + uid; a.srcObject = stream;
   document.body.appendChild(a);
 }
 function stopVoiceAudio(uid) { const a = $('va_' + uid); if (a) a.remove(); }
@@ -2093,15 +1914,10 @@ function createPC(key, uid, isCaller) {
   };
   pc.ontrack = e => playVoiceStream(uid, e.streams[0]);
   pc.onconnectionstatechange = () => {
-    if (['failed','closed','disconnected'].includes(pc.connectionState)) {
-      pc.close(); delete voice.pcs[uid]; stopVoiceAudio(uid);
-    }
+    if (['failed','closed','disconnected'].includes(pc.connectionState)) { pc.close(); delete voice.pcs[uid]; stopVoiceAudio(uid); }
   };
   if (isCaller) {
-    pc.createOffer()
-      .then(o => pc.setLocalDescription(o))
-      .then(() => set(ref(db, `voiceRooms/${key}/signal/${uid}/${currentUser.uid}/offer`), { t: Date.now(), sdp: pc.localDescription.sdp }))
-      .catch(() => {});
+    pc.createOffer().then(o => pc.setLocalDescription(o)).then(() => set(ref(db, `voiceRooms/${key}/signal/${uid}/${currentUser.uid}/offer`), { t: Date.now(), sdp: pc.localDescription.sdp })).catch(() => {});
   }
   return pc;
 }
@@ -2134,19 +1950,15 @@ async function handleVoiceSignal(key, inbox) {
 }
 async function syncVoicePeers(key, users) {
   const ids = Object.keys(users || {});
-  for (const uid of ids) {
-    if (uid !== currentUser.uid && !voice.pcs[uid]) createPC(key, uid, currentUser.uid < uid);
-  }
-  for (const uid of Object.keys(voice.pcs)) {
-    if (!users || !users[uid]) { voice.pcs[uid].close(); delete voice.pcs[uid]; stopVoiceAudio(uid); }
-  }
+  for (const uid of ids) { if (uid !== currentUser.uid && !voice.pcs[uid]) createPC(key, uid, currentUser.uid < uid); }
+  for (const uid of Object.keys(voice.pcs)) { if (!users || !users[uid]) { voice.pcs[uid].close(); delete voice.pcs[uid]; stopVoiceAudio(uid); } }
 }
 async function joinVoice(key) {
   if (!currentUser) { toast('Войдите', 'error'); return; }
   if (voice.room === key) return;
   await leaveVoice();
   try { await ensureMic(); } catch (e) { toast('Нет доступа к микрофону', 'error'); return; }
-  voice.room = key;
+  voice.room = key; voice.isMuted = false;
   await set(ref(db, `voiceRooms/${key}/users/${currentUser.uid}`), { nick: currentUser.nick, avatar: currentUser.avatar || '', role: currentUser.role || '', joinedAt: Date.now() });
   onDisconnect(ref(db, `voiceRooms/${key}/users/${currentUser.uid}`)).remove();
   voice.unsubUsers = onValue(ref(db, `voiceRooms/${key}/users`), snap => {
@@ -2169,8 +1981,15 @@ async function leaveVoice() {
   for (const uid of Object.keys(voice.pcs)) { voice.pcs[uid].close(); stopVoiceAudio(uid); }
   voice.pcs = {};
   if (voice.stream) { voice.stream.getTracks().forEach(t => t.stop()); voice.stream = null; }
-  voice.room = null;
+  voice.room = null; voice.isMuted = false;
   renderVoiceUI();
+}
+function toggleMicMute() {
+  if (!voice.stream || !voice.room) return;
+  voice.isMuted = !voice.isMuted;
+  voice.stream.getAudioTracks().forEach(t => t.enabled = !voice.isMuted);
+  renderVoiceUI();
+  toast(voice.isMuted ? '🔇 Микрофон выключен' : '🎙 Микрофон включён', 'success');
 }
 function startVoiceRoomWatch() {
   stopVoiceRoomWatch();
@@ -2205,8 +2024,8 @@ function renderVoiceUI() {
   const mb = $('voice-match-btn');
   if (mb) {
     const inMatch = voice.room && voice.room.startsWith('match_');
-    mb.textContent = inMatch ? '🎙 Войс: вкл' : '🎙 Войс: выкл';
-    mb.classList.toggle('danger', !!inMatch);
+    mb.textContent = inMatch ? (voice.isMuted ? '🔇 Войс: мьют' : '🎙 Войс: вкл') : '🎙 Войс: выкл';
+    mb.classList.toggle('danger', !!inMatch && !voice.isMuted);
   }
 }
 on('voice-match-btn', () => {
@@ -2234,15 +2053,13 @@ function playSound(type) {
 
 // ================= ИНИЦИАЛИЗАЦИЯ =================
 function renderRanksBox() {
-  $('ranks-box').innerHTML = RANKS.map(r =>
-    '<div style="background:var(--bg2);border:1px solid ' + r.c + '55;border-radius:10px;padding:10px;font-size:12px"><div style="font-weight:700;color:' + r.c + '">' + r.icon + ' ' + r.n + '</div><div style="color:var(--txt2)">' + r.min + ' - ' + (r.max === Infinity ? '∞' : r.max) + ' Elo</div></div>'
-  ).join('');
+  $('ranks-box').innerHTML = RANKS.map(r => '<div style="background:var(--bg2);border:1px solid ' + r.c + '55;border-radius:10px;padding:10px;font-size:12px"><div style="font-weight:700;color:' + r.c + '">' + r.icon + ' ' + r.n + '</div><div style="color:var(--txt2)">' + r.min + ' - ' + (r.max === Infinity ? '∞' : r.max) + ' Elo</div></div>').join('');
 }
 setUI(localStorage.getItem('uiMode') || 'pc');
 renderRanksBox();
 applySettings();
 renderVoiceUI();
-devLog('🌿 Шашки v1.1 готовы. M — консоль', 'info');
+devLog('🌿 Шашки v1.1.1 готовы. M — консоль', 'info');
 </script>
 </body>
 </html>
