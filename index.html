@@ -456,7 +456,11 @@ const LEVELS=[0,500,1500,3000,5000,7500,10000,12500,15000,17500,20000];
 function levelOf(xp){let l=1;for(let i=0;i<LEVELS.length;i++){if((xp||0)>=LEVELS[i])l=i+1;}return Math.min(l,11);}
 function levelProgress(xp){const l=levelOf(xp);if(l>=11)return{cur:xp-LEVELS[10],need:1,max:true};const b=LEVELS[l-1],n=LEVELS[l];return{cur:xp-b,need:n-b};}
 const RANKS=[{n:'Новичок',min:0,max:1199,c:'#9e9e9e',icon:'🌱',w:25,l:-15},{n:'Ученик',min:1200,max:1499,c:'#8bc34a',icon:'📗',w:25,l:-15},{n:'Любитель',min:1500,max:1999,c:'#4caf50',icon:'♟️',w:24,l:-16},{n:'Стратег',min:2000,max:2499,c:'#29b6f6',icon:'🧠',w:22,l:-18},{n:'Мастер',min:2500,max:2999,c:'#7e57c2',icon:'🎯',w:20,l:-20},{n:'Гроссмейстер',min:3000,max:3999,c:'#ffa726',icon:'⚡',w:16,l:-22},{n:'Чемпион',min:4000,max:4999,c:'#ff7043',icon:'🏆',w:15,l:-25},{n:'Легенда',min:5000,max:Infinity,c:'#ffd54f',icon:'👑',w:12,l:-25}];
-function getRank(e){return RANKS.find(r=>e>=r.min)||RANKS[0];}
+function getRank(e){
+  let r = RANKS[0];
+  for (const x of RANKS) if (e >= x.min) r = x;
+  return r;
+}
 function rankIndex(e){let i=0;RANKS.forEach((r,k)=>{if(e>=r.min)i=k;});return i;}
 function calcTotalBotElo(u){return(u.botElo_easy||1000)+(u.botElo_normal||1000)+(u.botElo_hard||1000)+(u.botElo_impossible||1000)-3000;}
 function avatarHtml(u,c){return u&&u.avatar?'<div class="avatar '+c+'"><img src="'+esc(u.avatar)+'"></div>':'<div class="avatar '+c+'">🙂</div>';}
