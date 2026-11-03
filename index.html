@@ -933,14 +933,61 @@ function drawMoveArrow(from,to){
   bd.appendChild(svg);
   arrowTimers.push(setTimeout(()=>{svg.classList.add('fade-out');arrowTimers.push(setTimeout(()=>svg.remove(),950));},8000));
 }
-function animatePieceMove(path,captures,color,isKing,flipped,cb){const bd=$('board'),cs=bd.clientWidth/8;const gp=i=>{const[r,c]=rc(i);const dr=flipped?7-r:r,dc=flipped?7-c:c;return{x:dc*cs+cs*0.11,y:dr*cs+cs*0.11};};clearMoveArrows();for(let s=0;s<path.length-1;s++)drawMoveArrow(path[s],path[s+1]);
-  const lastEl=bd.querySelector('.cell[data-idx="'+path[path.length-1]+'"] .piece');if(lastEl)lastEl.style.visibility='hidden';
-  const firstEl=bd.querySelector('.cell[data-idx="'+path[0]+'"] .piece');if(firstEl)firstEl.remove();
-  const anim=document.createElement('div');anim.className='piece anim-piece '+(color==='w'?'white':'black')+(isKing?' king':'');anim.style.width=cs*0.78+'px';anim.style.height=cs*0.78+'px';
-  const sp=gp(path[0]);anim.style.left=sp.x+'px';anim.style.top=sp.y+'px';bd.appendChild(anim);let step=0;
-  (function doStep(){step++;if(step>=path.length){anim.remove();if(lastEl)lastEl.style.visibility='';if(cb)cb();return;}
-    if(captures&&step-1<captures.length){const ce=bd.querySelector('.cell[data-idx="'+captures[step-1]+'"] .piece');if(ce){ce.classList.add('dying');setTimeout(()=>ce.remove(),200);}}
-    const pos=gp(path[step]);anim.style.left=pos.x+'px';anim.style.top=pos.y+'px';setTimeout(doStep,200);})();}
+function animatePieceMove(path,captures,color,isKing,flipped,cb){
+  const bd=$('board'),cs=bd.clientWidth/8;
+  function gp(i){
+    const[r,c]=rc(i);
+    const dr=flipped?7-r:r,dc=flipped?7-c:c;
+    return{x:dc*cs+cs*0.11,y:dr*cs+cs*0.11};
+  }
+  clearMoveArrows();
+  for(let s=0;s<path.length-1;s++)drawMoveArrow(path[s],path[s+1]);
+  
+  const lastEl=bd.querySelector('.cell[data-idx="'+path[path.length-1]+'"] .piece');
+  if(lastEl)lastEl.style.visibility='hidden';
+  const firstEl=bd.querySelector('.cell[data-idx="'+path[0]+'"] .piece');
+  if(firstEl)firstEl.remove();
+  
+  const anim=document.createElement('div');
+  anim.className='piece anim-piece '+(color==='w'?'white':'black')+(isKing?' king':'');
+  anim.style.width=cs*0.78+'px';
+  anim.style.height=cs*0.78+'px';
+  // ДОБАВЛЕН ЭФФЕКТ ПОДЪЁМА: тень + увеличение
+  anim.style.filter='drop-shadow(0 8px 12px rgba(0,0,0,0.5))';
+  anim.style.transform='scale(1.1)';
+  
+  const sp=gp(path[0]);
+  anim.style.left=sp.x+'px';
+  anim.style.top=sp.y+'px';
+  bd.appendChild(anim);
+  
+  let step=0;
+  (function doStep(){
+    step++;
+    if(step>=path.length){
+      // Возвращаем к нормальному размеру
+      anim.style.transform='scale(1)';
+      anim.style.filter='';
+      anim.remove();
+      if(lastEl)lastEl.style.visibility='';
+      if(cb)cb();
+      return;
+    }
+    if(captures&&step-1<captures.length){
+      const capEl=bd.querySelector('.cell[data-idx="'+captures[step-1]+'"] .piece');
+      if(capEl){
+        capEl.classList.add('dying');
+        setTimeout(()=>capEl.remove(),200);
+      }
+    }
+    const pos=gp(path[step]);
+    // Плавное движение
+    anim.style.transition='left 0.2s ease-out, top 0.2s ease-out';
+    anim.style.left=pos.x+'px';
+    anim.style.top=pos.y+'px';
+    setTimeout(doStep,220); // Чуть медленнее для плавности
+  })();
+}
 // ===== ИГРА =====
 let G=null,selected=null,possibleMoves=[],roomUnsub=null,midMoveBoard=null,midMovePiece=null,midMovePath=[],exitTimerInt=null,chainOrigin=null,animating=false,botControl=false;
 const BOT_META={easy:{n:'Лёгкий бот 🟢',elo:800,xp:5},normal:{n:'Обычный бот 🔵',elo:1500,xp:10},hard:{n:'Сложный бот 🟠',elo:2200,xp:15},impossible:{n:'Невозможный бот 🔥',elo:3500,xp:25}};
