@@ -167,8 +167,52 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 @keyframes spin{to{transform:rotate(360deg)}}
 #roulette-screen{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;justify-content:center;align-items:center;flex-direction:column;z-index:1000;text-align:center}
 #roulette-screen.active{display:flex}
-.roulette-spinner{width:120px;height:120px;border-radius:50%;border:8px solid var(--bg3);border-top-color:var(--main);border-bottom-color:#2e7d32;animation:spin 1s linear infinite;margin-bottom:24px}
+.roul-player{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px}
+.roul-player .avatar{width:48px;height:48px;border-radius:50%;overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px}
+.roul-player .avatar img{width:100%;height:100%;object-fit:cover}
+#roul-arrow-wrap{margin:22px 0;transition:transform 3.2s cubic-bezier(.15,.8,.2,1)}
+#roul-arrow{font-size:56px;line-height:1}
 #roulette-text{font-size:2rem;font-weight:800;color:var(--main);text-shadow:0 0 20px rgba(76,175,80,.8);margin-bottom:12px}
+/* v1.2: XP / уведомления / чаты / лента */
+.xp-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;color:var(--gold)}
+.flame-on{color:#ff7043}.flame-off{opacity:.35;filter:grayscale(1)}
+#notif-fab{position:fixed;left:14px;bottom:14px;z-index:900;background:var(--main);border:none;color:#fff;border-radius:24px;padding:9px 14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4);font-size:14px}
+#notif-fab .cnt{background:#f44336;border-radius:10px;padding:1px 6px;font-size:11px;margin-left:4px}
+.notif-item{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
+.notif-item .nic{font-size:18px}
+.notif-item.unread{background:rgba(255,255,255,.04)}
+.chat-row{display:flex;gap:10px;align-items:center;padding:10px 6px;border-radius:10px;cursor:pointer}
+.chat-row:hover{background:rgba(255,255,255,.05)}
+.chat-row.active{background:rgba(76,175,80,.12)}
+.chat-row .prev{font-size:12px;color:var(--txt2);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dm-msgs{max-height:46vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:6px 0}
+.dm-bubble{max-width:75%;padding:8px 12px;border-radius:14px;background:var(--bg3);font-size:14px;word-break:break-word}
+.dm-bubble.me{align-self:flex-end;background:var(--main);color:#fff}
+.dm-bubble .t{font-size:10px;opacity:.6;display:block;margin-top:2px}
+.post-card{background:var(--bg2);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px;margin-bottom:12px}
+.post-head{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.post-img{max-width:100%;max-height:340px;border-radius:10px;display:block;margin:8px auto}
+.post-actions{display:flex;gap:14px;align-items:center;margin-top:10px;font-size:14px}
+.pbtn{background:none;border:none;color:var(--txt2);cursor:pointer;font-size:14px;padding:4px 8px;border-radius:8px}
+.pbtn:hover{background:rgba(255,255,255,.06)}
+.pbtn.liked{color:#f06292;font-weight:700}
+.cmt{display:flex;gap:8px;padding:7px 0;border-top:1px solid rgba(255,255,255,.06);font-size:13px}
+.cmt .cn{font-weight:700;color:var(--main);cursor:pointer}
+.avatar xs,#av-draw{image-rendering:pixelated;border-radius:10px;border:1px solid rgba(255,255,255,.15);touch-action:none}
+.av-palette button{width:26px;height:26px;border-radius:6px;border:2px solid transparent;cursor:pointer}
+.av-palette button.on{border-color:#fff}
+.badge-role{font-size:11px;font-weight:800;border-radius:8px;padding:1px 7px;margin-left:6px}
+.role-premium{background:linear-gradient(90deg,#ffd54f,#ff8a65);color:#3e2723}
+.role-mod{background:#7e57c2;color:#fff}
+.msg-av{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;cursor:pointer}
+.msg-av img{width:100%;height:100%;object-fit:cover}
+.chat-msg{display:flex!important;gap:8px;align-items:flex-start}
+.chat-msg .nick-link{background:none;border:none;color:var(--main);cursor:pointer;font-weight:700;font-size:13px;padding:0}
+#side-nav{position:fixed;right:0;top:0;bottom:0;width:190px;background:var(--bg2);border-left:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:6px;padding:16px 10px;z-index:800;transform:translateX(100%);transition:transform .25s}
+body.side-open #side-nav{transform:none}
+body.side-open main{margin-right:190px}
+#side-toggle{position:fixed;right:14px;top:70px;z-index:801;background:var(--main);border:none;color:#fff;border-radius:12px;padding:8px 12px;font-size:18px;cursor:pointer}
+@media(max-width:800px){body.side-open main{margin-right:0}}
 
 #dev-console{position:fixed;right:0;top:0;bottom:0;width:400px;z-index:300;background:#0a0f16;border-left:1px solid var(--main);display:flex;flex-direction:column;transform:translateX(100%);transition:.25s}
 #dev-console.open{transform:none}
@@ -253,16 +297,84 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
   </nav>
 </header>
 
+<button id="side-toggle" class="hidden" title="Меню">☰</button>
+<nav id="side-nav" class="hidden">
+  <button class="navbtn" data-nav="profile-view">👤 Профиль</button>
+  <button class="navbtn" data-nav="mode">▶️ Играть</button>
+  <button class="navbtn" data-nav="feed">📰 Лента</button>
+  <button class="navbtn" data-nav="rating">🏆 Рейтинг</button>
+  <button class="navbtn" data-nav="players">👥 Игроки</button>
+  <button class="navbtn" data-nav="chat">💬 Чат</button>
+  <button class="navbtn" data-nav="dms">📨 Чаты</button>
+  <button class="navbtn" data-nav="notifs">🔔 Уведомления</button>
+  <button class="navbtn" data-nav="settings">⚙️ Настройки</button>
+  <button class="navbtn" data-nav="rules">📜 Правила</button>
+</nav>
+
 <section class="screen hidden" id="screen-auth">
   <div class="panel auth-card">
     <div class="auth-logo">🌿</div>
-    <div class="auth-title" id="auth-title">Вход</div>
-    <div class="auth-sub">v1.1 · создатель xxspk · кодил qwen &lt;3</div>
+    <div class="auth-title" id="auth-title">Регистрация</div>
+    <div class="auth-sub">v1.2 · создатель xxspk · кодил qwen &lt;3</div>
     <div class="field"><label>Имя</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
     <div class="field"><label>Пароль (мин. 6 символов)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
-    <button class="btn big" id="auth-submit">Войти</button>
-    <div style="text-align:center;margin-top:12px"><button class="linkish" id="auth-toggle">Нет аккаунта? Зарегистрироваться</button></div>
+    <button class="btn big" id="auth-submit">Зарегистрироваться</button>
+    <div style="text-align:center;margin-top:12px"><button class="linkish" id="auth-toggle">Уже есть аккаунт? Войти</button></div>
+    <div style="text-align:center;margin-top:8px"><button class="btn secondary" id="auth-guest">🎭 Играть без аккаунта</button></div>
     <div style="text-align:center;margin-top:6px"><button class="linkish" id="auth-rules" style="color:var(--txt2)">📜 Правила и рейтинг</button></div>
+  </div>
+</section>
+
+<section class="screen hidden" id="screen-notifs">
+  <div class="panel" style="max-width:560px;margin:0 auto">
+    <h2 class="ptitle">🔔 Уведомления</h2>
+    <div id="notif-list">Загрузка...</div>
+  </div>
+</section>
+
+<section class="screen hidden" id="screen-dms">
+  <div class="panel" style="max-width:760px;margin:0 auto">
+    <h2 class="ptitle">📨 Личные чаты</h2>
+    <div id="dm-requests-box" style="margin-bottom:14px"></div>
+    <div id="dm-list-box" style="max-height:30vh;overflow-y:auto"></div>
+    <div id="dm-thread-box" class="hidden">
+      <div class="row" style="align-items:center;margin-bottom:8px">
+        <button class="btn small secondary" id="dm-back-btn">← Все чаты</button>
+        <span id="dm-peer-name" style="font-weight:700"></span>
+        <span class="spacer"></span>
+      </div>
+      <div id="dm-msgs"></div>
+      <div class="row" style="margin-top:8px">
+        <input class="chat-input" id="dm-input" maxlength="300" placeholder="Сообщение..." style="flex:1">
+        <button class="btn small" id="dm-send-btn">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen hidden" id="screen-feed">
+  <div class="panel" style="max-width:640px;margin:0 auto">
+    <h2 class="ptitle">📰 Лента</h2>
+    <div class="post-card">
+      <textarea id="post-text" rows="2" maxlength="500" placeholder="Что нового?"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="btn small" id="post-add-img-btn">🖼 Фото</button>
+        <button class="btn small secondary" id="post-add-draw-btn">🎨 Нарисовать</button>
+        <span id="post-attach-name" style="font-size:12px;color:var(--txt2)"></span>
+        <span class="spacer"></span>
+        <button class="btn small" id="post-publish-btn">Опубликовать</button>
+      </div>
+      <input type="file" id="post-file" accept="image/*" class="hidden">
+      <div id="post-draw-wrap" class="hidden" style="margin-top:8px;text-align:center">
+        <canvas id="post-draw-canvas" width="240" height="240" style="background:#fff;border-radius:10px;touch-action:none"></canvas>
+        <div class="row" style="justify-content:center;margin-top:6px">
+          <div class="av-palette" id="post-palette"></div>
+          <button class="btn small danger" id="post-draw-clear">Очистить</button>
+          <button class="btn small" id="post-draw-ok">✔</button>
+        </div>
+      </div>
+    </div>
+    <div id="feed-box">Загрузка...</div>
   </div>
 </section>
 
@@ -277,6 +389,15 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
     <div class="field"><label>Приписка к нику (tag)</label><input id="edit-tag" maxlength="20"></div>
     <div class="field"><label>Клан</label><input id="edit-clan" maxlength="20"></div>
     <div class="field"><label>Описание</label><textarea id="edit-about" rows="3" maxlength="160"></textarea></div>
+    <div class="field">
+      <label>🎨 Нарисовать аватар (пиксель-арт)</label>
+      <canvas id="av-draw" width="128" height="128" style="width:160px;height:160px;background:#fff"></canvas>
+      <div class="row av-palette" id="av-palette" style="margin-top:6px;flex-wrap:wrap"></div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn small secondary" id="av-clear-btn">🧽 Очистить</button>
+        <button class="btn small" id="av-apply-btn">✔ Применить как аватар</button>
+      </div>
+    </div>
     <div class="row">
       <button class="btn" id="save-profile-btn">💾 Сохранить</button>
       <button class="btn secondary" id="edit-back-btn">← Назад</button>
@@ -293,6 +414,14 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
       <div class="color-row"><input type="color" id="set-color" value="#4caf50"><span style="color:var(--txt2);font-size:13px">Применяется ко всем кнопкам</span></div>
     </div>
     <div class="field"><label>Громкость музыки: <span id="vol-val">40%</span></label><input type="range" id="set-vol" min="0" max="100" value="40"></div>
+    <div class="field"><label>💬 Кто может писать мне личные сообщения</label>
+      <div class="row">
+        <button class="btn small secondary dm-perm-btn" data-perm="all">Каждый</button>
+        <button class="btn small secondary dm-perm-btn" data-perm="requests">Заявки</button>
+        <button class="btn small secondary dm-perm-btn" data-perm="none">Никто</button>
+      </div>
+      <div style="font-size:12px;color:var(--txt2);margin-top:4px">«Заявки» — вместо сообщения игрок отправляет заявку на переписку (в «Уведомления»)</div>
+    </div>
     <div class="field"><label>Смена ника (раз в 12 часов)</label>
       <div class="row"><input id="set-newnick" maxlength="20" placeholder="Новый ник" style="flex:1"><button class="btn small" id="nick-btn">Сменить</button></div>
       <div id="nick-timer" style="font-size:12px;color:var(--txt2);margin-top:5px"></div>
@@ -452,7 +581,13 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
     <button class="btn secondary small" id="cancel-search-btn" style="margin-top:16px">Отменить</button>
   </div>
 </div>
-<div id="roulette-screen"><div class="roulette-spinner"></div><div id="roulette-text">Бросаем жребий...</div></div>
+<div id="roulette-screen">
+  <div class="roul-player" id="roul-top"></div>
+  <div id="roul-arrow-wrap"><div id="roul-arrow">⬆️</div></div>
+  <div class="roul-player" id="roul-bottom"></div>
+  <div id="roulette-text" style="margin-top:20px">Бросаем жребий...</div>
+</div>
+<button id="notif-fab" class="hidden">🔔<span class="cnt hidden" id="notif-cnt">0</span></button>
 
 <div id="dev-console">
   <div class="head">🖥️ Консоль разработчика <span style="color:var(--txt2);font-size:11px">(M)</span><span class="spacer"></span><button class="btn small secondary" id="dev-clear">Очистить</button><button class="btn small secondary" id="dev-close">✕</button></div>
@@ -464,8 +599,21 @@ body.ui-mobile .ach-chip{font-size:10px;padding:5px 8px}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, update, onValue, push, query, orderByChild, limitToLast, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, update, onValue, push, query, orderByChild, limitToLast, runTransaction, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+// ================= БЛОКИРОВКА F12 / КОНСОЛИ (v1.2) =================
+(function blockDevTools(){
+  function kill(e){
+    const k = e.key;
+    if (k === 'F12') { e.preventDefault && e.preventDefault(); return false; }
+    if ((e.ctrlKey && e.shiftKey && ['I','J','C','i','j','c'].includes(k))) { e.preventDefault && e.preventDefault(); return false; }
+    if ((e.ctrlKey || e.metaKey) && ['u','U','s','S','p','P'].includes(k)) { e.preventDefault && e.preventDefault(); return false; }
+    return true;
+  }
+  window.addEventListener('keydown', kill, true);
+  document.addEventListener('contextmenu', e => { e.preventDefault(); return false; }, true);
+})();
 
 const firebaseConfig = {
   apiKey: "AIzaSyCk7Y-HHntq-tZMkJbDpk5WEct1IJ06RRs",
@@ -564,6 +712,9 @@ function buildAchievements() {
   list.push({ id:'chat10', icon:'💬', name:'Болтун', desc:'Написать 10 сообщений в чат', check:u=>(u.chatMsgs||0)>=10 });
   list.push({ id:'chat100', icon:'💬', name:'Мастер чата', desc:'Написать 100 сообщений в чат', check:u=>(u.chatMsgs||0)>=100 });
   list.push({ id:'clan', icon:'⚔', name:'Клановец', desc:'Поставить клан в профиле', check:u=>!!(u.clan && u.clan.trim()) });
+  list.push({ id:'flame7', icon:'🔥', name:'Неделя подряд', desc:'Побеждать каждый день 7 дней (огонёк)', check:u=>(u.dailyStreak||0)>=7 });
+  list.push({ id:'posts1', icon:'📰', name:'Блогер', desc:'Выложить пост в ленту', check:u=>(u.posts||0)>=1 });
+  list.push({ id:'subs10', icon:'⭐', name:'Популярный', desc:'Набрать 10 подписчиков', check:u=>(u.subs||0)>=10 });
   list.push({ id:'all', icon:'👑', name:'Выполнить все достижения', desc:'Получить все остальные достижения', check:u=>list.every(a => a.id === 'all' || a.check(u)) });
   return list;
 }
@@ -579,6 +730,88 @@ function achievementsHTML(u) {
 
 // ================= TOP 1 ELO =================
 let top1Cache = { ts: 0, uid: null, elo: 0 };
+
+// ================= XP / ДЕНЬ (МСК) / УВЕДОМЛЕНИЯ / РОЛИ (v1.2) =================
+const mskDay = (ts) => new Date((ts || Date.now()) + 3 * 3600e3).toISOString().slice(0, 10); // день по МСК
+const isGuest = () => !!(currentUser && currentUser.guest);
+function xpLevel(xp) { let lvl = 1, need = 100; while (xp >= need) { xp -= need; lvl++; need = Math.floor(need * 1.25); } return { lvl, cur: xp, need }; }
+function roleBadge(u) {
+  if (!u) return '';
+  if (u.role === 'moderator') return '<span class="badge-role role-mod">🛡 МОДЕРАТОР</span>';
+  if (u.role === 'premium') return '<span class="badge-role role-premium">👑 PREMIUM</span>';
+  return '';
+}
+async function addXP(uid, amount, reason) {
+  if (!uid || isGuest() || uid !== (currentUser && currentUser.uid)) return; // гость XP не копит
+  try {
+    await runTransaction(ref(db, 'users/' + uid + '/xp'), x => (x || 0) + amount);
+    if (currentUser) currentUser.xp = (currentUser.xp || 0) + amount;
+    const lvOld = xpLevel((currentUser.xp || amount) - amount).lvl, lvNew = xpLevel(currentUser.xp).lvl;
+    toast('✨ +' + amount + ' XP' + (reason ? ' · ' + reason : ''), 'success');
+    if (lvNew > lvOld) { notifySelf('🎉', 'Новый уровень: ' + lvNew + '!'); addXP(uid, 50, 'бонус за уровень'); }
+  } catch (e) {}
+}
+async function notifyUser(targetUid, icon, text) {
+  if (!targetUid || targetUid === (currentUser && currentUser.uid)) return;
+  try { await push(ref(db, 'users/' + targetUid + '/notifs'), { icon, text, ts: Date.now(), read: false }); } catch (e) {}
+}
+function notifySelf(icon, text) {
+  $('notif-fab').classList.remove('hidden');
+  toast(icon + ' ' + text, 'success');
+}
+let notifUnsub = null, lastNotifTs = 0;
+function startNotifListener() {
+  if (!currentUser || isGuest() || notifUnsub) return;
+  notifUnsub = onValue(query(ref(db, 'users/' + currentUser.uid + '/notifs'), orderByChild('ts'), limitToLast(30)), snap => {
+    const items = Object.entries(snap.val() || {}).sort((a, b) => b[1].ts - a[1].ts);
+    const unread = items.filter(([_, n]) => !n.read).length;
+    const cntEl = $('notif-cnt');
+    cntEl.textContent = unread; cntEl.classList.toggle('hidden', !unread);
+    if (items.length && items[0][1].ts > lastNotifTs && lastNotifTs !== 0) toast(items[0][1].icon + ' ' + items[0][1].text);
+    if (items.length) lastNotifTs = Math.max(lastNotifTs, items[0][1].ts);
+    if ($('screen-notifs') && !$('screen-notifs').classList.contains('hidden')) renderNotifList(items);
+  });
+}
+function renderNotifList(items) {
+  const box = $('notif-list');
+  if (!items) {
+    if (!currentUser || isGuest()) { box.innerHTML = 'Гостям уведомления недоступны'; return; }
+    get(query(ref(db, 'users/' + currentUser.uid + '/notifs'), orderByChild('ts'), limitToLast(30))).then(s => {
+      renderNotifList(Object.entries(s.val() || {}).sort((a, b) => b[1].ts - a[1].ts));
+    });
+    return;
+  }
+  if (!items.length) { box.innerHTML = '<div style="color:var(--txt2);text-align:center;padding:20px">Пока пусто 🌿</div>'; return; }
+  box.innerHTML = items.map(([key, n]) =>
+    '<div class="notif-item' + (n.read ? '' : ' unread') + '"><span class="nic">' + esc(n.icon || '🔔') + '</span>' +
+    '<div style="flex:1"><div>' + esc(n.text) + '</div><div style="font-size:11px;color:var(--txt2)">' + fmtTimeAgo(n.ts) + '</div></div>' +
+    (n.type === 'dm_request' && n.fromUid ? '<button class="btn small dm-req-accept" data-key="' + key + '" data-from="' + n.fromUid + '">Принять ✔</button>' : '') +
+    '</div>').join('');
+  box.querySelectorAll('.dm-req-accept').forEach(b => b.addEventListener('click', async () => {
+    await acceptDmRequest(b.dataset.from); update(ref(db, 'users/' + currentUser.uid + '/notifs/' + b.dataset.key), { read: true });
+  }));
+  const firstUnread = items.find(([_, n]) => !n.read);
+  if (firstUnread) update(ref(db, 'users/' + currentUser.uid + '/notifs'), Object.fromEntries(items.filter(([_, n]) => !n.read).map(([k]) => [k, { read: true }]))).catch(() => {});
+}
+on('notif-fab', () => showScreen('notifs'));
+
+// проверка «каждый день побеждай» — огонёк в профиле (1 победа за день по МСК)
+async function touchDailyFlame(won) {
+  if (!currentUser || isGuest()) return;
+  const today = mskDay();
+  const u = currentUser;
+  if (!won) return; // огонёк зажигается только победой
+  if (u.lastFlameDay === today) return; // уже зажигал сегодня
+  const yest = mskDay(Date.now() - 864e5);
+  const cont = u.lastFlameDay === yest; // серия продолжается, если вчера тоже была победа
+  const st = (cont ? (u.dailyStreak || 0) : 0) + 1;
+  try {
+    await update(ref(db, 'users/' + currentUser.uid), { lastFlameDay: today, dailyStreak: st });
+    Object.assign(currentUser, { lastFlameDay: today, dailyStreak: st });
+    if (st > 1) toast('🔥 Огонёк: ' + st + ' дн подряд!', 'success');
+    if (st === 7) addXP(currentUser.uid, 20, 'Неделя подряд');
+  } catch (e) {}
+}
 async function getTop1() {
   if (Date.now() - top1Cache.ts < 30000) return top1Cache;
   try {
@@ -609,14 +842,20 @@ async function fillGameTop1() {
 }
 
 // ================= ЭКРАНЫ =================
+const SCREEN_RENDERERS = {}; // v1.2: регистрация рендереров новых экранов (feed/dms/notifs)
+SCREEN_RENDERERS.chat = () => renderGlobalChat();
+SCREEN_RENDERERS.settings = () => renderNickTimer();
+SCREEN_RENDERERS.rating = () => renderRating();
+SCREEN_RENDERERS.players = () => renderPlayers();
+SCREEN_RENDERERS.notifs = () => renderNotifList(null);
+SCREEN_RENDERERS.dms = () => renderDms();
+SCREEN_RENDERERS.feed = () => renderFeed();
 function showScreen(name) {
+  if (currentUser && currentUser.guest && name === 'profile-edit') { toast('Гостям нельзя менять ник, клан и аватар', 'error'); name = 'profile-view'; }
   document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
   const el = $('screen-' + name);
   if (el) el.classList.remove('hidden');
-  if (name === 'chat') renderGlobalChat();
-  if (name === 'settings') renderNickTimer();
-  if (name === 'rating') renderRating();
-  if (name === 'players') renderPlayers();
+  if (SCREEN_RENDERERS[name]) SCREEN_RENDERERS[name]();
 }
 
 // ================= ТЕМА / МУЗЫКА / UI =================
@@ -671,7 +910,7 @@ window.addEventListener('keydown', e => {
 
 // ================= АВТОРИЗАЦИЯ =================
 let currentUser = null;
-let authMode = 'login';
+let authMode = 'register';
 
 on('auth-toggle', () => {
   authMode = authMode === 'login' ? 'register' : 'login';
@@ -681,27 +920,50 @@ on('auth-toggle', () => {
 });
 on('auth-rules', () => showScreen('rules'));
 
+// ===== Гость (игра без аккаунта, v1.2) =====
+function makeGuest() {
+  const g = JSON.parse(localStorage.getItem('guestAcc') || 'null') || { nick: 'шашист01', xp: 0 };
+  currentUser = {
+    uid: 'guest_' + (g.localId || (g.localId = Math.random().toString(36).slice(2, 10))),
+    guest: true, nick: g.nick, xp: g.xp || 0, elo: 1000, maxElo: 1000,
+    botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
+    botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
+    wins: 0, losses: 0, winStreak: 0, maxWinStreak: 0, onlineGames: 0, botGames: 0, playtime: 0, chatMsgs: 0,
+    displayId: 'гость', clan: '', tag: '', bio: '', avatar: '', deleted: false
+  };
+  localStorage.setItem('guestAcc', JSON.stringify(g));
+  toast('Ты играешь как «' + currentUser.nick + '». Профиль, чат и лента недоступны');
+  enterApp();
+}
+on('auth-guest', makeGuest);
+
 on('auth-submit', async () => {
   const name = $('auth-name').value.trim();
   const pass = $('auth-pass').value;
   if (!name) { toast('Введи имя'); return; }
   if (pass.length < 6) { toast('Пароль мин. 6 символов'); return; }
+  // ник можно использовать и в пароле — email формируется детерминированно из ника
   const email = name.toLowerCase().replace(/[^a-z0-9]/g, '') + '@shashki.app';
   try {
     if (authMode === 'register') {
+      // проверка занятости ника (по нижнему регистру)
       const ns = await get(ref(db, 'nicknames/' + name.toLowerCase()));
-      if (ns.exists()) { toast('Ник занят', 'error'); return; }
+      if (ns.exists()) { toast('❗ Никнейм занят', 'error'); return; }
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       const uid = cred.user.uid;
-      const ctr = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
-      const did = String(ctr.snapshot.exists() ? ctr.snapshot.val() : 1).padStart(5, '0');
+      let did = '00001';
+      try {
+        const ctr = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
+        did = String(ctr.snapshot.val() == null ? 1 : ctr.snapshot.val()).padStart(5, '0');
+      } catch (e) { devLog('userCounter недоступен: ' + e.message, 'err'); }
       const profile = {
-        nick: name, tag: '', avatar: '', bio: '', clan: '', displayId: did,
+        nick: name, tag: '', avatar: '', bio: '', clan: '', displayId: did, role: 'player', dmPerm: 'requests',
+        xp: 0, dailyStreak: 0, lastFlameDay: '', posts: 0, subs: 0,
         elo: 1000, maxElo: 1000,
         botElo_easy: 1000, botElo_normal: 1000, botElo_hard: 1000, botElo_impossible: 1000,
         botWins_easy: 0, botWins_normal: 0, botWins_hard: 0, botWins_impossible: 0,
         wins: 0, losses: 0, winStreak: 0, maxWinStreak: 0,
-        onlineGames: 0, botGames: 0, playtime: 0, chatMsgs: 0,
+        onlineGames: 0, botGames: 0, playtime: 0, chatMsgs: 0, achClaimed: {},
         lastSeen: Date.now(), lastNickChange: 0, createdAt: Date.now(), deleted: false
       };
       await set(ref(db, 'users/' + uid), profile);
@@ -719,30 +981,39 @@ on('auth-submit', async () => {
     }
   } catch (e) {
     devLog('AUTH FAIL: ' + e.message, 'err');
-    toast(e.code ? e.code + ': ' + e.message : e.message, 'error');
+    if (e.code === 'auth/email-already-in-use') { toast('❗ Никнейм занят', 'error'); }
+    else toast(e.code ? e.code + ': ' + e.message : e.message, 'error');
   }
 });
 
-on('nav-logout', () => { signOut(auth); currentUser = null; location.reload(); });
+on('nav-logout', () => { localStorage.removeItem('guestMode'); signOut(auth); currentUser = null; location.reload(); });
 
 function enterApp() {
   $('header-nav').classList.remove('hidden');
+  $('side-toggle').classList.remove('hidden');
+  $('notif-fab').classList.toggle('hidden', isGuest());
+  if (isGuest()) localStorage.setItem('guestMode', '1');
+  startNotifListener();
+  checkAchNotify();
   showScreen('mode');
   applySettings();
-  devLog('Вход: ' + currentUser.nick, 'ok');
+  devLog('Вход: ' + currentUser.nick + (isGuest() ? ' (гость)' : ''), 'ok');
 }
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
+    localStorage.removeItem('guestMode');
     const snap = await get(ref(db, 'users/' + user.uid));
     if (snap.exists()) {
       currentUser = Object.assign({ uid: user.uid }, snap.val());
-      const defs = { botElo_easy:1000, botElo_normal:1000, botElo_hard:1000, botElo_impossible:1000, botWins_easy:0, botWins_normal:0, botWins_hard:0, botWins_impossible:0, wins:0, losses:0, winStreak:0, maxWinStreak:0, onlineGames:0, botGames:0, playtime:0, chatMsgs:0, lastNickChange:0, clan:'', deleted:false, elo:1000, maxElo:1000 };
+      const defs = { botElo_easy:1000, botElo_normal:1000, botElo_hard:1000, botElo_impossible:1000, botWins_easy:0, botWins_normal:0, botWins_hard:0, botWins_impossible:0, wins:0, losses:0, winStreak:0, maxWinStreak:0, onlineGames:0, botGames:0, playtime:0, chatMsgs:0, lastNickChange:0, clan:'', deleted:false, elo:1000, maxElo:1000, xp:0, dailyStreak:0, lastFlameDay:'', posts:0, subs:0, role:'player', dmPerm:'requests', achClaimed:{} };
       const up = {};
       for (const k in defs) { if (currentUser[k] === undefined) { currentUser[k] = defs[k]; up[k] = defs[k]; } }
       if (!currentUser.displayId || currentUser.displayId === '00000') {
-        const r = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
-        if (r.snapshot.exists()) currentUser.displayId = String(r.snapshot.val()).padStart(5, '0');
+        try {
+          const r = await runTransaction(ref(db, 'system/userCounter'), c => c === null ? 1 : c + 1);
+          currentUser.displayId = String(r.snapshot.val() == null ? 1 : r.snapshot.val()).padStart(5, '0');
+        } catch (e) { currentUser.displayId = '00001'; }
         up.displayId = currentUser.displayId;
       }
       if (Object.keys(up).length) update(ref(db, 'users/' + user.uid), up).catch(() => {});
@@ -752,6 +1023,10 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     currentUser = null;
     $('header-nav').classList.add('hidden');
+    if (localStorage.getItem('guestMode') === '1') { makeGuest(); return; }
+    $('side-toggle').classList.add('hidden');
+    $('notif-fab').classList.add('hidden');
+    authMode = 'register';
     showScreen('auth');
   }
 });
@@ -772,6 +1047,16 @@ on('nav-players', () => showScreen('players'));
 on('nav-chat', () => showScreen('chat'));
 on('nav-settings', () => showScreen('settings'));
 on('nav-rules', () => showScreen('rules'));
+// боковое меню справа (v1.2)
+on('side-toggle', () => document.body.classList.toggle('side-open'));
+document.querySelectorAll('#side-nav [data-nav]').forEach(b => b.addEventListener('click', () => {
+  const s = b.dataset.nav;
+  if (isGuest() && ['feed', 'dms', 'notifs'].includes(s)) { toast('Гостям недоступно — зарегистрируйся', 'error'); return; }
+  if (s === 'chat' && isGuest()) { toast('Чат доступен только с аккаунтом', 'error'); return; }
+  showScreen(s);
+  if (s === 'profile-view') renderMyProfile();
+  document.body.classList.remove('side-open');
+}));
 on('rating-back-btn', () => showScreen('mode'));
 on('players-back-btn', () => showScreen('mode'));
 on('mode-back-btn', () => { if (currentUser) showScreen('mode'); else showScreen('auth'); });
@@ -821,21 +1106,23 @@ on('nick-btn', async () => {
 function eloLine(l, u, d) {
   return '<div class="elo-row"><span class="lab">' + l + '</span><span><b style="color:var(--gold)">' + (u['botElo_'+d]||1000) + '</b> · <span style="color:var(--green)">' + (u['botWins_'+d]||0) + 'W</span></span></div>';
 }
-function renderProfileInto(u, isMe, slotId) {
+// общий рендер карточки профиля (свой экран и модалка чужого профиля — v1.2 унифицировано)
+function profileBodyHTML(u, slotId, withEdit) {
   const tot = calcTotalBotElo(u), rk = getRank(u.elo || 1000);
   const bw = (u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
   const kd = u.losses === 0 ? (u.wins||0) : ((u.wins||0)/u.losses).toFixed(2);
-  // Кнопка «Редактировать» встраивается только когда профиль свой: иначе дублировалась
-  const headBtn = (isMe && u.uid === (currentUser ? currentUser.uid : null))
-    ? '<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>' : '';
-  $('my-profile-box').innerHTML =
-    '<div class="profile-head">' + avatarHtml(u, '') +
+  const lv = xpLevel(u.xp || 0);
+  const flameOn = u.lastFlameDay === mskDay();
+  return '<div class="profile-head">' + avatarHtml(u, '') +
     '<div style="flex:1;min-width:200px">' +
-    '<div class="pname">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + (u.clan ? ' <span class="pclan">⚔ ' + esc(u.clan) + '</span>' : '') + ' <span id="' + slotId + '"></span> <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ' + (u.displayId||'00000') + '</span></div>' +
+    '<div class="pname">' + esc(u.nick) + (u.tag ? ' <span class="ptag">' + esc(u.tag) + '</span>' : '') + (u.clan ? ' <span class="pclan">⚔ ' + esc(u.clan) + '</span>' : '') + roleBadge(u) +
+      ' <span id="' + slotId + '"></span> <span class="xp-badge">⭐ ' + lv.lvl + ' ур · ' + (u.xp||0) + ' XP</span>' +
+      ' <span class="' + (flameOn ? 'flame-on' : 'flame-off') + '" title="Огонёк за победу сегодня (по МСК)">🔥' + (u.dailyStreak||0) + '</span>' +
+      ' <span style="font-size:11px;color:var(--txt2);font-weight:400">ID: ' + (u.displayId||'00000') + '</span></div>' +
     '<div style="margin:6px 0"><span class="rank-badge">' + rk.icon + ' ' + rk.n + ' · ' + (u.elo||1000) + ' Elo</span></div>' +
     '<div style="margin:6px 0;font-size:13px">🤖 Общий BotElo: <b style="color:var(--gold);font-size:16px">' + tot + '</b></div>' +
     '<div class="pabout">' + (u.bio ? esc(u.bio) : '<i style="opacity:.5">Нет описания</i>') + '</div></div>' +
-    (isMe ? '<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>' : '') +
+    (withEdit ? '<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>' : '') +
     '</div>' +
     '<div class="stat-grid">' +
     '<div class="stat-card"><div class="v">' + (u.elo||1000) + '</div><div class="l">Онлайн Elo (макс ' + (u.maxElo||1000) + ')</div></div>' +
@@ -846,9 +1133,14 @@ function renderProfileInto(u, isMe, slotId) {
     '<div class="stat-card"><div class="v">' + (u.winStreak||0) + '</div><div class="l">Винстрик (макс ' + (u.maxWinStreak||0) + ')</div></div>' +
     '<div class="stat-card"><div class="v">' + fmtTime(u.playtime||0) + '</div><div class="l">Плейтайм</div></div>' +
     '<div class="stat-card"><div class="v">' + ((u.onlineGames||0)+(u.botGames||0)) + '</div><div class="l">Всего игр</div></div>' +
+    '<div class="stat-card"><div class="v">' + (u.subs||0) + '</div><div class="l">⭐ Подписчиков</div></div>' +
+    '<div class="stat-card"><div class="v">' + (u.posts||0) + '</div><div class="l">📰 Постов</div></div>' +
     '</div>' +
     '<div style="margin-top:14px">' + eloLine('🟢 Лёгкий бот', u, 'easy') + eloLine('🔵 Обычный бот', u, 'normal') + eloLine('🟠 Сложный бот', u, 'hard') + eloLine('🔥 Невозможный бот', u, 'impossible') + '</div>' +
     achievementsHTML(u);
+}
+function renderProfileInto(u, isMe, slotId) {
+  $('my-profile-box').innerHTML = profileBodyHTML(u, slotId, isMe && currentUser && u.uid === currentUser.uid);
   fillProfileTop1(u.uid, slotId);
   if (isMe) {
     on('open-edit-btn', () => {
@@ -870,14 +1162,61 @@ $('edit-avatar-file').addEventListener('change', e => {
 });
 on('save-profile-btn', async () => {
   if (!currentUser) return;
+  if (isGuest()) { toast('Гостям нельзя менять профиль', 'error'); return; }
   const a = $('edit-avatar-url').value.trim();
   const t = $('edit-tag').value.trim().slice(0, 20);
   const c = $('edit-clan').value.trim().slice(0, 20);
   const b = $('edit-about').value.trim().slice(0, 160);
   await update(ref(db, 'users/' + currentUser.uid), { avatar: a, tag: t, clan: c, bio: b });
   Object.assign(currentUser, { avatar: a, tag: t, clan: c, bio: b });
+  // XP за оформление профиля: клан +10, аватар/описание/приписка +10 (первый раз)
+  const claimed = currentUser.achClaimed || {};
+  if (c && !claimed.clanXp) { await runTransaction(ref(db, 'users/' + currentUser.uid + '/xp'), x => (x||0) + 10); currentUser.xp = (currentUser.xp||0)+10; claimed.clanXp = true; toast('✨ +10 XP · Клан', 'success'); }
+  if ((a || t || b) && !claimed.profileXp) { await runTransaction(ref(db, 'users/' + currentUser.uid + '/xp'), x => (x||0) + 10); currentUser.xp = (currentUser.xp||0)+10; claimed.profileXp = true; toast('✨ +10 XP · Профиль оформлен', 'success'); }
+  await update(ref(db, 'users/' + currentUser.uid + '/achClaimed'), claimed);
   toast('Профиль сохранён ✔', 'success');
   showScreen('profile-view'); renderMyProfile();
+});
+
+// ================= ПИКСЕЛЬНЫЙ РЕДАКТОР АВАТАРКИ (v1.2) =================
+function makePixelEditor(canvasId, paletteId, colors) {
+  const cv = $(canvasId), ctx = cv.getContext('2d');
+  const S = 16, PX = cv.width / S;
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, cv.width, cv.height);
+  let color = colors[0], down = false;
+  const pal = $(paletteId);
+  pal.innerHTML = colors.map((c, i) => '<button style="background:' + c + '" data-c="' + c + '" class="' + (i === 0 ? 'on' : '') + '"></button>').join('');
+  pal.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    color = b.dataset.c; pal.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  }));
+  function pos(e) {
+    const r = cv.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return [Math.floor((t.clientX - r.left) / r.width * S), Math.floor((t.clientY - r.top) / r.height * S)];
+  }
+  function paint(e) {
+    const [x, y] = pos(e);
+    if (x < 0 || y < 0 || x >= S || y >= S) return;
+    ctx.fillStyle = color; ctx.fillRect(x * PX, y * PX, PX, PX);
+    e.preventDefault();
+  }
+  cv.addEventListener('mousedown', e => { down = true; paint(e); });
+  cv.addEventListener('mousemove', e => { if (down) paint(e); });
+  window.addEventListener('mouseup', () => down = false);
+  cv.addEventListener('touchstart', e => { down = true; paint(e); }, { passive: false });
+  cv.addEventListener('touchmove', e => { if (down) paint(e); }, { passive: false });
+  cv.addEventListener('touchend', () => down = false);
+  return {
+    clear() { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height); },
+    dataURL() { return cv.toDataURL('image/png'); }
+  };
+}
+let avEditor = null;
+on('av-clear-btn', () => avEditor && avEditor.clear());
+on('av-apply-btn', () => {
+  if (!avEditor) return;
+  $('edit-avatar-url').value = avEditor.dataURL();
+  toast('Аватарка нарисована! Не забудь «Сохранить»', 'success');
 });
 on('delete-account-btn', async () => {
   if (!confirm('Удалить аккаунт навсегда?')) return;
