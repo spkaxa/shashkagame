@@ -567,6 +567,43 @@ onAuthStateChanged(auth,async user=>{
       const up={};for(const k in defs){if(currentUser[k]===undefined){currentUser[k]=defs[k];up[k]=defs[k];}}
       if(Object.keys(up).length)update(ref(db,'users/'+user.uid),up).catch(()=>{});
       update(ref(db,'users/'+user.uid),{lastSeen:Date.now()}).catch(()=>{});enterApp();}
+           // ===== МИГРАЦИЯ v1.2: разовое начисление XP за старые победы =====
+if (!currentUser.migrationV12 && !currentUser.guest) {
+  (async () => {
+    let bonusXP = 0;
+    const u = currentUser;
+    
+    // XP за старые онлайн-победы (150 за каждую)
+    if (u.wins > 0) bonusXP += u.wins * 150;
+    // XP за поражения (10 за каждое)
+    if (u.losses > 0) bonusXP += u.losses * 10;
+    // XP за победы над ботами
+    for (const d of ['easy','normal','hard','impossible']) {
+      const xpPerWin = {easy:5, normal:10, hard:15, impossible:25}[d];
+      if (u['botWins_'+d] > 0) bonusXP += u['botWins_'+d] * xpPerWin;
+    }
+    // XP за посты (если были)
+    if (u.postsCount > 0) bonusXP += u.postsCount * 15;
+    // XP за сообщения в чате
+    if (u.chatMsgs > 0) bonusXP += Math.min(u.chatMsgs, 100) * 1; // по 1 XP за сообщение, макс 100
+    
+    if (bonusXP > 0) {
+      await runTransaction(ref(db, 'users/'+currentUser.uid+'/xp'), x => (x||0) + bonusXP);
+      currentUser.xp = (currentUser.xp||0) + bonusXP;
+      currentUser.level = levelOf(currentUser.xp);
+      notify('🎁 Бонус за старые победы: +'+bonusXP+' XP!', '🎁');
+      toast('🎁 Начислено '+bonusXP+' XP за прошлые игры!', 'success');
+    }
+    
+    // Пересчёт достижений
+    await checkAchievements();
+    
+    // Помечаем миграцию как выполненную (чтобы не повторять)
+    await update(ref(db, 'users/'+currentUser.uid), { migrationV12: true });
+    currentUser.migrationV12 = true;
+    devLog('Миграция v1.2: +'+bonusXP+' XP, достижения пересчитаны', 'ok');
+  })();
+}
   }else if(!currentUser?.guest){currentUser=null;$('side-nav').classList.add('hidden');$('bl-panels').classList.add('hidden');showScreen('auth');}
 });
 setInterval(()=>{if(currentUser&&!isGuest()){update(ref(db,'users/'+currentUser.uid),{lastSeen:Date.now()}).catch(()=>{});runTransaction(ref(db,'users/'+currentUser.uid+'/playtime'),c=>(c||0)+60).catch(()=>{});currentUser.playtime=(currentUser.playtime||0)+60;}},60000);
