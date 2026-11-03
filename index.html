@@ -918,10 +918,21 @@ function botChooseMove(board,color,diff){
 // ===== СТРЕЛКИ/АНИМАЦИЯ =====
 let arrowTimers=[];
 function clearMoveArrows(){const bd=$('board');if(bd)bd.querySelectorAll('svg.move-arrow').forEach(s=>s.remove());arrowTimers.forEach(t=>clearTimeout(t));arrowTimers=[];}
-function drawMoveArrow(from,to){const bd=$('board'),cs=bd.clientWidth/8;const cen=i=>{const[r,c]=rc(i);return{x:c*cs+cs/2,y:r*cs+cs/2};};const a=cen(from),b=cen(to);const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len;const ins=cs*0.34,sx=a.x+ux*ins,sy=a.y+uy*ins,ex=b.x-ux*ins,ey=b.y-uy*ins,hd=cs*0.2,bx=ex-ux*hd,by=ey-uy*hd,px=-uy,py=ux,w=Math.max(3,cs*0.07);
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','move-arrow');svg.style.width=bd.clientWidth+'px';svg.style.height=bd.clientHeight+'px';
-  svg.innerHTML='<line x1="'+sx+'" y1="'+sy+'" x2="'+bx+'" y2="'+by+'" stroke="black" stroke-opacity="0.3" stroke-width="'+w+'" stroke-linecap="round"/><polygon points="'+ex+','+ey+' '+(bx+px*hd*0.55)+','+(by+py*hd*0.55)+' '+(bx-px*hd*0.55)+','+(by-py*hd*0.55)+'" fill="black" fill-opacity="0.32"/>';
-  bd.appendChild(svg);arrowTimers.push(setTimeout(()=>{svg.classList.add('fade-out');arrowTimers.push(setTimeout(()=>svg.remove(),950));},8000));}
+function drawMoveArrow(from,to){
+  const bd=$('board'),cs=bd.clientWidth/8;
+  const cen=i=>{const[r,c]=rc(i);return{x:c*cs+cs/2,y:r*cs+cs/2};};
+  const a=cen(from),b=cen(to);
+  const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len;
+  const ins=cs*0.34,sx=a.x+ux*ins,sy=a.y+uy*ins,ex=b.x-ux*ins,ey=b.y-uy*ins,hd=cs*0.2,bx=ex-ux*hd,by=ey-uy*hd,px=-uy,py=ux,w=Math.max(3,cs*0.07);
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','move-arrow');
+  svg.style.width=bd.clientWidth+'px';
+  svg.style.height=bd.clientHeight+'px';
+  // УМЕНЬШЕНА ПРОЗРАЧНОСТЬ: 0.3 → 0.12, 0.32 → 0.12
+  svg.innerHTML='<line x1="'+sx+'" y1="'+sy+'" x2="'+bx+'" y2="'+by+'" stroke="black" stroke-opacity="0.12" stroke-width="'+w+'" stroke-linecap="round"/><polygon points="'+ex+','+ey+' '+(bx+px*hd*0.55)+','+(by+py*hd*0.55)+' '+(bx-px*hd*0.55)+','+(by-py*hd*0.55)+'" fill="black" fill-opacity="0.12"/>';
+  bd.appendChild(svg);
+  arrowTimers.push(setTimeout(()=>{svg.classList.add('fade-out');arrowTimers.push(setTimeout(()=>svg.remove(),950));},8000));
+}
 function animatePieceMove(path,captures,color,isKing,flipped,cb){const bd=$('board'),cs=bd.clientWidth/8;const gp=i=>{const[r,c]=rc(i);const dr=flipped?7-r:r,dc=flipped?7-c:c;return{x:dc*cs+cs*0.11,y:dr*cs+cs*0.11};};clearMoveArrows();for(let s=0;s<path.length-1;s++)drawMoveArrow(path[s],path[s+1]);
   const lastEl=bd.querySelector('.cell[data-idx="'+path[path.length-1]+'"] .piece');if(lastEl)lastEl.style.visibility='hidden';
   const firstEl=bd.querySelector('.cell[data-idx="'+path[0]+'"] .piece');if(firstEl)firstEl.remove();
