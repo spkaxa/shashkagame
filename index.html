@@ -118,7 +118,17 @@ input[type=color]{width:60px;height:38px;padding:2px;background:var(--bg2);borde
 .piece.black{background:radial-gradient(circle at 35% 30%,#4a3555,#241430 60%,#120818);border:2px solid #0a0510;color:#ffd54f}
 .piece.king::after{content:"♛";font-size:1.4rem;position:absolute}
 .piece.king.white::after{color:#b8860b}.piece.king.black::after{color:#fbbf24}
-.piece.anim-piece{position:absolute;z-index:100;pointer-events:none;transition:left .18s ease,top .18s ease}
+.piece.anim-piece{
+  position:absolute;
+  z-index:100;
+  pointer-events:none;
+  transition:left .22s ease-out,top .22s ease-out;
+  animation:pieceFloat 0.4s ease-in-out infinite alternate;
+}
+@keyframes pieceFloat{
+  from{transform:scale(1.1) translateY(0);}
+  to{transform:scale(1.15) translateY(-4px);}
+}
 .piece.dying{transition:opacity .15s,transform .15s;opacity:0!important;transform:scale(0)!important}
 #capture-alert{position:absolute;top:-40px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;padding:6px 16px;border-radius:20px;font-weight:bold;font-size:14px;display:none;z-index:20;white-space:nowrap}
 #capture-alert.show{display:block}
