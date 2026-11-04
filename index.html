@@ -550,7 +550,7 @@ window.addEventListener('keydown',e=>{const k=e.key;if(k==='F12'||(e.ctrlKey&&e.
 on('dev-clear',()=>$('dev-log').innerHTML='');on('dev-close',()=>$('dev-console').classList.remove('open'));
 $('console-input').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const v=e.target.value.trim();e.target.value='';if(v==='/minesweeper')openMines();else if(v)toast('Неизвестная команда');});
 // ===== SPLASH =====
-$('splash').addEventListener('click',()=>{$('splash').classList.add('gone');});
+$('splash').classList.add('gone');
 // ===== ЭКРАНЫ =====
 const GUEST_BLOCK=['chat','feed','chats','players','rating','settings','profile-edit','history'];
 function showScreen(name){if(isBanned()){toast('🚫 Аккаунт заблокирован','error');name='profile-view';}
