@@ -1141,7 +1141,7 @@ async function sendGameChat(){const t=$('game-chat-input').value.trim();if(!t||i
  $('game-chat-input').value='';checkAchievements();}
 on('game-chat-send',sendGameChat);
 $('game-chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendGameChat();});
-let voice={room:null,stream:null,pcs:{},unsubUsers:null,unsubSignal:null,unsubRooms:[],stats:{},isMuted:false};
+var voice={room:null,stream:null,pcs:{},unsubUsers:null,unsubSignal:null,unsubRooms:[],stats:{},isMuted:false};
 const GLOBAL_VOICE=[{id:'voice_1',n:'Войс 1'},{id:'voice_2',n:'Войс 2'},{id:'voice_3',n:'Войс 3'}];
 async function ensureMic(){if(!voice.stream)voice.stream=await navigator.mediaDevices.getUserMedia({audio:true});return voice.stream;}
 function playVoiceStream(uid,stream){stopVoiceAudio(uid);const a=document.createElement('audio');a.autoplay=true;a.id='va_'+uid;a.srcObject=stream;document.body.appendChild(a);}
