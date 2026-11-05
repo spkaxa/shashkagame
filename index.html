@@ -821,7 +821,7 @@ async function renderPlayers(){
 }
  box.innerHTML=all.map(([uid,u])=>{const onl=now-(u.lastSeen||0)<3e5;
   return'<div class="player-item" data-uid="'+uid+'"><span class="online-dot '+(onl?'on':'off')+'"></span>'+avatarHtml(u,'sm')+'<div style="flex:1"><b>'+nickHtml(u)+'</b> '+roleBadge(u)+' '+banBadge(u)+(u.lastDailyWinMSK===mskDateStr(0)?' <span class="fire-streak">🔥</span>':'')+'<div style="font-size:11px;color:var(--txt2)">'+(onl?'🟢 онлайн сейчас':fmtTimeAgo(u.lastSeen))+' · '+fmtPlaytime(u.playtime||0)+'</div></div><div class="lb-val">'+(u.elo||1000)+'</div></div>';}).join('');
- box.querySelectorAll('.player-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));}
+ box.querySelectorAll('.player-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));
 function openModal(html){$('modal-content').innerHTML='<button class="x" id="modal-x">✕</button>'+html;$('modal-bg').classList.remove('hidden');on('modal-x',closeModal);}
 function closeModal(){$('modal-bg').classList.add('hidden');if(dmUnsub){dmUnsub();dmUnsub=null;}}
 $('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
