@@ -431,6 +431,8 @@ function plural(n,f){const a=Math.abs(n)%100,b=a%10;if(a>10&&a<20)return f[2];if
 function fmtPlaytime(s){s=Math.floor(s||0);const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h+' '+plural(h,['час','часа','часов'])+' '+m+' '+plural(m,['минута','минуты','минут']);}
 function toast(m,t){const el=$('toast');el.textContent=m;el.className='show '+(t||'');clearTimeout(el._t);el._t=setTimeout(()=>el.className='',2800);}
 function devLog(m,c){const b=$('dev-log');if(!b)return;const d=document.createElement('div');d.className=c||'info';d.textContent='['+new Date().toLocaleTimeString()+'] '+m;b.appendChild(d);b.scrollTop=b.scrollHeight;}
+  window.addEventListener('error',e=>devLog('JS Error: '+e.message,'err'));
+window.addEventListener('unhandledrejection',e=>devLog('Promise: '+((e.reason&&e.reason.message)||e.reason),'err'));
 function mskDateStr(off){return new Date(Date.now()+(off||0)*864e5).toLocaleDateString('en-CA',{timeZone:'Europe/Moscow'});}
 const LEVELS=[0,500,1500,3000,5000,7500,10000,12500,15000,17500,20000];
 function levelOf(xp){let l=1;for(let i=0;i<LEVELS.length;i++){if((xp||0)>=LEVELS[i])l=i+1;}return Math.min(l,11);}
@@ -798,11 +800,25 @@ async function renderRating(){const box=$('rating-box');box.innerHTML='Загр�
   list.sort((a,b)=>val(b)-val(a));list=list.slice(0,50);
   box.innerHTML=list.map((u,i)=>'<div class="lb-item" data-uid="'+u.uid+'"><div class="lb-rank">#'+(i+1)+'</div>'+avatarHtml(u,'sm')+'<div style="flex:1"><div style="font-weight:700">'+nickHtml(u)+' '+roleBadge(u)+' '+banBadge(u)+'</div><div style="font-size:11px;color:var(--txt2)">Ур. '+levelOf(u.xp||0)+' · '+getRank(u.elo||1000).n+'</div></div><div class="lb-val">'+val(u)+'</div></div>').join('')||'Нет данных';
   box.querySelectorAll('.lb-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));}catch(e){box.innerHTML='Ошибка';}}
-async function renderPlayers(){const box=$('players-box');box.innerHTML='Загрузка...';
- const snap=await get(ref(db,'users'));const all=Object.entries(snap.val()||{}).filter(([_,u])=>!u.deleted);
- const now=Date.now();
- $('players-count').textContent=all.filter(([_,u])=>now-(u.lastSeen||0)<3e5).length;
- all.sort((a,b)=>{const oa=now-(a[1].lastSeen||0)<3e5?1:0,ob=now-(b[1].lastSeen||0)<3e5?1:0;if(ob!==oa)return ob-oa;return(b[1].lastSeen||0)-(a[1].lastSeen||0);});
+async function renderPlayers(){
+  const box=$('players-box');
+  box.innerHTML='Загрузка...';
+  try{
+    const snap=await get(ref(db,'users'));
+    const users=snap.val()||{};
+    const now=Date.now();
+    const all=Object.entries(users).filter(([_,u])=>u&&typeof u==='object'&&!u.deleted);
+    $('players-count').textContent=all.filter(([_,u])=>now-(u.lastSeen||0)<3e5).length;
+    all.sort((a,b)=>{const oa=now-(a[1].lastSeen||0)<3e5?1:0,ob=now-(b[1].lastSeen||0)<3e5?1:0;if(ob!==oa)return ob-oa;return(b[1].lastSeen||0)-(a[1].lastSeen||0);});
+    if(!all.length){box.innerHTML='<div style="color:var(--txt2);font-size:13px">Игроков пока нет</div>';return;}
+    box.innerHTML=all.map(([uid,u])=>{const onl=now-(u.lastSeen||0)<3e5;
+      return '<div class="player-item" data-uid="'+uid+'"><span class="online-dot '+(onl?'on':'off')+'"></span>'+avatarHtml(u,'sm')+'<div style="flex:1"><b>'+nickHtml(u)+'</b> '+roleBadge(u)+' '+banBadge(u)+((u.lastDailyWinMSK===mskDateStr(0))?' <span class="fire-streak">🔥</span>':'')+'<div style="font-size:11px;color:var(--txt2)">'+(onl?'🟢 онлайн сейчас':fmtTimeAgo(u.lastSeen))+' · '+fmtPlaytime(u.playtime||0)+'</div></div><div class="lb-val">'+(u.elo||1000)+'</div></div>';}).join('');
+    box.querySelectorAll('.player-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));
+  }catch(e){
+    devLog('players: '+e.message,'err');
+    box.innerHTML='<div style="color:var(--red);font-size:13px">Ошибка: '+esc(e.message)+'</div>';
+  }
+}
  box.innerHTML=all.map(([uid,u])=>{const onl=now-(u.lastSeen||0)<3e5;
   return'<div class="player-item" data-uid="'+uid+'"><span class="online-dot '+(onl?'on':'off')+'"></span>'+avatarHtml(u,'sm')+'<div style="flex:1"><b>'+nickHtml(u)+'</b> '+roleBadge(u)+' '+banBadge(u)+(u.lastDailyWinMSK===mskDateStr(0)?' <span class="fire-streak">🔥</span>':'')+'<div style="font-size:11px;color:var(--txt2)">'+(onl?'🟢 онлайн сейчас':fmtTimeAgo(u.lastSeen))+' · '+fmtPlaytime(u.playtime||0)+'</div></div><div class="lb-val">'+(u.elo||1000)+'</div></div>';}).join('');
  box.querySelectorAll('.player-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));}
