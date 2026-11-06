@@ -13,6 +13,7 @@ body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:radial-gradien
 button{font-family:inherit;cursor:pointer;border:none;outline:none}
 input,textarea,select{font-family:inherit;outline:none}
 .hidden{display:none!important}
+#boot-error{position:fixed;top:0;left:0;right:0;background:#7f1d1d;color:#fff;z-index:9999;padding:10px;text-align:center;font-size:13px;font-weight:700}
 #egg-btn{position:fixed;right:0;bottom:0;width:14px;height:14px;z-index:400;opacity:0}
 #ban-banner{position:fixed;top:0;left:0;right:0;background:#7f1d1d;color:#fff;text-align:center;padding:10px;font-weight:700;z-index:999}
 .decor{position:fixed;pointer-events:none;opacity:.13;z-index:1;font-size:60px}
@@ -106,6 +107,9 @@ input[type=color]{width:50px;height:34px;padding:2px;background:var(--bg2);borde
 .chip{padding:7px 14px;border-radius:20px;font-size:12px;background:var(--bg3);color:var(--txt2);border:1px solid rgba(255,255,255,.08)}
 .chip.on{background:var(--main);color:#fff;font-weight:600}
 #season-note{margin:-6px 0 12px;font-size:12px;color:var(--txt2);background:var(--bg2);border:1px dashed rgba(255,255,255,.15);border-radius:10px;padding:8px 12px}
+.upd-item{background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:var(--txt2)}
+.upd-item b{color:var(--gold)}
+.upd-item ul{padding-left:18px;margin-top:6px;line-height:1.7}
 #game-wrap{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
 #board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(560px,86vw);height:min(560px,86vw);border:6px solid #241105;border-radius:10px;overflow:hidden;background:#241105;position:relative}
 #board svg.move-arrow{position:absolute;left:0;top:0;pointer-events:none;z-index:40;transition:opacity .9s}
@@ -145,7 +149,8 @@ input[type=color]{width:50px;height:34px;padding:2px;background:var(--bg2);borde
 .match-code-box b{color:var(--gold);font-size:16px;letter-spacing:2px}
 .spectator-badge{text-align:center;font-size:12px;color:var(--blue);padding:6px;background:rgba(91,168,255,.1);border-radius:8px}
 #chat-panel{height:min(70vh,640px);display:flex;flex-direction:column}
-#chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--bg2);border-radius:10px;margin-bottom:12px}
+#chat-msgs,#dm-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--bg2);border-radius:10px;margin-bottom:12px}
+#dm-msgs{flex:none;max-height:320px;min-height:120px;margin-bottom:10px}
 .chat-msg{max-width:85%;display:flex;flex-direction:column;gap:2px}
 .chat-msg.own{align-self:flex-end}
 .chat-msg .bubble{padding:10px 14px;border-radius:14px;font-size:14px;background:var(--bg3);border:1px solid rgba(255,255,255,.07);word-wrap:break-word}
@@ -172,14 +177,6 @@ input[type=color]{width:50px;height:34px;padding:2px;background:var(--bg2);borde
 .voice-card{background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;flex:1;min-width:140px;display:flex;flex-direction:column;gap:6px}
 .voice-card.on{border-color:var(--main)}
 .voice-avs{display:flex;gap:4px;flex-wrap:wrap;min-height:24px}
-.post-card{background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;margin-bottom:14px}
-.post-header{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-.post-img{width:100%;max-height:340px;object-fit:cover;border-radius:10px;margin-top:10px}
-.post-actions{display:flex;gap:16px;margin-top:10px}
-.post-action{cursor:pointer;display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--txt2);font-size:13px}
-.post-action.liked{color:var(--red)}
-.comments-section{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)}
-.comment{font-size:12px;margin-bottom:6px}
 .hist-item{display:flex;gap:10px;align-items:center;background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 14px;margin-bottom:8px}
 .hist-res{font-weight:800;font-size:14px;width:76px;text-align:center;border-radius:8px;padding:4px}
 .hist-res.win{background:rgba(105,219,124,.15);color:var(--green)}
@@ -248,7 +245,7 @@ body.ui-mobile #dev-console{width:100%}
 <span class="decor" style="bottom:8px;right:60px;font-size:40px">🎃</span>
 <div id="top-banner">🎃 Хэллоуин-ивент! · ТГК <a href="https://t.me/nasvseh" target="_blank">@nasvseh</a></div>
 <header id="app-header">
-  <div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки Онлайн</span><span class="ver">v1.2.3</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
+  <div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки Онлайн</span><span class="ver">v1.3</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
   <div id="ui-switch"><button id="ui-pc" class="on">🖥️ ПК</button><button id="ui-mobile-btn">📱 Телефон</button></div>
 </header>
 <div id="nav-shade"></div>
@@ -258,7 +255,7 @@ body.ui-mobile #dev-console{width:100%}
   <button class="side-btn" data-nav="mode">▶️<span>Играть</span></button>
   <button class="side-btn" data-nav="profile-view">👤<span>Аккаунт</span></button>
   <button class="side-btn" data-nav="history">📜<span>История</span></button>
-  <button class="side-btn" data-nav="feed">📰<span>Лента</span></button>
+  <button class="side-btn" data-nav="updates">🛠<span>Обновления</span></button>
   <button class="side-btn" data-nav="rating">🏆<span>Рейтинг</span></button>
   <button class="side-btn" data-nav="players">👥<span>Игроки</span></button>
   <button class="side-btn" data-nav="chat">💬<span>Общий чат</span></button>
@@ -274,7 +271,7 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen" id="screen-auth">
   <div class="panel auth-card">
     <div style="font-size:44px">🌿</div><h2 id="auth-title" style="font-size:22px;font-weight:700">Вход</h2>
-    <div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.2.3 · создатель xxspk · кодил qwen &lt;3</div>
+    <div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.3 · создатель xxspk · кодил qwen &lt;3</div>
     <div class="field"><label>Никнейм</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
     <div class="field"><label>Пароль (мин. 6, можно с ником)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
     <button class="btn big" id="auth-submit">Войти</button>
@@ -309,17 +306,26 @@ body.ui-mobile #dev-console{width:100%}
   </div>
 </section>
 <section class="screen hidden" id="screen-history"><div class="panel"><h2 class="ptitle">📜 История игр (онлайн)</h2><div id="history-list">Загрузка...</div></div></section>
-<section class="screen hidden" id="screen-feed">
-  <div class="panel"><h2 class="ptitle">📰 Лента игроков</h2>
-    <div class="field"><textarea id="post-text" rows="2" maxlength="500" placeholder="Что нового? @ник — отметить"></textarea></div>
-    <div class="row" style="margin-bottom:16px"><button class="btn small secondary" id="post-draw-btn">🎨 Нарисовать</button><label class="btn small secondary" style="cursor:pointer">📷 Фото<input type="file" id="post-file" accept="image/*" style="display:none"></label><span id="post-attach-note" style="font-size:11px;color:var(--txt2)"></span><span class="spacer"></span><button class="btn small" id="post-publish">Опубликовать (+15 XP)</button></div>
-    <div id="feed-list">Загрузка...</div></div>
+<section class="screen hidden" id="screen-updates">
+  <div class="panel" style="max-width:680px;margin:0 auto">
+    <h2 class="ptitle">🛠 Обновления и исправления</h2>
+    <div class="upd-item"><b>v1.3 — текущая</b><ul>
+      <li>🗑 Лента удалена; добавлена вкладка «Обновления и исправления».</li>
+      <li>💬 Личный чат теперь как общий: пузыри, аватарки, фотки, рисунки, реакции ❤️👍😂😮, удаление своих сообщений.</li>
+      <li>🐞 Исправлено «ничего не нажимается»: все кнопки вешаются одним блоком в конце загрузки + защита от падений и индикатор ошибки загрузки.</li>
+    </ul></div>
+    <div class="upd-item"><b>v1.2.3</b><ul><li>♟ Режим «Шахматы»: боты, онлайн, Elo, XP, достижения, рейтинг, правила.</li><li>🎙 Возвращён войс-чат (3 комнаты + матч).</li></ul></div>
+    <div class="upd-item"><b>v1.2.2</b><ul><li>🐛 Фиксы: fmtTimeAgo, инициализация войса, вкладка «Игроки».</li><li>👑 Ребаланс дамки: летает, бьёт перешагиванием.</li><li>☰ Меню на телефоне, топ кланов, заглушка сезона.</li></ul></div>
+    <div class="upd-item"><b>v1.2</b><ul><li>✨ XP и уровни, 🔥 огонёк дня, 📜 история игр, реакции, 🥚 пасхалка, 💣 сапёр, градиент профиля, цветной ник, 💻 developer, 🚫 баны.</li></ul></div>
+    <div class="upd-item"><b>v1.1</b><ul><li>🎃 Хэллоуин-тема, боковое меню, уведомления и чаты снизу, войс, рулетка со стрелкой, гость.</li></ul></div>
+    <div class="upd-item"><b>v1.0</b><ul><li>🌿 База: онлайн-матчи, боты, достижения, TOP-1, наблюдение, код матча, рейтинг.</li></ul></div>
+  </div>
 </section>
 <section class="screen hidden" id="screen-rating">
   <div class="panel"><h2 class="ptitle">🏆 Рейтинг (Топ 50)</h2>
     <div id="season-note">⏳ Следующий сезон рейтинга будет: <b style="color:var(--gold)">___</b> (дата не объявлена)</div>
     <div class="chips" id="rating-filter">
-      <button class="chip on" data-f="total">🌿 Общий ботов</button><button class="chip" data-f="online">🌿 Онлайн Elo</button><button class="chip" data-f="wins">🌿 Победы</button><button class="chip" data-f="chessElo">♟ Elo шахматы</button><button class="chip" data-f="chessWins">♟ Победы шах</button><button class="chip" data-f="xp">XP</button><button class="chip" data-f="maxElo">За всё время</button><button class="chip" data-f="clans">⚔ Кланы</button><button class="chip" data-f="easy">🌿 Лёгкий</button><button class="chip" data-f="normal">🌿 Обычный</button><button class="chip" data-f="hard">🌿 Сложный</button><button class="chip" data-f="impossible">🌿 Невозможный</button><button class="chip" data-f="chessBotElo_easy">♟ Бот лёгкий</button><button class="chip" data-f="chessBotElo_normal">♟ Бот обычный</button><button class="chip" data-f="chessBotElo_hard">♟ Бот сложный</button><button class="chip" data-f="chessBotElo_impossible">♟ Бот невозм.</button></div>
+      <button class="chip on" data-f="total">🌿 Общий ботов</button><button class="chip" data-f="online">🌿 Онлайн Elo</button><button class="chip" data-f="wins">🌿 Победы</button><button class="chip" data-f="chessElo">♟ Elo шахматы</button><button class="chip" data-f="chessWins">♟ Победы шах</button><button class="chip" data-f="xp">XP</button><button class="chip" data-f="maxElo">За всё время</button><button class="chip" data-f="clans">⚔ Кланы</button><button class="chip" data-f="easy">🌿 Лёгкий</button><button class="chip" data-f="normal">🌿 Обычный</button><button class="chip" data-f="hard">🌿 Сложный</button><button class="chip" data-f="impossible">🌿 Невозм.</button><button class="chip" data-f="chessBotElo_easy">♟ Бот лёгкий</button><button class="chip" data-f="chessBotElo_normal">♟ Бот обычный</button><button class="chip" data-f="chessBotElo_hard">♟ Бот сложный</button><button class="chip" data-f="chessBotElo_impossible">♟ Бот невозм.</button></div>
     <div id="rating-box">Загрузка...</div></div>
 </section>
 <section class="screen hidden" id="screen-players"><div class="panel"><h2 class="ptitle">👥 Игроки онлайн · <span id="players-count" style="color:var(--green)">0</span></h2><div id="players-box">Загрузка...</div></div></section>
@@ -329,7 +335,6 @@ body.ui-mobile #dev-console{width:100%}
     <h2 class="ptitle">🎃 Выберите режим</h2>
     <div class="chips"><button class="chip on" id="gametab-checkers">🌿 Шашки</button><button class="chip" id="gametab-chess">♟ Шахматы</button></div>
     <div id="mode-checkers" style="display:flex;flex-direction:column;gap:10px">
-      <div style="font-size:13px;color:var(--txt2)">🤖 Бот (шашки)</div>
       <button class="btn big secondary" id="diff-easy">🟢 Лёгкая (Elo 800)</button>
       <button class="btn big secondary" id="diff-normal">🔵 Обычная (Elo 1500)</button>
       <button class="btn big secondary" id="diff-hard">🟠 Сложная (Elo 2200)</button>
@@ -340,7 +345,6 @@ body.ui-mobile #dev-console{width:100%}
       <button class="btn big secondary" id="play-online-noelo-btn">🌐 Онлайн БЕЗ Elo и XP</button>
     </div>
     <div id="mode-chess" class="hidden" style="display:flex;flex-direction:column;gap:10px">
-      <div style="font-size:13px;color:var(--txt2)">🤖 Бот (шахматы)</div>
       <button class="btn big secondary" id="chdiff-easy">🟢 Лёгкий (Elo 800)</button>
       <button class="btn big secondary" id="chdiff-normal">🔵 Обычный (Elo 1500)</button>
       <button class="btn big secondary" id="chdiff-hard">🟠 Сложный (Elo 2200)</button>
@@ -384,20 +388,20 @@ body.ui-mobile #dev-console{width:100%}
     </ul>
     <h3 style="font-size:15px;margin:16px 0 8px">♟ Шахматы</h3>
     <ul style="font-size:13px;color:var(--txt2);line-height:1.9;padding-left:18px">
-      <li>Стандартные правила ФИДЕ: ходы фигур, шах, мат, пат.</li>
-      <li>Рокировка (короткая/длинная), взятие на проходе, превращение пешки в ферзя.</li>
-      <li>Победа: мат сопернику или сдача/таймаут соперника. Пат = ничья.</li>
+      <li>Стандартные правила: ходы фигур, шах, мат, пат.</li>
+      <li>Рокировка, взятие на проходе, превращение пешки в ферзя.</li>
+      <li>Победа: мат / сдача / таймаут соперника. Пат = ничья.</li>
       <li>⏱ 30 сек на ход, иначе поражение.</li>
-      <li>Elo, XP, достижения и боты — отдельные от шашек, но по тем же формулам.</li>
+      <li>Elo, XP и достижения отдельные от шашек, по тем же формулам.</li>
     </ul>
-    <h3 style="font-size:15px;margin:16px 0 8px">🏆 Ранги (общие для обеих игр)</h3>
+    <h3 style="font-size:15px;margin:16px 0 8px">🏆 Ранги (общие)</h3>
     <div style="font-size:.9rem;background:var(--bg2);padding:12px;border-radius:8px" id="ranks-box"></div>
     <h3 style="font-size:15px;margin:16px 0 8px">✨ Уровни XP</h3>
     <div style="font-size:.9rem;background:var(--bg2);padding:12px;border-radius:8px" id="levels-box"></div>
-    <h3 style="font-size:15px;margin:16px 0 8px">✨ XP (шашки и шахматы одинаково)</h3>
+    <h3 style="font-size:15px;margin:16px 0 8px">✨ XP</h3>
     <ul style="font-size:13px;color:var(--txt2);line-height:1.9;padding-left:18px">
-      <li>Онлайн: победа +150, поражение +10. Боты: +5/+10/+15/+25.</li>
-      <li>Достижение +20 · подписчик +25 · пост +15 · TOP-1 дня +50.</li>
+      <li>Онлайн (шашки/шахматы): победа +150, поражение +10. Боты: +5/+10/+15/+25.</li>
+      <li>Достижение +20 · подписчик +25 · TOP-1 дня +50.</li>
     </ul>
   </div>
 </section>
@@ -411,6 +415,9 @@ body.ui-mobile #dev-console{width:100%}
 <div id="dev-console"><div class="head"><span>🖥️ Консоль (M)</span><input id="console-input" placeholder="/minesweeper"><button class="btn small secondary" id="dev-clear">Очистить</button><button class="btn small secondary" id="dev-close">✕</button></div><div id="dev-log"></div></div>
 <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
 <div id="toast"></div>
+<script>
+window.addEventListener('load',()=>{setTimeout(()=>{if(!window.__APP_OK){const d=document.createElement('div');d.id='boot-error';d.textContent='⚠️ Скрипт не загрузился полностью (нет интернета до Firebase CDN или ошибка). Кнопки могут не работать.';document.body.prepend(d);}},3000);});
+</script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getDatabase,ref,set,get,update,onValue,push,query,orderByChild,limitToLast,runTransaction,onDisconnect}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -419,7 +426,7 @@ const firebaseConfig={apiKey:"AIzaSyCk7Y-HHntq-tZMkJbDpk5WEct1IJ06RRs",authDomai
 const app=initializeApp(firebaseConfig),db=getDatabase(app),auth=getAuth(app);
 const TURN_SECONDS=30,DEFAULT_MUSIC="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3";
 const $=id=>document.getElementById(id);
-function on(id,fn){const el=$(id);if(el)el.addEventListener('click',fn);}
+function on(id,fn){const el=$(id);if(el)el.addEventListener('click',fn);else devLog('Нет элемента #'+id,'warn');}
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtTime(s){s=Math.floor(s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function fmtTimeHM(ts){if(!ts)return'';const d=new Date(ts);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
@@ -447,7 +454,7 @@ function banBadge(u){return(u&&u.banUntil&&u.banUntil>Date.now())?'<span class="
 let currentUser=null;
 const isGuest=()=>!currentUser||currentUser.guest;
 const isBanned=()=>currentUser&&currentUser.banUntil&&currentUser.banUntil>Date.now();
-async function setFlag(n){if(isGuest()||currentUser[n])return;currentUser[n]=true;await update(ref(db,'users/'+currentUser.uid),{[n]:true}).catch(()=>{});checkAchievements();}
+async function setFlag(n){if(isGuest()||!currentUser||currentUser[n])return;currentUser[n]=true;await update(ref(db,'users/'+currentUser.uid),{[n]:true}).catch(()=>{});checkAchievements();}
 async function addXPTo(uid,amount,reason){if(!uid||amount<=0)return;await runTransaction(ref(db,'users/'+uid+'/xp'),x=>(x||0)+amount).catch(()=>{});if(uid===currentUser?.uid)currentUser.xp=(currentUser.xp||0)+amount;notifyUser(uid,'✨ +'+amount+' XP: '+reason,'✨');}
 function addXP(a,r){if(!isGuest())addXPTo(currentUser.uid,a,r);}
 function bump(uid,f,d){return runTransaction(ref(db,'users/'+uid+'/'+f),v=>Math.max(0,(v||0)+d)).catch(()=>{});}
@@ -455,37 +462,27 @@ async function notifyUser(uid,text,icon){if(!uid)return;await push(ref(db,'users
 function notify(t,i){if(!isGuest())notifyUser(currentUser.uid,t,i);}
 async function markDailyWin(){if(isGuest())return;const t=mskDateStr(0);if(currentUser.lastDailyWinMSK===t)return;const s=currentUser.lastDailyWinMSK===mskDateStr(-1)?(currentUser.dailyStreak||0)+1:1;currentUser.lastDailyWinMSK=t;currentUser.dailyStreak=s;await update(ref(db,'users/'+currentUser.uid),{lastDailyWinMSK:t,dailyStreak:s}).catch(()=>{});notify('🔥 Победа дня! Серия: '+s,'🔥');}
 const BOT_DIFF_NAMES={easy:'Лёгкий',normal:'Обычный',hard:'Сложный',impossible:'Невозможный'};
-const BOT_META={easy:{n:'🟢',elo:800,xp:5},normal:{n:'🔵',elo:1500,xp:10},hard:{n:'🟠',elo:2200,xp:15},impossible:{n:'🔥',elo:3500,xp:25}};
+const BOT_META={easy:{elo:800,xp:5},normal:{elo:1500,xp:10},hard:{elo:2200,xp:15},impossible:{elo:3500,xp:25}};
 function buildAchievements(){const L=[];
- const addOnline=(pre,winsF,icon,game)=>{[[1,'I'],[5,'II'],[10,'III'],[25,'IV'],[50,'V'],[100,'VI']].forEach(([n,r])=>L.push({id:pre+'ow'+n,icon,name:game+'-победа '+r,desc:'Выиграть '+n+' онлайн игр ('+game+')',check:u=>(u[winsF]||0)>=n}));};
- addOnline('',  'wins','🌐','Шашки'); addOnline('ch_','chessWins','♟','Шахматы');
- RANKS.forEach((r,i)=>L.push({id:'rank'+i,icon:r.icon,name:'Ранг: '+r.n,desc:'Шашки: ранг '+r.n,check:u=>rankIndex(u.maxElo||1000)>=i}));
- RANKS.forEach((r,i)=>L.push({id:'chrank'+i,icon:r.icon,name:'♟ Ранг: '+r.n,desc:'Шахматы: ранг '+r.n,check:u=>rankIndex(u.chessMaxElo||1000)>=i}));
- for(let lv=1;lv<=11;lv++)L.push({id:'lvl'+lv,icon:'⭐',name:'Уровень '+lv+(lv===11?' MAX':''),desc:'XP до уровня '+lv,check:u=>levelOf(u.xp||0)>=lv});
+ [[1,'🌐','Онлайн-победа I','wins',1],['5','🌐','Онлайн-победа II','wins',5],['10','🌐','Онлайн-победа III','wins',10],['25','🌐','Онлайн-победа IV','wins',25],['50','🌐','Онлайн-победа V','wins',50],['100','🌐','Онлайн-победа VI','wins',100]].forEach(([n,ic,nm,f,c])=>L.push({id:'ow'+n,icon:ic,name:nm,desc:'Выиграть '+c+' онлайн игр (шашки)',check:u=>(u[f]||0)>=c}));
+ [[1,'♟','Шах-победа I','chessWins',1],[5,'♟','Шах-победа II','chessWins',5],[10,'♟','Шах-победа III','chessWins',10],[25,'♟','Шах-победа IV','chessWins',25],[50,'♟','Шах-победа V','chessWins',50],[100,'♟','Шах-победа VI','chessWins',100]].forEach(([n,ic,nm,f,c])=>L.push({id:'chow'+n,icon:ic,name:nm,desc:'Выиграть '+c+' онлайн игр (шахматы)',check:u=>(u[f]||0)>=c}));
+ RANKS.forEach((r,i)=>L.push({id:'rank'+i,icon:r.icon,name:'Ранг: '+r.n,desc:'Шашки: достичь ранга '+r.n,check:u=>rankIndex(u.maxElo||1000)>=i}));
+ RANKS.forEach((r,i)=>L.push({id:'chrank'+i,icon:r.icon,name:'♟ Ранг: '+r.n,desc:'Шахматы: достичь ранга '+r.n,check:u=>rankIndex(u.chessMaxElo||1000)>=i}));
+ for(let lv=1;lv<=11;lv++)L.push({id:'lvl'+lv,icon:'⭐',name:'Уровень '+lv+(lv===11?' MAX':''),desc:'Накопить XP до уровня '+lv,check:u=>levelOf(u.xp||0)>=lv});
  L.push({id:'first',icon:'🎮',name:'Первая игра',desc:'Сыграть любую игру',check:u=>((u.onlineGames||0)+(u.botGames||0)+(u.chessGames||0)+(u.chessOnlineGames||0))>=1});
  L.push({id:'chfirst',icon:'♟',name:'Первая шахматная',desc:'Сыграть в шахматы',check:u=>((u.chessGames||0)+(u.chessOnlineGames||0))>=1});
- for(const g of[['','botWins_','botElo_','🌿'],['ch_','chessBotWins_','chessBotElo_','♟']]){
-   for(const d of['easy','normal','hard','impossible']){const dn=BOT_DIFF_NAMES[d];
-     L.push({id:g[0]+'bw1_'+d,icon:g[3]==='♟'?'♟':'🤖',name:g[3]+' Победить бота '+dn,desc:'1 победа над ботом ('+(g[0]?'шахматы':'шашки')+')',check:u=>(u[g[1]+d]||0)>=1});
-     [5,10,25,50].forEach(n=>L.push({id:g[0]+'bw'+n+'_'+d,icon:g[3]==='♟'?'':'🤖',name:g[3]+' '+dn+' ×'+n,desc:n+' побед над ботом',check:u=>(u[g[1]+d]||0)>=n}));}}
+ for(const pre of['','chess']){const icon=pre?'♟':'🤖';
+  for(const d of['easy','normal','hard','impossible']){const dn=BOT_DIFF_NAMES[d];
+   L.push({id:pre+'bw1_'+d,icon,name:(pre?'♟ ':'')+'Победить бота '+dn,desc:'1 победа над ботом ('+(pre?'шахматы':'шашки')+')',check:u=>(u[pre+'BotWins_'+d]||0)>=1});
+   [5,10,25,50].forEach(n=>L.push({id:pre+'bw'+n+'_'+d,icon,name:(pre?'♟ ':'')+dn+' ×'+n,desc:n+' побед над ботом ('+(pre?'шахматы':'шашки')+')',check:u=>(u[pre+'BotWins_'+d]||0)>=n}));}}
  L.push({id:'chat1',icon:'💬',name:'Собеседник',desc:'1 сообщение в чат',check:u=>(u.chatMsgs||0)>=1});
  L.push({id:'chat10',icon:'💬',name:'Болтун',desc:'10 сообщений',check:u=>(u.chatMsgs||0)>=10});
  L.push({id:'chat100',icon:'💬',name:'Мастер чата',desc:'100 сообщений',check:u=>(u.chatMsgs||0)>=100});
  L.push({id:'clan',icon:'⚔',name:'Клановец',desc:'Поставить клан',check:u=>!!(u.clan&&u.clan.trim())});
- L.push({id:'post1',icon:'📰',name:'Первый пост',desc:'Опубликовать пост',check:u=>(u.postsCount||0)>=1});
- L.push({id:'post5',icon:'📰',name:'Блогер',desc:'5 постов',check:u=>(u.postsCount||0)>=5});
- L.push({id:'post10',icon:'📰',name:'Журналист',desc:'10 постов',check:u=>(u.postsCount||0)>=10});
  L.push({id:'folG1',icon:'👥',name:'Подписчик',desc:'Подписаться на кого-то',check:u=>(u.followingCount||0)>=1});
  L.push({id:'folR5',icon:'👥',name:'Популярный',desc:'5 подписчиков',check:u=>(u.followersCount||0)>=5});
  L.push({id:'folR10',icon:'👥',name:'Звезда',desc:'10 подписчиков',check:u=>(u.followersCount||0)>=10});
- L.push({id:'likeG1',icon:'❤️',name:'Ценитель',desc:'Лайкнуть пост',check:u=>(u.likesGiven||0)>=1});
- L.push({id:'likeR5',icon:'❤️',name:'Симпатия',desc:'5 лайков получено',check:u=>(u.likesReceived||0)>=5});
- L.push({id:'likeR10',icon:'❤️',name:'Любимчик',desc:'10 лайков получено',check:u=>(u.likesReceived||0)>=10});
- L.push({id:'cmtM1',icon:'💭',name:'Комментатор',desc:'Прокомментировать пост',check:u=>(u.commentsMade||0)>=1});
- L.push({id:'cmtR1',icon:'💭',name:'Обсуждаемый',desc:'Коммент на твоём посте',check:u=>(u.commentsReceived||0)>=1});
- L.push({id:'cmtR5',icon:'💭',name:'Дискуссия',desc:'5 комментов получено',check:u=>(u.commentsReceived||0)>=5});
- L.push({id:'cmtR10',icon:'💭',name:'Ораторская',desc:'10 комментов получено',check:u=>(u.commentsReceived||0)>=10});
- L.push({id:'egg1',icon:'🥚',name:'Найдена пасхалка',desc:'Найти скрытую кнопку',check:u=>!!u.eggFound});
+ L.push({id:'egg1',icon:'🥚',name:'Найдена пасхалка',desc:'Найти скрытую кнопку в углу',check:u=>!!u.eggFound});
  L.push({id:'egg2',icon:'🔑',name:'Код введён',desc:'Ввести код пасхалки',check:u=>!!u.eggCode});
  L.push({id:'dmS',icon:'✉️',name:'Вы написали игроку',desc:'Отправить ЛС',check:u=>!!u.dmSent});
  L.push({id:'dmR',icon:'📬',name:'Вам написал игрок',desc:'Получить ЛС',check:u=>!!u.dmReceived});
@@ -501,10 +498,10 @@ function buildAchievements(){const L=[];
  L.push({id:'voice',icon:'🎙',name:'Голос',desc:'Зайти в войс',check:u=>!!u.voiceSpoke});
  L.push({id:'lost1',icon:'💀',name:'Поражение',desc:'Проиграть онлайн (шашки)',check:u=>(u.losses||0)>=1});
  L.push({id:'chlost1',icon:'💀',name:'♟ Поражение',desc:'Проиграть онлайн (шахматы)',check:u=>(u.chessLosses||0)>=1});
- L.push({id:'ws2',icon:'🔥',name:'Винстрик 2',desc:'Серия 2 побед',check:u=>(u.maxWinStreak||0)>=2});
- L.push({id:'ws5',icon:'🔥',name:'Винстрик 5',desc:'Серия 5 побед',check:u=>(u.maxWinStreak||0)>=5});
- L.push({id:'ws10',icon:'🔥',name:'Винстрик 10',desc:'Серия 10 побед',check:u=>(u.maxWinStreak||0)>=10});
- L.push({id:'ws20',icon:'🔥',name:'Винстрик 20',desc:'Серия 20 побед',check:u=>(u.maxWinStreak||0)>=20});
+ L.push({id:'ws2',icon:'🔥',name:'Винстрик 2',desc:'Серия 2 побед (шашки)',check:u=>(u.maxWinStreak||0)>=2});
+ L.push({id:'ws5',icon:'🔥',name:'Винстрик 5',desc:'Серия 5 побед (шашки)',check:u=>(u.maxWinStreak||0)>=5});
+ L.push({id:'ws10',icon:'🔥',name:'Винстрик 10',desc:'Серия 10 побед (шашки)',check:u=>(u.maxWinStreak||0)>=10});
+ L.push({id:'ws20',icon:'🔥',name:'Винстрик 20',desc:'Серия 20 побед (шашки)',check:u=>(u.maxWinStreak||0)>=20});
  L.push({id:'chws2',icon:'🔥',name:'♟ Винстрик 2',desc:'Шахматы: серия 2',check:u=>(u.chessMaxWinStreak||0)>=2});
  L.push({id:'chws5',icon:'🔥',name:'♟ Винстрик 5',desc:'Шахматы: серия 5',check:u=>(u.chessMaxWinStreak||0)>=5});
  L.push({id:'vsUp',icon:'️',name:'Сильный соперник',desc:'Игра с соперником выше по Elo',check:u=>!!u.playedHigher});
@@ -530,308 +527,17 @@ function applyMusicSource(on){const old=$('yt-frame');if(old)old.remove();ytPlay
  bgm.volume=localStorage.getItem('musicVol')?parseFloat(localStorage.getItem('musicVol')):0.4;bgm.play().catch(()=>{});}
 function setVolume(v){$('bg-music').volume=v;if(ytPlayer&&ytReady){try{ytPlayer.setVolume(Math.round(v*100));}catch(e){}}}
 function applyTheme(){const c=localStorage.getItem('themeColor')||'#ff7a1a';document.documentElement.style.setProperty('--main',c);const sc=$('set-color');if(sc)sc.value=c;const vol=localStorage.getItem('musicVol')?parseFloat(localStorage.getItem('musicVol')):0.4;$('set-vol').value=vol*100;$('vol-val').textContent=Math.round(vol*100)+'%';const mus=localStorage.getItem('musicOn')!=='false';$('music-toggle-btn').textContent=mus?'🎵 вкл':'🔇 выкл';applyMusicSource(mus);}
-$('set-color').addEventListener('input',e=>{localStorage.setItem('themeColor',e.target.value);applyTheme();});
-on('reset-halloween',()=>{localStorage.setItem('themeColor','#ff7a1a');applyTheme();});
-on('reset-leaf',()=>{localStorage.setItem('themeColor','#4caf50');applyTheme();});
-$('set-vol').addEventListener('input',e=>{const v=e.target.value/100;localStorage.setItem('musicVol',v);$('vol-val').textContent=e.target.value+'%';setVolume(v);});
-on('music-toggle-btn',()=>{const m=localStorage.getItem('musicOn')!=='false';localStorage.setItem('musicOn',String(!m));applyTheme();});
-on('save-music-url',()=>{const v=$('music-url').value.trim();if(v)localStorage.setItem('customMusicUrl',v);else localStorage.removeItem('customMusicUrl');applyTheme();setFlag('customMusic');toast('🎵 Применено','success');});
-function setUI(m){localStorage.setItem('uiMode',m);document.body.classList.toggle('ui-mobile',m==='mobile');$('ui-pc').classList.toggle('on',m==='pc');$('ui-mobile-btn').classList.toggle('on',m==='mobile');}
-on('ui-pc',()=>setUI('pc'));on('ui-mobile-btn',()=>setUI('mobile'));
-const sideNav=$('side-nav'),navShade=$('nav-shade');
-function openNav(){sideNav.classList.add('open');navShade.classList.add('on');document.body.classList.add('nav-open');}
-function closeNav(){sideNav.classList.remove('open');navShade.classList.remove('on');document.body.classList.remove('nav-open');}
-if(window.matchMedia('(hover:hover)').matches){sideNav.addEventListener('mouseenter',openNav);sideNav.addEventListener('mouseleave',closeNav);}
-$('nav-handle').addEventListener('click',e=>{e.stopPropagation();sideNav.classList.contains('open')?closeNav():openNav();});
-on('nav-mobile-toggle',()=>{sideNav.classList.contains('open')?closeNav():openNav();});
-navShade.addEventListener('click',closeNav);
-window.addEventListener('keydown',e=>{const k=e.key;if(k==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','i','j','c'].includes(k))||(e.ctrlKey&&['u','U'].includes(k))){e.preventDefault();toast('🚫 Отключено','error');}if((k==='m'||k==='M'||k==='ь')&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName))$('dev-console').classList.toggle('open');if(voice.room&&e.code===muteKeyCode&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();toggleMicMute();}});
-on('dev-clear',()=>$('dev-log').innerHTML='');on('dev-close',()=>$('dev-console').classList.remove('open'));
-$('console-input').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const v=e.target.value.trim();e.target.value='';if(v==='/minesweeper')openMines();else if(v)toast('Неизвестная команда');});
-let modeGame='checkers';
-on('gametab-checkers',()=>{modeGame='checkers';$('gametab-checkers').classList.add('on');$('gametab-chess').classList.remove('on');$('mode-checkers').classList.remove('hidden');$('mode-chess').classList.add('hidden');});
-on('gametab-chess',()=>{modeGame='chess';$('gametab-chess').classList.add('on');$('gametab-checkers').classList.remove('on');$('mode-chess').classList.remove('hidden');$('mode-checkers').classList.add('hidden');});
-const GUEST_BLOCK=['chat','feed','chats','players','rating','settings','profile-edit','history'];
+const GUEST_BLOCK=['chat','chats','players','rating','settings','profile-edit','history','updates'];
 function showScreen(name){if(isBanned()){toast('🚫 Забанен','error');name='profile-view';}
  if(isGuest()&&GUEST_BLOCK.includes(name)){toast('👻 Гостям недоступно','error');name='mode';}
  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
  const el=$('screen-'+name);if(el)el.classList.remove('hidden');
- if(name==='chat')renderGlobalChat();if(name==='feed')loadFeed();if(name==='rating')renderRating();
+ if(name==='chat')renderGlobalChat();if(name==='rating')renderRating();
  if(name==='players')renderPlayers();if(name==='profile-view')renderMyProfile();if(name==='chats')renderChatsList();
  if(name==='settings')renderSettings();if(name==='history')renderHistory();
  if(name==='chat')startVoiceRoomWatch();else stopVoiceRoomWatch();
  closeNav();}
-document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>showScreen(b.dataset.nav)));
-let authMode='login';
-on('auth-toggle',()=>{authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход':'Регистрация';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';});
-on('auth-submit',async()=>{const name=$('auth-name').value.trim(),pass=$('auth-pass').value;
- if(name.length<2){toast('Ник мин. 2','error');return;}if(pass.length<6){toast('Пароль мин. 6','error');return;}
- const email=name.toLowerCase().replace(/[^a-z0-9]/g,'')+'@shashki.app';
- try{if(authMode==='register'){const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));if(ns.exists()){toast('❌ Ник занят!','error');return;}
-   const cred=await createUserWithEmailAndPassword(auth,email,pass);const uid=cred.user.uid;
-   const ctr=await runTransaction(ref(db,'system/userCounter'),c=>c===null?1:c+1).catch(()=>null);
-   const did=ctr&&ctr.snapshot.exists()?String(ctr.snapshot.val()).padStart(5,'0'):String(Math.floor(10000+Math.random()*89999));
-   const profile={nick:name,tag:'',avatar:'',bio:'',clan:'',nickColor:'',profileGrad:null,displayId:did,role:'',xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',likesReceived:0,commentsReceived:0,followersCount:0,followingCount:0,likesGiven:0,commentsMade:0,postsCount:0,lastPostTs:0,elo:1000,maxElo:1000,botElo_easy:1000,botElo_normal:1000,botElo_hard:1000,botElo_impossible:1000,botWins_easy:0,botWins_normal:0,botWins_hard:0,botWins_impossible:0,wins:0,losses:0,winStreak:0,maxWinStreak:0,onlineGames:0,botGames:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0,playtime:0,chatMsgs:0,lastSeen:Date.now(),lastNickChange:0,createdAt:Date.now(),deleted:false,banUntil:0};
-   await set(ref(db,'users/'+uid),profile);await set(ref(db,'nicknames/'+name.toLowerCase()),uid);toast('🌿 Аккаунт создан!','success');}
-  else{await signInWithEmailAndPassword(auth,email,pass);toast('Добро пожаловать!','success');}}
- catch(e){toast(e.code||'Ошибка','error');}});
-on('guest-btn',()=>{const n=parseInt(localStorage.getItem('guestNum')||'0')+1;localStorage.setItem('guestNum',String(n));currentUser={uid:'guest_'+Date.now(),nick:'Шашист'+String(n).padStart(2,'0'),guest:true,xp:0,elo:1000,chessElo:1000};enterApp();toast('👻 Гость: только боты');});
-on('nav-logout',()=>{closeNav();if(currentUser?.guest){location.reload();return;}leaveVoice();signOut(auth);});
-function enterApp(){$('side-nav').classList.remove('hidden');if(!isGuest())$('bl-panels').classList.remove('hidden');
- if(isBanned()){$('ban-banner').classList.remove('hidden');$('ban-banner').textContent='🚫 Аккаунт заблокирован до '+new Date(currentUser.banUntil).toLocaleString();}
- showScreen(isBanned()?'profile-view':'mode');applyTheme();if(!isGuest()){startNotifListener();checkTopPos();}
- $('music-url').value=localStorage.getItem('customMusicUrl')||'';devLog('Вход: '+currentUser.nick,'ok');}
-onAuthStateChanged(auth,async user=>{if(user){const snap=await get(ref(db,'users/'+user.uid));
-  if(snap.exists()){currentUser=Object.assign({uid:user.uid},snap.val());
-    const defs={xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',postsCount:0,lastPostTs:0,followersCount:0,followingCount:0,likesReceived:0,commentsReceived:0,likesGiven:0,commentsMade:0,chatMsgs:0,role:'',nickColor:'',tag:'',clan:'',bio:'',avatar:'',banUntil:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0};
-    const up={};for(const k in defs){if(currentUser[k]===undefined){currentUser[k]=defs[k];up[k]=defs[k];}}
-    if(Object.keys(up).length)update(ref(db,'users/'+user.uid),up).catch(()=>{});
-    update(ref(db,'users/'+user.uid),{lastSeen:Date.now()}).catch(()=>{});enterApp();}}
- else if(!currentUser?.guest){currentUser=null;$('side-nav').classList.add('hidden');$('bl-panels').classList.add('hidden');showScreen('auth');}});
-setInterval(()=>{if(currentUser&&!isGuest()){update(ref(db,'users/'+currentUser.uid),{lastSeen:Date.now()}).catch(()=>{});runTransaction(ref(db,'users/'+currentUser.uid+'/playtime'),c=>(c||0)+60).catch(()=>{});currentUser.playtime=(currentUser.playtime||0)+60;checkAchievements();}},60000);
-let notifUnsub=null;
-on('toggle-notif',()=>$('notif-panel').classList.toggle('hidden'));
-function startNotifListener(){if(notifUnsub)notifUnsub();notifUnsub=onValue(ref(db,'users/'+currentUser.uid+'/notifications'),snap=>{const list=[];snap.forEach(c=>list.unshift(Object.assign({key:c.key},c.val())));const un=list.filter(n=>!n.read).length;const b=$('notif-badge');b.textContent=un;b.classList.toggle('hidden',un===0);renderNotifList(list);});}
-async function renderNotifList(list){const box=$('notif-list');let html='';
- const rs=await get(ref(db,'users/'+currentUser.uid+'/pendingDMs'));
- for(const[uid,r]of Object.entries(rs.val()||{}))html+='<div class="notif-item unread"><span>💌</span><div class="nt"><b>'+esc(r.nick)+'</b> хочет писать</div><button class="btn small" data-acc="'+uid+'">✅</button><button class="btn small danger" data-dec="'+uid+'">❌</button></div>';
- html+=list.slice(0,15).map(n=>'<div class="notif-item'+(n.read?'':' unread')+'" data-notif="'+n.key+'"><span>'+(n.icon||'🔔')+'</span><div class="nt">'+esc(n.text)+'</div></div>').join('')||'<div style="font-size:11px;color:var(--txt2)">Пока пусто</div>';
- box.innerHTML=html;
- box.querySelectorAll('[data-acc]').forEach(b=>b.onclick=async e=>{e.stopPropagation();await acceptDM(b.dataset.acc);});
- box.querySelectorAll('[data-dec]').forEach(b=>b.onclick=async e=>{e.stopPropagation();await set(ref(db,'users/'+currentUser.uid+'/pendingDMs/'+b.dataset.dec),null);});
- box.querySelectorAll('[data-notif]').forEach(el=>el.onclick=()=>update(ref(db,'users/'+currentUser.uid+'/notifications/'+el.dataset.notif),{read:true}).catch(()=>{}));}
-async function acceptDM(fromUid){const r=(await get(ref(db,'users/'+currentUser.uid+'/pendingDMs/'+fromUid))).val();if(!r)return;
- await set(ref(db,'users/'+currentUser.uid+'/pendingDMs/'+fromUid),null);
- await update(ref(db,'users/'+currentUser.uid+'/acceptedDMs/'+fromUid),{nick:r.nick,avatar:r.avatar||''});
- await update(ref(db,'users/'+fromUid+'/acceptedDMs/'+currentUser.uid),{nick:currentUser.nick,avatar:currentUser.avatar||''});
- notifyUser(fromUid,'✅ Заявка принята','✅');toast('Принято!','success');}
-function dmChatId(a,b){return[a,b].sort().join('_');}
-let dmUnsub=null;
-async function startDMWith(uid,profile){if(isGuest()||isBanned())return;if(uid===currentUser.uid)return;
- const privacy=profile.msgPrivacy||'everyone';
- const accepted=(profile.acceptedDMs||{})[currentUser.uid]||((currentUser.acceptedDMs||{})[uid]);
- if(privacy==='nobody'&&!accepted){toast('🚫 Не принимает сообщения','error');return;}
- if(privacy==='requests'&&!accepted){await update(ref(db,'users/'+uid+'/pendingDMs/'+currentUser.uid),{nick:currentUser.nick,avatar:currentUser.avatar||'',ts:Date.now()});notifyUser(uid,'💌 Заявка от '+currentUser.nick,'💌');toast('💌 Заявка отправлена!');return;}
- openDM(uid,profile);}
-function openDM(uid,profile){const chatId=dmChatId(currentUser.uid,uid);
- openModal('<h3 style="margin-bottom:10px">💬 Чат с '+esc(profile.nick)+'</h3><div id="dm-msgs" style="max-height:320px;overflow-y:auto;background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:10px"></div><div id="chat-input-row"><input class="chat-input" id="dm-input" maxlength="300"><button class="btn small" id="dm-send">→</button></div>');
- if(dmUnsub){dmUnsub();dmUnsub=null;}
- dmUnsub=onValue(ref(db,'dms/'+chatId+'/messages'),snap=>{const box=$('dm-msgs');if(!box)return;const msgs=Object.entries(snap.val()||{}).sort((a,b)=>a[1].ts-b[1].ts);
-  msgs.forEach(([k,m])=>{if(m.uid!==currentUser.uid)setFlag('dmReceived');});
-  box.innerHTML=msgs.map(([k,m])=>'<div class="gchat-msg'+(m.uid===currentUser.uid?' own':'')+(m.deleted?' deleted':'')+'"><div class="gm-header"><b>'+esc(m.nick)+'</b><span style="font-size:10px;color:var(--txt2)">'+fmtTimeHM(m.ts)+'</span>'+(m.uid===currentUser.uid&&!m.deleted?'<button class="del-msg" data-dmkey="'+k+'">🗑</button>':'')+'</div><div>'+(m.deleted?'🚫 удалено':esc(m.text))+'</div></div>').join('')||'<div style="font-size:12px;color:var(--txt2)">Напишите первое сообщение 🌿</div>';
-  box.scrollTop=box.scrollHeight;
-  box.querySelectorAll('[data-dmkey]').forEach(b=>b.onclick=()=>update(ref(db,'dms/'+chatId+'/messages/'+b.dataset.dmkey),{deleted:true}).catch(()=>{}));});
- const send=async()=>{const t=$('dm-input').value.trim();if(!t)return;
-  await update(ref(db,'dms/'+chatId+'/participants'),{[currentUser.uid]:true,[uid]:true}).catch(()=>{});
-  await update(ref(db,'users/'+currentUser.uid+'/acceptedDMs/'+uid),{nick:profile.nick,avatar:profile.avatar||''}).catch(()=>{});
-  await push(ref(db,'dms/'+chatId+'/messages'),{uid:currentUser.uid,nick:currentUser.nick,text:t,ts:Date.now(),deleted:false});
-  setFlag('dmSent');notifyUser(uid,'💬 Сообщение от '+currentUser.nick,'💬');$('dm-input').value='';};
- on('dm-send',send);$('dm-input').addEventListener('keydown',e=>{if(e.key==='Enter')send();});}
-async function renderChatsList(){if(isGuest())return;const box=$('chats-list');box.innerHTML='Загрузка...';
- try{const acc=currentUser.acceptedDMs||{};const ids=Object.keys(acc);
-  if(!ids.length){box.innerHTML='<div style="color:var(--txt2);font-size:13px">Нет чатов. «Написать» в профиле игрока!</div>';return;}
-  const uSnap=await get(ref(db,'users'));const users=uSnap.val()||{};let html='';
-  for(const uid of ids){let last=null;
-    try{const mSnap=await get(ref(db,'dms/'+dmChatId(currentUser.uid,uid)+'/messages'));const ms=Object.values(mSnap.val()||{}).sort((a,b)=>a.ts-b.ts);last=ms[ms.length-1];}catch(e){}
-    const p=users[uid]||acc[uid]||{nick:'?'};
-    html+='<div class="chat-item" data-dm="'+uid+'">'+avatarHtml(p,'sm')+'<div style="flex:1;min-width:0"><b>'+esc(p.nick||'?')+'</b> '+roleBadge(p)+'<div style="font-size:11px;color:var(--txt2)">'+(last?(last.deleted?'🚫':esc(last.text)):'Нет сообщений')+'</div></div></div>';}
-  box.innerHTML=html;
-  box.querySelectorAll('[data-dm]').forEach(el=>el.onclick=async()=>{const uid=el.dataset.dm;const s=await get(ref(db,'users/'+uid));openDM(uid,s.val()||{nick:'?'});});}
- catch(e){box.innerHTML='<div style="color:var(--txt2)">Нет чатов</div>';}}
-function eloLine(l,u,d){return'<div class="elo-row"><span class="lab">'+l+'</span><span><b style="color:var(--gold)">'+(u[d+'Elo']!==undefined?u[d+'Elo']:(u['botElo_'+d]||1000))+'</b> · <span style="color:var(--green)">'+(u[d+'Wins']!==undefined?u[d+'Wins']:(u['botWins_'+d]||0))+'W</span></span></div>';}
-function botLine(l,u,pre,d){return'<div class="elo-row"><span class="lab">'+l+'</span><span><b style="color:var(--gold)">'+(u[pre+'BotElo_'+d]||1000)+'</b> · <span style="color:var(--green)">'+(u[pre+'BotWins_'+d]||0)+'W</span></span></div>';}
-function lum(hex){const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');if(!m)return 0;return(0.299*parseInt(m[1],16)+0.587*parseInt(m[2],16)+0.114*parseInt(m[3],16))/255;}
-function applyGrad(el,u){if(!u||!u.profileGrad||!u.profileGrad.c1){el.style.background='';['--txt','--txt2','--gold','--bg2','--bg3'].forEach(v=>el.style.removeProperty(v));return;}
- el.style.background='linear-gradient(180deg,'+u.profileGrad.c1+','+u.profileGrad.c2+')';
- const bright=(lum(u.profileGrad.c1)+lum(u.profileGrad.c2))/2>0.55;
- if(bright){el.style.setProperty('--txt','#241436');el.style.setProperty('--txt2','#54406a');el.style.setProperty('--gold','#7a5200');el.style.setProperty('--bg2','rgba(255,255,255,.45)');el.style.setProperty('--bg3','rgba(255,255,255,.6)');}
- else{el.style.setProperty('--txt','#f3e9dc');el.style.setProperty('--txt2','#b9a8c9');el.style.setProperty('--gold','#ffd54f');el.style.setProperty('--bg2','rgba(0,0,0,.25)');el.style.setProperty('--bg3','rgba(0,0,0,.35)');}}
-function profileHTML(u,isMe,slotId){const rk=getRank(u.elo||1000),rkCh=getRank(u.chessElo||1000);
- const bw=(u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
- const cbw=(u.chessBotWins_easy||0)+(u.chessBotWins_normal||0)+(u.chessBotWins_hard||0)+(u.chessBotWins_impossible||0);
- const kd=u.losses===0?(u.wins||0):((u.wins||0)/u.losses).toFixed(2);
- const ckd=u.chessLosses===0?(u.chessWins||0):((u.chessWins||0)/u.chessLosses).toFixed(2);
- const fire=(u.lastDailyWinMSK===mskDateStr(0))?'<span class="fire-streak">🔥</span>':'';
- const xp=u.xp||0,lv=levelOf(xp),pr=levelProgress(xp);
- return'<div class="profile-head">'+avatarHtml(u,'')+'<div style="flex:1;min-width:200px"><div class="pname">'+nickHtml(u)+(u.tag?' <span class="ptag">'+esc(u.tag)+'</span>':'')+(u.clan?' <span class="pclan">⚔ '+esc(u.clan)+'</span>':'')+' '+roleBadge(u)+' '+fire+banBadge(u)+' <span id="'+slotId+'"></span></div>'+
- '<div style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap"><span class="rank-badge">'+rk.icon+' '+rk.n+' · '+(u.elo||1000)+'</span><span class="rank-badge" style="background:linear-gradient(90deg,#555,#222)">'+rkCh.icon+' '+rkCh.n+' · '+(u.chessElo||1000)+' ♟</span><span class="level-badge">⭐ Ур. '+lv+(lv>=11?' MAX':'')+'</span></div>'+
- '<div class="xp-bar"><div class="xp-fill" style="width:'+Math.min(100,(pr.cur/pr.need)*100)+'%"></div></div><div style="font-size:11px;color:var(--txt2);margin-top:3px">'+(pr.max?'MAX · '+xp+' XP':pr.cur+' / '+pr.need+' XP (всего '+xp+')')+'</div>'+
- '<div style="font-size:12px;margin-top:6px;color:var(--txt2)">👥 '+(u.followersCount||0)+' · подписки '+(u.followingCount||0)+' · ❤️ '+(u.likesReceived||0)+'</div>'+
- '<div class="pabout">'+(u.bio?esc(u.bio):'<i>Нет описания</i>')+'</div></div>'+
- (isMe?'<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>':'')+'</div>'+
- '<div class="stat-grid"><div class="stat-card"><div class="v">'+(u.elo||1000)+'</div><div class="l">🌿 Elo (макс '+(u.maxElo||1000)+')</div></div><div class="stat-card"><div class="v">'+(u.chessElo||1000)+'</div><div class="l">♟ Elo шах (макс '+(u.chessMaxElo||1000)+')</div></div><div class="stat-card"><div class="v">'+(u.wins||0)+'</div><div class="l">🌐 Побед шашки</div></div><div class="stat-card"><div class="v">'+(u.chessWins||0)+'</div><div class="l">♟ Побед шахматы</div></div><div class="stat-card"><div class="v">'+bw+'</div><div class="l">🤖 Побед с ботом 🌿</div></div><div class="stat-card"><div class="v">'+cbw+'</div><div class="l">🤖 Побед с ботом ♟</div></div><div class="stat-card"><div class="v">'+kd+'</div><div class="l">K/D шашки</div></div><div class="stat-card"><div class="v">'+ckd+'</div><div class="l">K/D шахматы</div></div><div class="stat-card"><div class="v">'+(u.winStreak||0)+'</div><div class="l">Винстрик 🌿</div></div><div class="stat-card"><div class="v">'+(u.chessWinStreak||0)+'</div><div class="l">Винстрик ♟</div></div><div class="stat-card"><div class="v">'+(u.dailyStreak||0)+'</div><div class="l">🔥 Серия дней</div></div><div class="stat-card"><div class="v">'+fmtPlaytime(u.playtime||0)+'</div><div class="l">Плейтайм</div></div></div>'+
- '<h3 style="margin:16px 0 8px;font-size:15px">🌿 Шашки</h3><div style="margin-top:4px">'+botLine('🟢 Лёгкий',u,'','easy')+botLine('🔵 Обычный',u,'','normal')+botLine('🟠 Сложный',u,'','hard')+botLine('🔥 Невозможный',u,'','impossible')+'</div>'+
- '<h3 style="margin:16px 0 8px;font-size:15px">♟ Шахматы</h3><div style="margin-top:4px">'+botLine('🟢 Лёгкий',u,'chess','easy')+botLine('🔵 Обычный',u,'chess','normal')+botLine('🟠 Сложный',u,'chess','hard')+botLine('🔥 Невозможный',u,'chess','impossible')+'</div>'+
- achievementsHTML(u);}
-function renderMyProfile(){if(!currentUser)return;
- if(isGuest()){$('my-profile-box').innerHTML='<div class="profile-head">'+avatarHtml(currentUser,'')+'<div><div class="pname">'+esc(currentUser.nick)+' <span class="role-badge" style="background:#555">👻 ГОСТЬ</span></div><div class="pabout">Чат, лента, XP недоступны.</div></div></div>';return;}
- $('my-profile-box').innerHTML=profileHTML(currentUser,true,'top1-main')+'<div class="row" style="margin-top:16px"><button class="btn small secondary" id="my-followers-btn">👥 Подписчики</button><button class="btn small secondary" data-nav="history">📜 История</button></div>';
- applyGrad($('my-profile-box'),currentUser);
- getTop1().then(t=>{const el=$('top1-main');if(el)el.innerHTML=top1BadgeHTML(t,currentUser.uid);});
- on('open-edit-btn',()=>{$('edit-tag').value=currentUser.tag||'';$('edit-clan').value=currentUser.clan||'';$('edit-about').value=currentUser.bio||'';$('edit-avatar-url').value=(currentUser.avatar||'').startsWith('http')?currentUser.avatar:'';$('nickcolor-field').style.display=isPremium(currentUser)?'block':'none';$('edit-nickcolor').value=currentUser.nickColor||'#ffd54f';showScreen('profile-edit');});
- on('my-followers-btn',()=>showFollowers(currentUser.uid));}
-async function showProfileModal(uid){const snap=await get(ref(db,'users/'+uid));if(!snap.exists()){toast('Не найден','error');return;}
- const u=snap.val();if(uid!==currentUser?.uid)setFlag('viewedOther');
- const isF=!!((currentUser?.following||{})[uid]);
- openModal(profileHTML(u,false,'top1-modal')+'<div class="row" style="margin-top:16px">'+(uid!==currentUser?.uid?'<button class="btn small" id="pm-dm-btn">✉️ Написать</button><button class="btn small '+(isF?'danger':'secondary')+'" id="pm-follow-btn">'+(isF?'✓ Отписаться':'+ Подписаться')+'</button>':'')+'<button class="btn small secondary" id="pm-followers-btn">👥 Подписчики</button></div>');
- applyGrad($('modal-content'),u);
- getTop1().then(t=>{const el=$('top1-modal');if(el)el.innerHTML=top1BadgeHTML(t,uid);});
- if(uid!==currentUser?.uid){on('pm-dm-btn',()=>startDMWith(uid,u));
-  on('pm-follow-btn',async()=>{if(isGuest())return;const fRef=ref(db,'users/'+uid+'/followers/'+currentUser.uid);const s=await get(fRef);
-   if(s.exists()){await set(fRef,null);await set(ref(db,'users/'+currentUser.uid+'/following/'+uid),null);bump(uid,'followersCount',-1);bump(currentUser.uid,'followingCount',-1);}
-   else{await set(fRef,true);await set(ref(db,'users/'+currentUser.uid+'/following/'+uid),true);bump(uid,'followersCount',1);bump(currentUser.uid,'followingCount',1);addXPTo(uid,25,'новый подписчик');notifyUser(uid,'👥 Подписка от '+currentUser.nick,'👥');}
-   closeModal();showProfileModal(uid);checkAchievements();});}
- on('pm-followers-btn',()=>showFollowers(uid));}
-async function showFollowers(uid){const s=await get(ref(db,'users/'+uid+'/followers'));const ids=Object.keys(s.val()||{});if(!ids.length){toast('Нет подписчиков');return;}
- const users=(await get(ref(db,'users'))).val()||{};
- openModal('<h3 style="margin-bottom:12px">👥 Подписчики ('+ids.length+')</h3>'+ids.map(id=>'<div class="chat-item" data-fu="'+id+'">'+avatarHtml(users[id]||{},'sm')+'<b>'+esc((users[id]||{}).nick||'?')+'</b></div>').join(''));
- document.querySelectorAll('[data-fu]').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.fu));}
-on('save-profile-btn',async()=>{if(isGuest())return;
- const a=$('edit-avatar-url').value.trim(),t=$('edit-tag').value.trim().slice(0,20),c=$('edit-clan').value.trim().slice(0,20),b=$('edit-about').value.trim().slice(0,160);
- const nc=isPremium(currentUser)?$('edit-nickcolor').value:'';
- const flags=currentUser.xpFlags||{};let bonus=0;const nf={...flags};
- if(a&&!flags.avatar){nf.avatar=1;bonus+=10;}if(t&&!flags.tag){nf.tag=1;bonus+=10;}if(c&&!flags.clan){nf.clan=1;bonus+=10;}if(b&&!flags.bio){nf.bio=1;bonus+=10;}
- await update(ref(db,'users/'+currentUser.uid),{avatar:a,tag:t,clan:c,bio:b,nickColor:nc,xpFlags:nf});
- Object.assign(currentUser,{avatar:a,tag:t,clan:c,bio:b,nickColor:nc,xpFlags:nf});
- if(bonus)addXP(bonus,'заполнение профиля');setFlag('editedProfile');
- toast('Сохранено ✔','success');showScreen('profile-view');checkAchievements();});
-$('edit-avatar-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>$('edit-avatar-url').value=ev.target.result;r.readAsDataURL(f);});
-on('edit-draw-btn',()=>openDrawModal('avatar-field'));
-on('save-grad',async()=>{if(isGuest())return;const g={c1:$('grad-c1').value,c2:$('grad-c2').value};await update(ref(db,'users/'+currentUser.uid),{profileGrad:g});currentUser.profileGrad=g;setFlag('profileGradFlag');toast('🎨 Градиент','success');renderMyProfile();});
-let drawTarget='avatar',drawing=false,dctx=null;
-function openDrawModal(target){if(isGuest()){toast('Гостям нельзя','error');return;}drawTarget=target||'avatar';$('draw-modal').classList.add('active');const cv=$('draw-canvas');dctx=cv.getContext('2d');dctx.fillStyle='#fff';dctx.fillRect(0,0,240,240);dctx.lineCap='round';dctx.lineJoin='round';
- const pos=e=>{const r=cv.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(240/r.width),y:(p.clientY-r.top)*(240/r.height)};};
- cv.onmousedown=cv.ontouchstart=e=>{e.preventDefault();drawing=true;const q=pos(e);dctx.beginPath();dctx.moveTo(q.x,q.y);};
- cv.onmousemove=cv.ontouchmove=e=>{if(!drawing)return;e.preventDefault();const q=pos(e);dctx.strokeStyle=$('draw-color').value;dctx.lineWidth=$('draw-size').value;dctx.lineTo(q.x,q.y);dctx.stroke();};
- cv.onmouseup=cv.ontouchend=cv.onmouseleave=()=>{drawing=false;};}
-on('draw-clear',()=>{dctx.fillStyle='#fff';dctx.fillRect(0,0,240,240);});
-on('draw-cancel',()=>$('draw-modal').classList.remove('active'));
-on('draw-save',()=>{const data=$('draw-canvas').toDataURL('image/png');$('draw-modal').classList.remove('active');
- if(drawTarget==='avatar-field'){$('edit-avatar-url').value=data;toast('🎨 → аватар');}
- else if(drawTarget==='post'){window.postImage=data;$('post-attach-note').textContent='🎨 прикреплён';}
- else if(drawTarget==='chat'){window.chatImage=data;$('chat-attach-note').textContent='🎨 прикреплён';}
- else{update(ref(db,'users/'+currentUser.uid),{avatar:data});currentUser.avatar=data;const f=currentUser.xpFlags||{};if(!f.avatar){update(ref(db,'users/'+currentUser.uid+'/xpFlags/avatar'),true);addXP(10,'аватарка');}renderMyProfile();}});
-on('egg-btn',()=>{setFlag('eggFound');$('egg-modal').classList.remove('hidden');});
-on('egg-close',()=>$('egg-modal').classList.add('hidden'));
-on('egg-submit',()=>{if($('egg-input').value.trim()==='20251811'){$('egg-modal').classList.add('hidden');setFlag('eggCode');
-  if(!isGuest()){update(ref(db,'users/'+currentUser.uid),{eggPremium:true});currentUser.eggPremium=true;notify('💎 PREMIUM (пасхалка)!','💎');}
-  toast('💎 Верно!','success');$('egg-input').value='';}else toast('Неверно...','error');});
-let mines={grid:[],open:0,over:false};
-function openMines(){$('mines-modal').classList.remove('hidden');initMines();}
-function initMines(){mines={grid:[],open:0,over:false};const g=[];for(let i=0;i<81;i++)g.push({m:false,o:false,f:false});let p=0;while(p<10){const r=Math.floor(Math.random()*81);if(!g[r].m){g[r].m=true;p++;}}mines.grid=g;renderMines();}
-function renderMines(){$('mines-grid').innerHTML='';mines.grid.forEach((c,i)=>{const b=document.createElement('button');b.className='mine-cell'+(c.o?' open':'');
- if(c.o){if(c.m){b.classList.add('boom');b.textContent='💣';}else{const n=mineNear(i);b.textContent=n||'';}}else if(c.f)b.textContent='🚩';
- b.onclick=()=>reveal(i);b.oncontextmenu=e=>{e.preventDefault();if(!c.o&&!mines.over){c.f=!c.f;renderMines();}};$('mines-grid').appendChild(b);});}
-function mineNear(i){const r=Math.floor(i/9),c=i%9;let n=0;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const rr=r+dr,cc=c+dc;if(rr>=0&&rr<9&&cc>=0&&cc<9&&mines.grid[rr*9+cc].m)n++;}return n;}
-function reveal(i){if(mines.over)return;const c=mines.grid[i];if(c.f||c.o)return;
- if(c.m){mines.over=true;c.o=true;mines.grid.forEach(x=>{if(x.m)x.o=true;});renderMines();$('mines-status').textContent='💥 Бум!';return;}
- const flood=k=>{const q=mines.grid[k];if(q.o||q.f)return;q.o=true;mines.open++;if(mineNear(k)===0){const r=Math.floor(k/9),c2=k%9;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const rr=r+dr,cc=c2+dc;if(rr>=0&&rr<9&&cc>=0&&cc<9)flood(rr*9+cc);}}};
- flood(i);renderMines();if(mines.open===71){mines.over=true;$('mines-status').textContent='🏆 Победа!';}}
-on('mines-restart',initMines);on('mines-close',()=>$('mines-modal').classList.add('hidden'));
-let postImage=null;
-on('post-draw-btn',()=>openDrawModal('post'));
-$('post-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>{postImage=ev.target.result;$('post-attach-note').textContent='📷 прикреплено';};r.readAsDataURL(f);});
-on('post-publish',async()=>{if(isGuest()||isBanned())return;
- const now=Date.now();const cd=600000-(now-(currentUser.lastPostTs||0));
- if(cd>0){toast('⏳ КД: ещё '+Math.ceil(cd/60000)+' мин','error');return;}
- const text=$('post-text').value.trim();if(!text&&!postImage){toast('Пустой пост','error');return;}
- await push(ref(db,'posts'),{uid:currentUser.uid,nick:currentUser.nick,nickColor:currentUser.nickColor||'',avatar:currentUser.avatar||'',text,image:postImage,ts:now});
- update(ref(db,'users/'+currentUser.uid),{lastPostTs:now});currentUser.lastPostTs=now;
- bump(currentUser.uid,'postsCount',1);currentUser.postsCount=(currentUser.postsCount||0)+1;
- $('post-text').value='';postImage=null;$('post-attach-note').textContent='';
- addXP(15,'новый пост');toast('Пост! +15 XP','success');checkAchievements();});
-let feedUnsub=null;
-function loadFeed(){if(feedUnsub)feedUnsub();
- const q=query(ref(db,'posts'),orderByChild('ts'),limitToLast(40));
- feedUnsub=onValue(q,snap=>{const posts=[];snap.forEach(c=>posts.unshift(Object.assign({id:c.key},c.val())));
-  $('feed-list').innerHTML=posts.map(p=>{const liked=!!(p.likes||{})[currentUser?.uid];const lc=Object.keys(p.likes||{}).length;
-   const comments=Object.entries(p.comments||{}).sort((a,b)=>a[1].ts-b[1].ts);
-   const canDel=p.uid===currentUser?.uid||isStaff(currentUser);
-   return'<div class="post-card"><div class="post-header">'+avatarHtml(p,'sm')+'<div><div style="font-weight:700;font-size:14px;cursor:pointer" data-pnick="'+p.uid+'">'+nickHtml(p)+'</div><div style="font-size:11px;color:var(--txt2)">'+fmtTimeHM(p.ts)+'</div></div>'+(canDel?'<button class="del-msg" data-delpost="'+p.id+'" style="margin-left:auto">🗑 пост</button>':'')+'</div>'+
-   (p.text?'<div style="font-size:14px;line-height:1.5;white-space:pre-wrap">'+esc(p.text)+'</div>':'')+
-   (p.image?'<img class="post-img" src="'+esc(p.image)+'">':'')+
-   '<div class="post-actions"><button class="post-action'+(liked?' liked':'')+'" data-like="'+p.id+'" data-author="'+p.uid+'">❤️ '+lc+'</button><button class="post-action" data-cmt="'+p.id+'">💬 '+comments.length+'</button></div>'+
-   '<div class="comments-section hidden" id="cs-'+p.id+'">'+comments.map(([k,c])=>'<div class="comment"><strong style="color:var(--blue);cursor:pointer" data-pnick="'+c.uid+'">'+esc(c.nick)+'</strong>: '+esc(c.text)+'</div>').join('')+
-   '<div class="row" style="margin-top:8px"><input class="chat-input" style="padding:6px;font-size:12px" id="ci-'+p.id+'" maxlength="200" placeholder="Комментарий..."><button class="btn small" data-csend="'+p.id+'" data-author="'+p.uid+'">→</button></div></div></div>';}).join('')||'<div style="color:var(--txt2);text-align:center">Пока нет постов 🌿</div>';
-  document.querySelectorAll('[data-like]').forEach(b=>b.onclick=async()=>{if(isGuest()||isBanned())return;const id=b.dataset.like,author=b.dataset.author;const lr=ref(db,'posts/'+id+'/likes/'+currentUser.uid);const s=await get(lr);
-   if(s.exists()){await set(lr,null);bump(author,'likesReceived',-1);bump(currentUser.uid,'likesGiven',-1);}else{await set(lr,true);bump(author,'likesReceived',1);bump(currentUser.uid,'likesGiven',1);}checkAchievements();});
-  document.querySelectorAll('[data-delpost]').forEach(b=>b.onclick=async()=>{if(!confirm('Удалить пост?'))return;await set(ref(db,'posts/'+b.dataset.delpost),null);toast('Удалено');});
-  document.querySelectorAll('[data-cmt]').forEach(b=>b.onclick=()=>$('cs-'+b.dataset.cmt).classList.toggle('hidden'));
-  document.querySelectorAll('[data-csend]').forEach(b=>b.onclick=async()=>{if(isGuest()||isBanned())return;const id=b.dataset.csend,inp=$('ci-'+id),t=inp.value.trim();if(!t)return;
-   await push(ref(db,'posts/'+id+'/comments'),{uid:currentUser.uid,nick:currentUser.nick,text:t,ts:Date.now()});
-   bump(b.dataset.author,'commentsReceived',1);bump(currentUser.uid,'commentsMade',1);
-   notifyUser(b.dataset.author,'💭 Коммент от '+currentUser.nick,'💭');inp.value='';checkAchievements();});
-  document.querySelectorAll('[data-pnick]').forEach(el=>el.onclick=()=>{if(!isGuest())showProfileModal(el.dataset.pnick);});});}
-let chatImage=null;
-on('chat-draw-btn',()=>openDrawModal('chat'));
-$('chat-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>{chatImage=ev.target.result;$('chat-attach-note').textContent='📷 прикреплено';};r.readAsDataURL(f);});
-const REACTS=['❤️','👍','😂','😮'];
-let globalChatUnsub=null;const mentionDone=new Set();
-function renderGlobalChat(){if(globalChatUnsub)globalChatUnsub();
- const q=query(ref(db,'globalChat'),orderByChild('ts'),limitToLast(100));
- globalChatUnsub=onValue(q,snap=>{const box=$('chat-msgs');box.innerHTML='';
-  Object.entries(snap.val()||{}).sort((a,b)=>a[1].ts-b[1].ts).forEach(([key,m])=>{
-   const own=m.uid===currentUser?.uid;const canDel=(own||isStaff(currentUser))&&!m.deleted;
-   const d=document.createElement('div');d.className='chat-msg'+(own?' own':'')+(m.deleted?' deleted':'');
-   let reacts='';if(!m.deleted)reacts='<div class="react-row">'+REACTS.map(e=>{const rs=Object.keys((m.reactions||{})[e]||{});return'<button class="react-btn'+(rs.includes(currentUser?.uid)?' mine':'')+'" data-react="'+key+'" data-emoji="'+e+'">'+e+' '+(rs.length||'')+'</button>';}).join('')+'</div>';
-   d.innerHTML='<div class="meta"><span class="msg-av">'+(m.avatar?'<img src="'+esc(m.avatar)+'">':esc((m.nick||'?')[0].toUpperCase()))+'</span><button class="nick-link" data-uid="'+esc(m.uid)+'">'+nickHtml(m)+'</button>'+roleBadge(m)+'<span class="time">'+fmtTimeHM(m.ts)+'</span>'+(canDel?'<button class="del-msg" data-key="'+key+'">🗑</button>':'')+'</div>'+
-    (m.deleted?'<div class="bubble">🚫 удалено</div>':(m.type==='game'?'<div class="game-share-card">📊 '+esc(m.text)+'</div>':'<div class="bubble">'+esc(m.text)+(m.image?'<img src="'+esc(m.image)+'">':'')+'</div>'))+reacts;
-   box.appendChild(d);
-   if(!own&&!m.deleted&&currentUser&&m.text&&m.text.includes('@'+currentUser.nick)&&!mentionDone.has(key)){mentionDone.add(key);notify('💬 Вас отметили: '+m.nick,'💬');}});
-  box.scrollTop=box.scrollHeight;
-  box.querySelectorAll('.nick-link').forEach(el=>el.onclick=()=>{if(!isGuest())showProfileModal(el.dataset.uid);});
-  box.querySelectorAll('.del-msg').forEach(el=>el.onclick=()=>update(ref(db,'globalChat/'+el.dataset.key),{deleted:true}));
-  box.querySelectorAll('[data-react]').forEach(el=>el.onclick=async()=>{if(isGuest()||isBanned())return;const k=el.dataset.react,e=el.dataset.emoji;const r=ref(db,'globalChat/'+k+'/reactions/'+e+'/'+currentUser.uid);const s=await get(r);await set(r,s.exists()?null:true);});});}
-async function sendGlobalChat(){const t=$('global-chat-input').value.trim();if((!t&&!chatImage)||isGuest()||isBanned())return;
- await push(ref(db,'globalChat'),{uid:currentUser.uid,nick:currentUser.nick,nickColor:currentUser.nickColor||'',text:t,ts:Date.now(),deleted:false,avatar:currentUser.avatar||'',role:currentUser.role||'',image:chatImage||null});
- chatImage=null;$('chat-attach-note').textContent='';
- bump(currentUser.uid,'chatMsgs',1);currentUser.chatMsgs=(currentUser.chatMsgs||0)+1;
- $('global-chat-input').value='';checkAchievements();}
-on('global-chat-send',sendGlobalChat);
-$('global-chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendGlobalChat();});
-async function renderHistory(){if(isGuest())return;const box=$('history-list');box.innerHTML='Загрузка...';
- const s=await get(ref(db,'users/'+currentUser.uid+'/history'));const list=Object.entries(s.val()||{}).sort((a,b)=>b[1].ts-a[1].ts);
- if(!list.length){box.innerHTML='<div style="color:var(--txt2)">Пока нет онлайн-игр</div>';return;}
- box.innerHTML=list.map(([k,h])=>'<div class="hist-item"><div class="hist-res '+(h.result==='win'?'win':'loss')+'">'+(h.result==='win'?'ПОБЕДА':'ПОРАЗ.')+'</div><div style="flex:1"><b>'+esc(h.oppNick)+'</b> '+(h.game==='chess'?'♟':'🌿')+(h.noElo?' <span style="font-size:10px;color:var(--txt2)">(без Elo)</span>':'')+(h.kingRules==='short'?' 👑':'')+'<div style="font-size:11px;color:var(--txt2)">'+fmtTimeHM(h.ts)+' · счёт <b style="color:var(--gold)">'+h.myScore+'-'+h.oppScore+'</b></div></div><button class="btn small secondary" data-share="'+k+'">📤</button></div>').join('');
- box.querySelectorAll('[data-share]').forEach(b=>b.onclick=async()=>{const h=(s.val()||{})[b.dataset.share];
-  await push(ref(db,'globalChat'),{uid:currentUser.uid,nick:currentUser.nick,text:'📊 '+(h.game==='chess'?'♟':'🌿')+' Игра vs '+h.oppNick+': '+(h.result==='win'?'ПОБЕДА':'ПОРАЖЕНИЕ')+' '+h.myScore+'-'+h.oppScore,type:'game',ts:Date.now(),deleted:false,avatar:currentUser.avatar||'',role:currentUser.role||''});
-  toast('📤 В чат!','success');showScreen('chat');});}
-let ratingFilter='total';
-document.querySelectorAll('#rating-filter .chip').forEach(ch=>ch.addEventListener('click',()=>{ratingFilter=ch.dataset.f;document.querySelectorAll('#rating-filter .chip').forEach(c=>c.classList.toggle('on',c===ch));renderRating();}));
-async function renderRating(){const box=$('rating-box');box.innerHTML='Загрузка...';
- try{const snap=await get(ref(db,'users'));let list=Object.entries(snap.val()||{}).filter(([_,u])=>!u.deleted).map(([uid,u])=>Object.assign({uid},u));
-  if(ratingFilter==='clans'){const clans={};list.forEach(u=>{if(u.clan&&u.clan.trim()){const c=u.clan.trim();clans[c]=clans[c]||{elo:0,n:0};clans[c].elo+=(u.elo||1000)+(u.chessElo||1000);clans[c].n++;}});
-   const arr=Object.entries(clans).sort((a,b)=>b[1].elo-a[1].elo).slice(0,50);
-   box.innerHTML=arr.map(([name,c],i)=>'<div class="lb-item"><div class="lb-rank">#'+(i+1)+'</div><div style="flex:1"><b>⚔ '+esc(name)+'</b><div style="font-size:11px;color:var(--txt2)">Состав: '+c.n+' · Средний: '+Math.round(c.elo/c.n/2)+'</div></div><div class="lb-val">'+c.elo+'</div></div>').join('')||'Кланов пока нет';return;}
-  const val=u=>{if(ratingFilter==='total')return calcTotalBotElo(u);if(ratingFilter==='online')return u.elo||1000;if(ratingFilter==='wins')return u.wins||0;if(ratingFilter==='chessElo')return u.chessElo||1000;if(ratingFilter==='chessWins')return u.chessWins||0;if(ratingFilter==='maxElo')return u.maxElo||1000;if(ratingFilter==='xp')return u.xp||0;if(ratingFilter.startsWith('chessBotElo_'))return u[ratingFilter]||1000;return u['botElo_'+ratingFilter]||1000;};
-  list.sort((a,b)=>val(b)-val(a));list=list.slice(0,50);
-  box.innerHTML=list.map((u,i)=>'<div class="lb-item" data-uid="'+u.uid+'"><div class="lb-rank">#'+(i+1)+'</div>'+avatarHtml(u,'sm')+'<div style="flex:1"><div style="font-weight:700">'+nickHtml(u)+' '+roleBadge(u)+' '+banBadge(u)+'</div><div style="font-size:11px;color:var(--txt2)">Ур. '+levelOf(u.xp||0)+' · 🌿'+getRank(u.elo||1000).n+' / ♟'+getRank(u.chessElo||1000).n+'</div></div><div class="lb-val">'+val(u)+'</div></div>').join('')||'Нет данных';
-  box.querySelectorAll('.lb-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));}catch(e){box.innerHTML='Ошибка';}}
-async function renderPlayers(){const box=$('players-box');box.innerHTML='Загрузка...';
- try{const snap=await get(ref(db,'users'));const users=snap.val()||{};const now=Date.now();
-  const all=Object.entries(users).filter(([_,u])=>u&&typeof u==='object'&&!u.deleted);
-  $('players-count').textContent=all.filter(([_,u])=>now-(u.lastSeen||0)<3e5).length;
-  all.sort((a,b)=>{const oa=now-(a[1].lastSeen||0)<3e5?1:0,ob=now-(b[1].lastSeen||0)<3e5?1:0;if(ob!==oa)return ob-oa;return(b[1].lastSeen||0)-(a[1].lastSeen||0);});
-  if(!all.length){box.innerHTML='<div style="color:var(--txt2);font-size:13px">Игроков пока нет</div>';return;}
-  box.innerHTML=all.map(([uid,u])=>{const onl=now-(u.lastSeen||0)<3e5;
-   return'<div class="player-item" data-uid="'+uid+'"><span class="online-dot '+(onl?'on':'off')+'"></span>'+avatarHtml(u,'sm')+'<div style="flex:1"><b>'+nickHtml(u)+'</b> '+roleBadge(u)+' '+banBadge(u)+((u.lastDailyWinMSK===mskDateStr(0))?' <span class="fire-streak">🔥</span>':'')+'<div style="font-size:11px;color:var(--txt2)">'+(onl?'🟢 онлайн сейчас':fmtTimeAgo(u.lastSeen))+' · '+fmtPlaytime(u.playtime||0)+'</div></div><div class="lb-val">🌿'+(u.elo||1000)+' ♟'+(u.chessElo||1000)+'</div></div>';}).join('');
-  box.querySelectorAll('.player-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));}
- catch(e){devLog('players: '+e.message,'err');box.innerHTML='<div style="color:var(--red);font-size:13px">Ошибка: '+esc(e.message)+'</div>';}}
-function openModal(html){$('modal-content').innerHTML='<button class="x" id="modal-x">✕</button>'+html;$('modal-bg').classList.remove('hidden');on('modal-x',closeModal);}
-function closeModal(){$('modal-bg').classList.add('hidden');if(dmUnsub){dmUnsub();dmUnsub=null;}}
-$('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
-on('creator-link',async()=>{let s=await get(ref(db,'nicknames/larp'));if(!s.exists())s=await get(ref(db,'nicknames/xxxspk'));if(s.exists())showProfileModal(s.val());else toast('Не найден','error');});
-let muteKeyCode=localStorage.getItem('muteKeyCode')||'PageUp',recMute=false;
-$('mute-key-cur').textContent=muteKeyCode;
-on('save-mute-key',()=>{recMute=true;$('mute-key-input').value='Нажми клавишу...';});
-$('mute-key-input').addEventListener('keydown',e=>{if(!recMute)return;e.preventDefault();muteKeyCode=e.code;localStorage.setItem('muteKeyCode',muteKeyCode);$('mute-key-cur').textContent=muteKeyCode;$('mute-key-input').value='';recMute=false;});
-function renderSettings(){if(isGuest())return;$('msg-privacy').value=currentUser.msgPrivacy||'everyone';
- if(currentUser.profileGrad){$('grad-c1').value=currentUser.profileGrad.c1||'#171126';$('grad-c2').value=currentUser.profileGrad.c2||'#120c1d';}
- renderNickTimer();}
-function renderNickTimer(){const u=currentUser;if(!u||u.guest)return;if(u.lastNickChange){const l=u.lastNickChange+432e5-Date.now();if(l>0){$('nick-timer').textContent='Смена через '+Math.ceil(l/36e5)+' ч';$('nick-btn').disabled=true;return;}}$('nick-timer').textContent='Можно сменить';$('nick-btn').disabled=false;}
-on('nick-btn',async()=>{const u=currentUser;if(!u||u.guest)return;const nn=$('set-newnick').value.trim();if(nn.length<2){toast('Коротко','error');return;}const s=await get(ref(db,'nicknames/'+nn.toLowerCase()));if(s.exists()){toast('Занят','error');return;}await update(ref(db),{['users/'+u.uid+'/nick']:nn,['users/'+u.uid+'/lastNickChange']:Date.now(),['nicknames/'+u.nick.toLowerCase()]:null,['nicknames/'+nn.toLowerCase()]:u.uid});u.nick=nn;$('set-newnick').value='';toast('✔','success');});
-$('msg-privacy').addEventListener('change',e=>{if(!isGuest())update(ref(db,'users/'+currentUser.uid),{msgPrivacy:e.target.value});});
-// ================= ШАШКИ ДВИЖОК =================
+// ===== ДВИЖКИ =====
 let currentKingRules='flying';
 function initBoard(){const b=new Array(64).fill(null);for(let r=0;r<3;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'b',king:false};for(let r=5;r<8;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'w',king:false};return b;}
 function cloneBoard(b){return b.map(p=>p?Object.assign({},p):null);}
@@ -841,16 +547,16 @@ function isPromo(color,r){return(color==='w'&&r===0)||(color==='b'&&r===7);}
 function getStepsForPiece(board,from,color){const p=board[from];if(!p||p.color!==color)return[];
  const dirs=[[-1,-1],[-1,1],[1,-1],[1,1]];const[r,c]=rc(from);const steps=[];
  if(p.king&&currentKingRules==='short'){
-   for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){nr+=dr;nc+=dc;}
-     if(inside(nr,nc)&&board[idx(nr,nc)].color!==color){const er=nr+dr,ec=nc+dc;if(inside(er,ec)&&!board[idx(er,ec)])steps.push({from,to:idx(er,ec),captures:[idx(nr,nc)],promote:false});}}
-   if(steps.length)return steps;
-   for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){steps.push({from,to:idx(nr,nc),captures:[],promote:false});nr+=dr;nc+=dc;}}
-   return steps;}
- if(p.king){for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){nr+=dr;nc+=dc;}
-   if(inside(nr,nc)&&board[idx(nr,nc)].color!==color){let er=nr+dr,ec=nc+dc;while(inside(er,ec)&&!board[idx(er,ec)]){steps.push({from,to:idx(er,ec),captures:[idx(nr,nc)],promote:false});er+=dr;ec+=dc;}}}
+  for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){nr+=dr;nc+=dc;}
+   if(inside(nr,nc)&&board[idx(nr,nc)].color!==color){const er=nr+dr,ec=nc+dc;if(inside(er,ec)&&!board[idx(er,ec)])steps.push({from,to:idx(er,ec),captures:[idx(nr,nc)],promote:false});}}
   if(steps.length)return steps;
   for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){steps.push({from,to:idx(nr,nc),captures:[],promote:false});nr+=dr;nc+=dc;}}
   return steps;}
+ if(p.king){for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){nr+=dr;nc+=dc;}
+  if(inside(nr,nc)&&board[idx(nr,nc)].color!==color){let er=nr+dr,ec=nc+dc;while(inside(er,ec)&&!board[idx(er,ec)]){steps.push({from,to:idx(er,ec),captures:[idx(nr,nc)],promote:false});er+=dr;ec+=dc;}}}
+ if(steps.length)return steps;
+ for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inside(nr,nc)&&!board[idx(nr,nc)]){steps.push({from,to:idx(nr,nc),captures:[],promote:false});nr+=dr;nc+=dc;}}
+ return steps;}
  for(const[dr,dc]of dirs){const mr=r+dr,mc=c+dc,tr=r+2*dr,tc=c+2*dc;if(inside(tr,tc)&&board[idx(mr,mc)]&&board[idx(mr,mc)].color!==color&&!board[idx(tr,tc)])steps.push({from,to:idx(tr,tc),captures:[idx(mr,mc)],promote:isPromo(color,tr)});}
  if(steps.length)return steps;
  const fwd=color==='w'?-1:1;
@@ -877,7 +583,7 @@ function botChooseMove(board,color,diff){const seqs=getFullMoves(board,color);if
   for(const sq of sorted){if(performance.now()>dl)break;let nb=board;for(const st of sq)nb=applyStep(nb,st);const sc=minimax(nb,d-1,a,Infinity,false,color,evalAdv);if(sc>cs){cs=sc;cb=sq;}if(sc>a)a=sc;}
   if(cb)best=cb;}
  return best;}
-// ================= ШАХМАТЫ ДВИЖОК =================
+// шахматы
 const CH_VAL={p:1,n:3,b:3.2,r:5,q:9,k:0};
 const CH_GLYPH={k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
 function chInit(){const b=new Array(64).fill(null);const back=['r','n','b','q','k','b','n','r'];for(let c=0;c<8;c++){b[c]={t:back[c],c:'b'};b[8+c]={t:'p',c:'b'};b[48+c]={t:'p',c:'w'};b[56+c]={t:back[c],c:'w'};}return{b,turn:'w',rights:{wk:1,wq:1,bk:1,bq:1},ep:null};}
@@ -906,7 +612,8 @@ function chGenPseudo(st,color){const b=st.b,mv=[];
  return mv;}
 function chApply(st,m){const b=st.b.slice();const p=b[m.from];const cap=b[m.to];
  b[m.to]=m.promo?{t:m.promo,c:p.c}:p;b[m.from]=null;
- let capSq=m.to;
+ let capSq=null;
+ if(cap)capSq=m.to;
  if(m.ep){capSq=m.to+(p.c==='w'?8:-8);b[capSq]=null;}
  if(m.castle){const home=p.c==='w'?56:0;if(m.castle==='k'){b[home+5]=b[home+7];b[home+7]=null;}else{b[home+3]=b[home];b[home]=null;}}
  const rights=Object.assign({},st.rights);
@@ -914,12 +621,11 @@ function chApply(st,m){const b=st.b.slice();const p=b[m.from];const cap=b[m.to];
  const RS={56:'wq',63:'wk',0:'bq',7:'bk'};
  if(RS[m.from])rights[RS[m.from]]=0;
  if(RS[m.to])rights[RS[m.to]]=0;
- return{b,turn:st.turn==='w'?'b':'w',rights,ep:m.dbl?((m.from+m.to)/2):null,capSq:cap?capSq:(m.ep?capSq:null),captured:!!cap||!!m.ep};}
+ return{b,turn:st.turn==='w'?'b':'w',rights,ep:m.dbl?((m.from+m.to)/2):null,capSq};}
 function chLegal(st,color){return chGenPseudo(st,color).filter(m=>!chInCheck(chApply(st,m),color));}
 function chEval(st,me){let s=0;for(let i=0;i<64;i++){const p=st.b[i];if(!p)continue;const r=i>>3,c=i&7;let v=CH_VAL[p.t];
  if(p.t==='p')v+=(p.c==='w'?(6-r):(r-1))*0.06;
  if(p.t==='n'||p.t==='b')v+=(3.5-Math.max(Math.abs(3.5-r),Math.abs(3.5-c)))*0.06;
- if(p.t==='k')v+=(r===7||r===0)?0.2:0;
  s+=p.c===me?v:-v;}return s;}
 function chMinimax(st,d,alpha,beta,me){const color=st.turn;const moves=chLegal(st,color);
  if(!moves.length)return chInCheck(st,color)?(color===me?-99999-d:99999+d):0;
@@ -935,21 +641,21 @@ function chBotMove(st,diff){const moves=chLegal(st,st.turn);if(!moves.length)ret
  let best=moves[0],bs=-Infinity,alpha=-Infinity;
  for(const m of moves){if(performance.now()>dl&&depth>3)break;const sc=chMinimax(chApply(st,m),depth-1,alpha,Infinity,st.turn);if(sc>bs){bs=sc;best=m;}if(sc>alpha)alpha=sc;}
  return best;}
-// ================= АНИМАЦИЯ/СТРЕЛКИ =================
+// анимация/стрелки
 let arrowTimers=[];
 function clearMoveArrows(){const bd=$('board');if(bd)bd.querySelectorAll('svg.move-arrow').forEach(s=>s.remove());arrowTimers.forEach(t=>clearTimeout(t));arrowTimers=[];}
 function drawMoveArrow(from,to){const bd=$('board'),cs=bd.clientWidth/8;const cen=i=>{const[r,c]=rc(i);return{x:c*cs+cs/2,y:r*cs+cs/2};};const a=cen(from),b=cen(to);const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len;const ins=cs*0.34,sx=a.x+ux*ins,sy=a.y+uy*ins,ex=b.x-ux*ins,ey=b.y-uy*ins,hd=cs*0.2,bx=ex-ux*hd,by=ey-uy*hd,px=-uy,py=ux,w=Math.max(3,cs*0.07);
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','move-arrow');svg.style.width=bd.clientWidth+'px';svg.style.height=bd.clientHeight+'px';
  svg.innerHTML='<line x1="'+sx+'" y1="'+sy+'" x2="'+bx+'" y2="'+by+'" stroke="black" stroke-opacity="0.12" stroke-width="'+w+'" stroke-linecap="round"/><polygon points="'+ex+','+ey+' '+(bx+px*hd*0.55)+','+(by+py*hd*0.55)+' '+(bx-px*hd*0.55)+','+(by-py*hd*0.55)+'" fill="black" fill-opacity="0.12"/>';
  bd.appendChild(svg);arrowTimers.push(setTimeout(()=>{svg.classList.add('fade-out');arrowTimers.push(setTimeout(()=>svg.remove(),950));},8000));}
-function animatePieceMove(path,captures,color,isKing,flipped,cb,isChess,pieceGlyph){const bd=$('board'),cs=bd.clientWidth/8;
+function animatePieceMove(path,captures,color,isKing,flipped,cb,isChess,glyph){const bd=$('board'),cs=bd.clientWidth/8;
  const gp=i=>{const[r,c]=rc(i);const dr=flipped?7-r:r,dc=flipped?7-c:c;return{x:dc*cs+cs*0.11,y:dr*cs+cs*0.11};};
  clearMoveArrows();for(let s=0;s<path.length-1;s++)drawMoveArrow(path[s],path[s+1]);
  const lastEl=bd.querySelector('.cell[data-idx="'+path[path.length-1]+'"] .piece');if(lastEl)lastEl.style.visibility='hidden';
  const firstEl=bd.querySelector('.cell[data-idx="'+path[0]+'"] .piece');if(firstEl)firstEl.remove();
  const anim=document.createElement('div');
  anim.className='piece anim-piece '+(isChess?('chess '+(color==='w'?'w':'b')):((color==='w'?'white':'black')+(isKing?' king':'')));
- if(isChess)anim.textContent=pieceGlyph;
+ if(isChess)anim.textContent=glyph;
  anim.style.width=cs*0.78+'px';anim.style.height=cs*0.78+'px';
  anim.style.filter='drop-shadow(0 8px 12px rgba(0,0,0,0.5))';anim.style.transform='scale(1.1)';
  const sp=gp(path[0]);anim.style.left=sp.x+'px';anim.style.top=sp.y+'px';bd.appendChild(anim);
@@ -958,17 +664,11 @@ function animatePieceMove(path,captures,color,isKing,flipped,cb,isChess,pieceGly
   if(step>=path.length){anim.style.transform='scale(1)';anim.style.filter='';anim.remove();if(lastEl)lastEl.style.visibility='';if(cb)cb();return;}
   if(captures&&step-1<captures.length&&captures[step-1]!=null){const ce=bd.querySelector('.cell[data-idx="'+captures[step-1]+'"] .piece');if(ce){ce.classList.add('dying');setTimeout(()=>ce.remove(),200);}}
   const pos=gp(path[step]);anim.style.left=pos.x+'px';anim.style.top=pos.y+'px';setTimeout(doStep,450);})();}
-// ================= ИГРА ОБЩЕЕ =================
+// ===== СОСТОЯНИЕ ИГРЫ =====
 let G=null,selected=null,possibleMoves=[],roomUnsub=null,midMoveBoard=null,midMovePiece=null,midMovePath=[],exitTimerInt=null,chainOrigin=null,animating=false,botControl=false;
 function setCard(pre,d){$(pre+'-av').innerHTML=d.avatar?'<img src="'+esc(d.avatar)+'">':(d.uid===undefined?'🤖':(d.nick?d.nick[0].toUpperCase():'?'));$(pre+'-name').innerHTML=nickHtml(d);$(pre+'-sub').textContent=(d.elo||1000)+' Elo';$(pre+'-rank').textContent=getRank(d.elo||1000).n;const re=$(pre+'-role');if(re)re.innerHTML=roleBadge(d);}
 function resetMoveState(){midMoveBoard=null;midMovePiece=null;midMovePath=[];selected=null;possibleMoves=[];chainOrigin=null;clearMoveArrows();}
 let pendingDiff=null,pendingGame='checkers';
-['easy','normal','hard','impossible'].forEach(d=>{on('diff-'+d,()=>{pendingGame='checkers';pendingDiff=d;$('bot-modal-title').textContent='🌿 Шашки: режим с ботом';$('bot-mode-modal').classList.remove('hidden');});
- on('chdiff-'+d,()=>{pendingGame='chess';pendingDiff=d;$('bot-modal-title').textContent='♟ Шахматы: режим с ботом';$('bot-mode-modal').classList.remove('hidden');});});
-on('bot-cancel-btn',()=>{$('bot-mode-modal').classList.add('hidden');pendingDiff=null;});
-on('bot-with-elo-btn',()=>{pendingGame==='chess'?startChessBot(pendingDiff,false):startBotGame(pendingDiff,false);});
-on('bot-no-elo-btn',()=>{pendingGame==='chess'?startChessBot(pendingDiff,true):startBotGame(pendingDiff,true);});
-on('bot-control-btn',()=>{botControl=!botControl;$('bot-control-btn').textContent='🎮 Обе: '+(botControl?'вкл':'выкл');$('bot-control-btn').classList.toggle('danger',botControl);});
 function startBotGame(diff,noElo){$('bot-mode-modal').classList.add('hidden');resetMoveState();animating=false;botControl=false;
  $('bot-control-btn').textContent='🎮 Обе: выкл';$('bot-control-btn').classList.toggle('hidden',!noElo);$('voice-match-btn').classList.add('hidden');
  currentKingRules=$('chk-king-rules').checked?'short':'flying';
@@ -982,16 +682,12 @@ function startChessBot(diff,noElo){$('bot-mode-modal').classList.add('hidden');r
  $('bot-control-btn').textContent='🎮 Обе: выкл';$('bot-control-btn').classList.toggle('hidden',!noElo);$('voice-match-btn').classList.add('hidden');
  G={type:'chess',mode:'bot',diff,noElo:!!noElo,ch:chInit(),turn:'w',myColor:'w',botColor:'b',timers:{w:TURN_SECONDS,b:TURN_SECONDS},timerInt:null,over:false,eloUp:false,moveCount:0,startTime:Date.now(),oppUid:null,roomId:null,spectator:false,matchCode:null,whiteUid:null,chLast:null};
  setCard('me',currentUser);$('me-av').innerHTML=currentUser.avatar?'<img src="'+esc(currentUser.avatar)+'">':'🙂';
- setCard('opp',{nick:BOT_DIFF_NAMES[diff]+' бот ♟',elo:BOT_META[diff].elo,});$('opp-av').innerHTML='🤖';
+ setCard('opp',{nick:BOT_DIFF_NAMES[diff]+' бот ♟',elo:BOT_META[diff].elo});$('opp-av').innerHTML='🤖';
  $('game-chat-box').innerHTML='';$('match-code-box').classList.add('hidden');$('spectator-badge').classList.add('hidden');$('rebalance-note').classList.add('hidden');
  showScreen('game');renderBoard();startTurnTimer();}
-// ================= МАТЧМЕЙКИНГ =================
+// ===== МАТЧМЕЙКИНГ =====
 let isSearching=false,queueListener=null,matchListener=null,heartbeatInt=null,guestWatchdog=null,myKingRules='flying',myAnyRules=true,myNoElo=false,myGameType='checkers';
 function isAlive(e,now){if(!e)return false;if(e.heartbeat)return now-e.heartbeat<20000;return e.joinedAt?now-e.joinedAt<30000:false;}
-on('play-online-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=false;myGameType='checkers';startOnlineSearch();});
-on('play-online-noelo-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=true;myGameType='checkers';startOnlineSearch();});
-on('play-chess-online-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=false;myGameType='chess';startOnlineSearch();});
-on('play-chess-online-noelo-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=true;myGameType='chess';startOnlineSearch();});
 async function startOnlineSearch(){if(!currentUser||isSearching)return;isSearching=true;const uid=currentUser.uid;
  myKingRules=$('chk-king-rules').checked?'short':'flying';myAnyRules=$('chk-any-rules').checked;
  $('search-overlay').classList.remove('hidden');
@@ -1027,7 +723,6 @@ async function startOnlineSearch(){if(!currentUser||isSearching)return;isSearchi
   const os=await get(ref(db,'users/'+oppUid));const opp=os.exists()?os.val():{nick:oppData.nick,elo:oppData.elo};opp.uid=oppUid;
   $('search-overlay').classList.add('hidden');showRoulette(roomId,iAmWhite?'w':'b',opp,!!me.noElo);});}
 function cleanupSearch(){if(queueListener){queueListener();queueListener=null;}if(matchListener){matchListener();matchListener=null;}if(heartbeatInt){clearInterval(heartbeatInt);heartbeatInt=null;}}
-on('cancel-search-btn',async()=>{if(!isSearching)return;isSearching=false;cleanupSearch();if(currentUser)await set(ref(db,'matchmaking/'+currentUser.uid),null).catch(()=>{});$('search-overlay').classList.add('hidden');});
 setInterval(async()=>{const mv=!$('screen-mode').classList.contains('hidden');if(!mv&&!isSearching)return;try{const s=await get(ref(db,'matchmaking'));const q=s.val()||{};const now=Date.now();const sweep={};const my=currentUser?currentUser.uid:'';for(const id of Object.keys(q))if(id!==my&&!isAlive(q[id],now))sweep['matchmaking/'+id]=null;if(Object.keys(sweep).length&&currentUser)update(ref(db,sweep)).catch(()=>{});}catch(e){}},5000);
 let rouletteData=null;
 function showRoulette(roomId,myColor,opp,noElo){rouletteData={roomId,myColor,opp,noElo};
@@ -1042,13 +737,11 @@ function showRoulette(roomId,myColor,opp,noElo){rouletteData={roomId,myColor,opp
   setTimeout(()=>{$('roulette-screen').classList.remove('active');joinOnlineGame(rouletteData.roomId,rouletteData.myColor,rouletteData.opp,rouletteData.noElo);},1400);},2600);}
 function joinOnlineGame(roomId,myColor,oppProfile,noElo){if(roomUnsub)roomUnsub();resetMoveState();animating=false;
  roomUnsub=onValue(ref(db,'rooms/'+roomId),snap=>{const data=snap.val();if(!data)return;
-  const gType=data.gameType||'checkers';
-  currentKingRules=data.kingRules||'flying';
+  const gType=data.gameType||'checkers';currentKingRules=data.kingRules||'flying';
   const oppUid=myColor==='w'?data.black:data.white;
   if(!G||G.roomId!==roomId){
    G={type:gType,mode:'online',roomId,myColor,turn:data.turn,timers:data.timers||{w:TURN_SECONDS,b:TURN_SECONDS},over:false,timerInt:null,oppUid,oppProfile,eloUp:false,moveCount:data.moveCount||0,startTime:Date.now(),spectator:false,matchCode:data.matchCode||null,diff:'normal',botColor:null,whiteUid:data.white,noElo:!!data.noElo,chLast:null};
-   if(gType==='chess'){try{G.ch=JSON.parse(data.board);}catch(e){G.ch=chInit();}}
-   else{G.board=JSON.parse(data.board);}
+   if(gType==='chess'){try{G.ch=JSON.parse(data.board);}catch(e){G.ch=chInit();}}else{G.board=JSON.parse(data.board);}
    if(currentKingRules==='short'&&gType==='checkers')setFlag('rebalancePlayed');
    const myE=gType==='chess'?(currentUser.chessElo||1000):(currentUser.elo||1000);const opE=gType==='chess'?(oppProfile.chessElo||1000):(oppProfile.elo||1000);
    if(opE>myE)setFlag('playedHigher');if(opE<myE)setFlag('playedLower');
@@ -1064,23 +757,7 @@ function joinOnlineGame(roomId,myColor,oppProfile,noElo){if(roomUnsub)roomUnsub(
   if(!midMoveBoard&&!animating&&!G.over)renderBoard();
   renderGameChat(data.chat||{});});}
 async function fillGameTop1(){const t=await getTop1();$('opp-top1').innerHTML=G&&G.oppUid?top1BadgeHTML(t,G.oppUid):'';$('me-top1').innerHTML=!isGuest()?top1BadgeHTML(t,currentUser.uid):'';$('opp-role').innerHTML=G&&G.oppProfile?roleBadge(G.oppProfile):'';$('me-role').innerHTML=roleBadge(currentUser);}
-on('spectate-btn',async()=>{if(isGuest()){toast('Гостям нельзя','error');return;}const code=$('spectate-code').value.trim();if(code.length!==4){toast('4 цифры','error');return;}
- const cs=await get(ref(db,'matchCodes/'+code));if(!cs.exists()){toast('Не найден','error');return;}
- const roomId=cs.val();const rs=await get(ref(db,'rooms/'+roomId));if(!rs.exists()){toast('Нет комнаты','error');return;}
- const data=rs.val();currentKingRules=data.kingRules||'flying';
- const[ws,bs]=await Promise.all([get(ref(db,'users/'+data.white)),get(ref(db,'users/'+data.black))]);
- const wp=ws.val()||{nick:'Белый',elo:1000},bp=bs.val()||{nick:'Чёрный',elo:1000};
- resetMoveState();const gType=data.gameType||'checkers';
- G={type:gType,mode:'spectate',roomId,myColor:null,turn:data.turn,timers:data.timers||{w:TURN_SECONDS,b:TURN_SECONDS},over:data.status==='finished',timerInt:null,eloUp:true,moveCount:data.moveCount||0,startTime:Date.now(),spectator:true,matchCode:data.matchCode||code,oppUid:data.black,oppProfile:bp,diff:'normal',botColor:null,whiteUid:data.white,noElo:!!data.noElo,chLast:data.lastMove||null};
- if(gType==='chess')G.ch=JSON.parse(data.board);else G.board=JSON.parse(data.board);
- setCard('me',wp);setCard('opp',bp);$('spectator-badge').classList.remove('hidden');$('match-code-box').classList.remove('hidden');$('match-code-val').textContent=G.matchCode;$('game-chat-box').innerHTML='';$('bot-control-btn').classList.add('hidden');$('voice-match-btn').classList.remove('hidden');
- showScreen('game');renderBoard();startTurnTimer();renderGameChat(data.chat||{});renderVoiceUI();
- if(roomUnsub)roomUnsub();
- roomUnsub=onValue(ref(db,'rooms/'+roomId),s2=>{const d=s2.val();if(!d||!G||!G.spectator)return;
-  if(G.type==='chess')G.ch=JSON.parse(d.board);else G.board=JSON.parse(d.board);
-  G.turn=d.turn;G.timers=d.timers||G.timers;G.chLast=d.lastMove||null;G.over=d.status==='finished';renderBoard();renderGameChat(d.chat||{});
-  if(d.status==='finished'){$('turn-banner').textContent='🏁 Завершён';setTimeout(()=>{if(G&&G.spectator)leaveGame(true);},5000);}});});
-// ================= РЕНДЕР ДОСКИ =================
+// ===== РЕНДЕР =====
 function renderBoard(){const bd=$('board');if(!G)return;
  bd.querySelectorAll('.cell').forEach(c=>c.remove());
  const rn=$('rebalance-note');if(rn)rn.classList.toggle('hidden',!(G.type==='checkers'&&currentKingRules==='short'));
@@ -1094,14 +771,14 @@ function renderBoard(){const bd=$('board');if(!G)return;
   for(const i of order){const[r,c]=rc(i);const cell=document.createElement('div');cell.className='cell '+((r+c)%2===0?'light':'dark');cell.dataset.idx=i;
    if(G.chLast&&(G.chLast.from===i||G.chLast.to===i))cell.classList.add('lastmove');
    if(selected===i)cell.classList.add('selected');
-   const lm=legal.find(m=>m.to===i);
-   if(lm)cell.classList.add(st.b[i]||lm.ep?'capture-possible':'possible');
+   const lm=legal.find(m=>m.to===i&&m.from===selected);
+   if(selected!==null&&lm)cell.classList.add(st.b[i]||lm.ep?'capture-possible':'possible');
    const p=st.b[i];
    if(p){if(inCheck&&p.t==='k'&&p.c===st.turn)cell.classList.add('check-sq');
     const pc=document.createElement('div');pc.className='piece chess '+(p.c==='w'?'w':'b');pc.textContent=CH_GLYPH[p.t];cell.appendChild(pc);}
    cell.addEventListener('click',()=>onCellClick(i));bd.appendChild(cell);}
  }else{
-  const active=midMoveBoard||(G?G.board:null);if(!active)return;
+  const active=midMoveBoard||G.board;if(!active)return;
   const isMy=G&&G.turn===G.myColor&&!G.spectator;const hasMand=isMy&&mustCapture(active,G.myColor);
   $('capture-alert').classList.toggle('show',hasMand&&!midMoveBoard);
   for(const i of order){const[r,c]=rc(i);const cell=document.createElement('div');cell.className='cell '+((r+c)%2===0?'light':'dark');cell.dataset.idx=i;
@@ -1111,7 +788,7 @@ function renderBoard(){const bd=$('board');if(!G)return;
    if(p){if(isMy&&hasMand&&!midMoveBoard&&getStepsForPiece(active,i,G.myColor).some(s=>s.captures.length>0))cell.classList.add('must-capture');
     const pc=document.createElement('div');pc.className='piece '+(p.color==='w'?'white':'black')+(p.king?' king':'');cell.appendChild(pc);}
    cell.addEventListener('click',()=>onCellClick(i));bd.appendChild(cell);}}
- if(G&&!G.over){if(G.spectator){$('opp-timer').textContent=G.timers.b;$('me-timer').textContent=G.timers.w;$('turn-banner').textContent=(G.type==='chess'?(G.turn==='w'?'⚪ Ход белых':'⚫ Ход чёрных'):(G.turn==='w'?'⚪ Ход белых':'⚫ Ход чёрных'));}
+ if(G&&!G.over){if(G.spectator){$('opp-timer').textContent=G.timers.b;$('me-timer').textContent=G.timers.w;$('turn-banner').textContent=G.turn==='w'?'⚪ Ход белых':'⚫ Ход чёрных';}
   else{const tT=G.timers[G.myColor==='w'?'b':'w'],bT=G.timers[G.myColor];$('opp-timer').textContent=tT;$('me-timer').textContent=bT;$('opp-timer').classList.toggle('low',tT<=5);$('me-timer').classList.toggle('low',bT<=5);$('opp-card').classList.toggle('turn',G.turn!==G.myColor);$('me-card').classList.toggle('turn',G.turn===G.myColor);$('turn-banner').textContent=G.turn===G.myColor?'✨ Ваш ход':'⏳ Ход противника';$('turn-banner').style.color='';}}}
 function onCellClick(i){if(!G||G.over||G.spectator||animating||isBanned())return;
  if(G.type==='chess'){chClick(i);return;}
@@ -1135,15 +812,14 @@ function onCellClick(i){if(!G||G.over||G.spectator||animating||isBanned())return
 function chClick(i){const both=G.mode==='bot'&&G.noElo&&botControl;
  if(!both&&G.turn!==G.myColor)return;
  const ctrl=both?G.turn:G.myColor;
- if(G.turn!==ctrl&&!both)return;
  const st=G.ch;const p=st.b[i];
  if(selected!==null){const mv=chLegal(st,ctrl).find(m=>m.to===i&&m.from===selected);
   if(mv){chExecute(mv,ctrl);return;}}
- if(p&&p.c===ctrl){selected=i;possibleMoves=chLegal(st,ctrl).filter(m=>m.from===i);renderBoard();}
+ if(p&&p.c===ctrl){selected=i;possibleMoves=[1];renderBoard();}
  else{selected=null;possibleMoves=[];renderBoard();}}
 async function chExecute(m,ctrl){const st=G.ch;const glyph=CH_GLYPH[st.b[m.from].t];
  const res=chApply(st,m);const capSq=res.capSq;
- G.ch=res.b?res:res;G.ch=res;G.turn=res.turn;G.chLast={from:m.from,to:m.to};
+ G.ch=res;G.turn=res.turn;G.chLast={from:m.from,to:m.to};
  selected=null;possibleMoves=[];G.moveCount=(G.moveCount||0)+1;G.timers[ctrl]=TURN_SECONDS;
  const nextMoves=chLegal(res,res.turn);const inChk=chInCheck(res,res.turn);
  let result=null;
@@ -1160,18 +836,18 @@ async function chExecute(m,ctrl){const st=G.ch;const glyph=CH_GLYPH[st.b[m.from]
   await update(ref(db,'rooms/'+G.roomId),upd).catch(e=>devLog('sync: '+e.message,'err'));
   if(result)handleGameOver(result);}
  if(inChk&&!result)toast('⚠️ Шах!','error');}
-function chEnd(result){if(result==='draw'){G.over=true;toast('🤝 Пат — ничья');if(G.timerInt)clearInterval(G.timerInt);
+function chEnd(result){if(result==='draw'){G.over=true;if(G.timerInt)clearInterval(G.timerInt);toast('🤝 Пат — ничья');
   if(G.mode==='online'&&G.roomId)update(ref(db,'rooms/'+G.roomId),{status:'finished',result:'draw'}).catch(()=>{});
-  scheduleAutoExit();return;}
- if(G.mode==='bot')endGame(result,G.ch);else handleGameOver(result,G.ch);}
+  if(G.mode==='bot'){G.eloUp=true;scheduleAutoExit();}else handleGameOver('draw');return;}
+ if(G.mode==='bot')endGame(result);else handleGameOver(result);}
 function scheduleChessBot(ctrl){setTimeout(()=>{if(!G||G.over)return;const m=chBotMove(G.ch,G.diff);
   if(!m){chEnd(ctrl);return;}
   chExecute(m,G.botColor);},450);}
-// ================= ХОДЫ/ЗАВЕРШЕНИЕ ШАШКИ =================
+// ===== ЗАВЕРШЕНИЕ / ELO =====
 function boardStats(board,myColor){let myP=0,myK=0,opP=0,opK=0;const opC=myColor==='w'?'b':'w';
  for(let i=0;i<64;i++){const p=board[i];if(!p)continue;if(p.color===myColor){myP++;if(p.king)myK++;}else if(p.color===opC){opP++;if(p.king)opK++;}}
  return{myKilled:12-opP,oppKilled:12-myP,myK,opK};}
-function chStats(st,myColor){let myP=0,opP=0;for(let i=0;i<64;i++){const p=st.b?st.b[i]:null;if(!p)continue;if(p.c===myColor)myP++;else opP++;}
+function chStats(st,myColor){let myP=0,opP=0;for(let i=0;i<64;i++){const p=st.b[i];if(!p)continue;if(p.c===myColor)myP++;else opP++;}
  return{myKilled:16-opP,oppKilled:16-myP,myK:0,opK:0};}
 async function recordHistory(won,stats,noElo){if(isGuest()||!G||G.mode!=='online')return;
  await push(ref(db,'users/'+currentUser.uid+'/history'),{oppUid:G.oppUid,oppNick:G.oppProfile?G.oppProfile.nick:'?',game:G.type,result:won?'win':'loss',myScore:stats.myKilled,oppScore:stats.oppKilled,kingRules:currentKingRules,noElo:!!noElo,ts:Date.now()}).catch(()=>{});}
@@ -1192,13 +868,13 @@ async function executeFullMove(seq){let animPath,animCaptures,newBoard;const mov
   else if(G.mode==='bot')scheduleBotMove(nextTurn,moverColor);
   if(G&&!G.over&&G.mode!=='bot')startTurnTimer();});
  if(G.mode==='online'){const upd={board:JSON.stringify(newBoard),turn:nextTurn,moveCount:G.moveCount,lastMove:{from:animPath[0],to:lastIdx}};if(result){upd.status='finished';upd.result=result;}await update(ref(db,'rooms/'+G.roomId),upd).catch(e=>devLog('sync: '+e.message,'err'));}}
-function endGameOrFinish(r,b){if(!G)return;if(G.mode==='bot')endGame(r,b);else handleGameOver(r,b);}
-function scheduleBotMove(nextTurn,moverColor){setTimeout(()=>{if(!G||G.over)return;const seq=botChooseMove(G.board,G.botColor,G.diff);if(!seq||!seq.length){endGame(moverColor,G.board);return;}
+function endGameOrFinish(r,b){if(!G)return;if(G.mode==='bot')endGame(r);else handleGameOver(r,b);}
+function scheduleBotMove(nextTurn,moverColor){setTimeout(()=>{if(!G||G.over)return;const seq=botChooseMove(G.board,G.botColor,G.diff);if(!seq||!seq.length){endGame(moverColor);return;}
  let nb=G.board;const bp=[seq[0].from],bc=[];for(const st of seq){nb=applyStep(nb,st);bp.push(st.to);if(st.captures.length)bc.push(...st.captures);}
  const li=bp[bp.length-1];const ik=!!(nb[li]&&nb[li].king);
  G.board=nb;G.turn=moverColor;G.timers[G.botColor]=TURN_SECONDS;G.moveCount++;
  playSound(bc.length?'capture':'move');renderBoard();animating=true;
- animatePieceMove(bp,bc,G.botColor,ik,false,()=>{animating=false;if(!getFullMoves(nb,moverColor).length)endGame(G.botColor,nb);else if(G&&!G.over)startTurnTimer();});},450);}
+ animatePieceMove(bp,bc,G.botColor,ik,false,()=>{animating=false;if(!getFullMoves(nb,moverColor).length)endGame(G.botColor);else if(G&&!G.over)startTurnTimer();});},450);}
 function endGame(result){if(!G||G.eloUp)return;G.eloUp=true;G.over=true;if(G.timerInt){clearInterval(G.timerInt);G.timerInt=null;}
  const won=result===G.myColor;
  if(won){toast('🏆 Победа!','success');playSound('win');markDailyWin();}else{toast('Поражение','error');playSound('lose');}
@@ -1270,7 +946,6 @@ async function handleTimeout(color){try{if(!G||G.over)return;
   const pieces=[];G.board.forEach((p,i)=>{if(p&&p.color===color)pieces.push(i);});if(!pieces.length){endGame(color==='w'?'b':'w');return;}const simple=pieces.filter(i=>!G.board[i].king);const pool=simple.length?simple:pieces;G.board[pool[Math.floor(Math.random()*pool.length)]]=null;G.turn=color==='w'?'b':'w';G.timers={w:TURN_SECONDS,b:TURN_SECONDS};G.moveCount++;renderBoard();toast('⏱ Время! −шашка','error');}}
  catch(e){devLog('timeout: '+e.message,'err');}
  finally{if(G&&!G.over)startTurnTimer();}}
-on('surrender-btn',async()=>{if(!G||G.over||G.spectator)return;if(!confirm('Сдаться?'))return;doSurrender();});
 async function doSurrender(){if(exitTimerInt){clearInterval(exitTimerInt);exitTimerInt=null;}
  if(G.mode==='bot')endGame(G.botColor);
  else if(G.roomId){const w=G.myColor==='w'?'b':'w';await update(ref(db,'rooms/'+G.roomId),{status:'finished',result:w});handleGameOver(w,G.type==='chess'?G.ch:G.board);}}
@@ -1284,23 +959,198 @@ async function leaveGame(force){
  if(roomUnsub){roomUnsub();roomUnsub=null;}
  if(G&&G.matchCode&&G.mode!=='spectate')set(ref(db,'matchCodes/'+G.matchCode),null).catch(()=>{});
  G=null;resetMoveState();animating=false;showScreen('mode');}
-on('leave-btn',()=>leaveGame(false));
-on('opp-card',()=>{if(G&&G.oppUid&&!isGuest())showProfileModal(G.oppUid);});
-on('me-card',()=>{if(!isGuest()&&(!G||!G.spectator))showProfileModal(currentUser.uid);});
+// ===== ЧАТЫ =====
+const REACTS=['❤️','👍','😂','😮'];
+function msgHTML(key,m,own,canDel,reactPath){
+ let reacts='';if(!m.deleted)reacts='<div class="react-row">'+REACTS.map(e=>{const rs=Object.keys((m.reactions||{})[e]||{});return'<button class="react-btn'+(rs.includes(currentUser?.uid)?' mine':'')+'" data-react="'+key+'" data-emoji="'+e+'" data-path="'+reactPath+'">'+e+' '+(rs.length||'')+'</button>';}).join('')+'</div>';
+ return'<div class="meta"><span class="msg-av">'+(m.avatar?'<img src="'+esc(m.avatar)+'">':esc((m.nick||'?')[0].toUpperCase()))+'</span><button class="nick-link" data-uid="'+esc(m.uid)+'">'+nickHtml(m)+'</button>'+roleBadge(m)+'<span class="time">'+fmtTimeHM(m.ts)+'</span>'+(canDel?'<button class="del-msg" data-key="'+key+'" data-path="'+reactPath+'">🗑</button>':'')+'</div>'+
+  (m.deleted?'<div class="bubble">🚫 Сообщение удалено</div>':(m.type==='game'?'<div class="game-share-card">📊 '+esc(m.text)+'</div>':'<div class="bubble">'+esc(m.text)+(m.image?'<img src="'+esc(m.image)+'">':'')+'</div>'))+reacts;}
+function bindMsgBox(box){
+ box.querySelectorAll('.nick-link').forEach(el=>el.onclick=()=>{if(!isGuest())showProfileModal(el.dataset.uid);});
+ box.querySelectorAll('.del-msg').forEach(el=>el.onclick=()=>update(ref(db,el.dataset.path+'/'+el.dataset.key),{deleted:true}).catch(()=>{}));
+ box.querySelectorAll('[data-react]').forEach(el=>el.onclick=async()=>{if(isGuest()||isBanned())return;const p=el.dataset.path,k=el.dataset.key,e=el.dataset.emoji;const r=ref(db,p+'/'+k+'/reactions/'+e+'/'+currentUser.uid);const s=await get(r);await set(r,s.exists()?null:true).catch(()=>{});});}
+let globalChatUnsub=null;const mentionDone=new Set();
+function renderGlobalChat(){if(globalChatUnsub)globalChatUnsub();
+ const q=query(ref(db,'globalChat'),orderByChild('ts'),limitToLast(100));
+ globalChatUnsub=onValue(q,snap=>{const box=$('chat-msgs');box.innerHTML='';
+  Object.entries(snap.val()||{}).sort((a,b)=>a[1].ts-b[1].ts).forEach(([key,m])=>{
+   const own=m.uid===currentUser?.uid;const canDel=(own||isStaff(currentUser))&&!m.deleted;
+   const d=document.createElement('div');d.className='chat-msg'+(own?' own':'')+(m.deleted?' deleted':'');
+   d.innerHTML=msgHTML(key,m,own,canDel,'globalChat');
+   box.appendChild(d);
+   if(!own&&!m.deleted&&currentUser&&m.text&&m.text.includes('@'+currentUser.nick)&&!mentionDone.has(key)){mentionDone.add(key);notify('💬 Вас отметили: '+m.nick,'💬');}});
+  box.scrollTop=box.scrollHeight;bindMsgBox(box);});}
+let chatImage=null;
+function dmChatId(a,b){return[a,b].sort().join('_');}
+let dmUnsub=null,dmImage=null,dmPeerUid=null;
+async function startDMWith(uid,profile){if(isGuest()||isBanned())return;if(uid===currentUser.uid)return;
+ const privacy=profile.msgPrivacy||'everyone';
+ const accepted=(profile.acceptedDMs||{})[currentUser.uid]||((currentUser.acceptedDMs||{})[uid]);
+ if(privacy==='nobody'&&!accepted){toast('🚫 Не принимает сообщения','error');return;}
+ if(privacy==='requests'&&!accepted){await update(ref(db,'users/'+uid+'/pendingDMs/'+currentUser.uid),{nick:currentUser.nick,avatar:currentUser.avatar||'',ts:Date.now()});notifyUser(uid,'💌 Заявка от '+currentUser.nick,'💌');toast('💌 Заявка отправлена!');return;}
+ openDM(uid,profile);}
+function openDM(uid,profile){dmPeerUid=uid;const chatId=dmChatId(currentUser.uid,uid);dmImage=null;
+ openModal('<h3 style="margin-bottom:10px">💬 Чат с '+esc(profile.nick)+'</h3><div id="dm-msgs"></div>'+
+  '<div class="row" style="margin-bottom:8px"><button class="btn small secondary" id="dm-draw-btn">🎨 Нарисовать</button><label class="btn small secondary" style="cursor:pointer">📷 Фото<input type="file" id="dm-file" accept="image/*" style="display:none"></label><span id="dm-attach-note" style="font-size:11px;color:var(--txt2)"></span></div>'+
+  '<div id="chat-input-row"><input class="chat-input" id="dm-input" maxlength="300" placeholder="Сообщение..."><button class="btn small" id="dm-send">→</button></div>');
+ on('dm-draw-btn',()=>openDrawModal('dm'));
+ $('dm-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>{dmImage=ev.target.result;$('dm-attach-note').textContent='📷 прикреплено';};r.readAsDataURL(f);});
+ if(dmUnsub){dmUnsub();dmUnsub=null;}
+ dmUnsub=onValue(ref(db,'dms/'+chatId+'/messages'),snap=>{const box=$('dm-msgs');if(!box)return;
+  const msgs=Object.entries(snap.val()||{}).sort((a,b)=>a[1].ts-b[1].ts);
+  msgs.forEach(([k,m])=>{if(m.uid!==currentUser.uid)setFlag('dmReceived');});
+  box.innerHTML=msgs.map(([k,m])=>{const own=m.uid===currentUser?.uid;
+   const d=document.createElement('div');d.className='chat-msg'+(own?' own':'')+(m.deleted?' deleted':'');
+   d.innerHTML=msgHTML(k,m,own,own&&!m.deleted,'dms/'+chatId+'/messages');return d.outerHTML;}).join('')||'<div style="font-size:12px;color:var(--txt2);text-align:center">Напишите первое сообщение 🌿</div>';
+  box.scrollTop=box.scrollHeight;bindMsgBox(box);});
+ const send=async()=>{const t=$('dm-input').value.trim();if(!t&&!dmImage)return;
+  await update(ref(db,'dms/'+chatId+'/participants'),{[currentUser.uid]:true,[uid]:true}).catch(()=>{});
+  await update(ref(db,'users/'+currentUser.uid+'/acceptedDMs/'+uid),{nick:profile.nick,avatar:profile.avatar||''}).catch(()=>{});
+  await push(ref(db,'dms/'+chatId+'/messages'),{uid:currentUser.uid,nick:currentUser.nick,nickColor:currentUser.nickColor||'',avatar:currentUser.avatar||'',role:currentUser.role||'',text:t,image:dmImage||null,ts:Date.now(),deleted:false});
+  dmImage=null;const nt=$('dm-attach-note');if(nt)nt.textContent='';
+  setFlag('dmSent');bump(currentUser.uid,'chatMsgs',1);notifyUser(uid,'💬 Сообщение от '+currentUser.nick,'💬');$('dm-input').value='';checkAchievements();};
+ on('dm-send',send);$('dm-input').addEventListener('keydown',e=>{if(e.key==='Enter')send();});}
+async function renderChatsList(){if(isGuest())return;const box=$('chats-list');box.innerHTML='Загрузка...';
+ try{const acc=currentUser.acceptedDMs||{};const ids=Object.keys(acc);
+  if(!ids.length){box.innerHTML='<div style="color:var(--txt2);font-size:13px">Нет чатов. «Написать» в профиле игрока!</div>';return;}
+  const uSnap=await get(ref(db,'users'));const users=uSnap.val()||{};let html='';
+  for(const uid of ids){let last=null;
+   try{const mSnap=await get(ref(db,'dms/'+dmChatId(currentUser.uid,uid)+'/messages'));const ms=Object.values(mSnap.val()||{}).sort((a,b)=>a.ts-b.ts);last=ms[ms.length-1];}catch(e){}
+   const p=users[uid]||acc[uid]||{nick:'?'};
+   html+='<div class="chat-item" data-dm="'+uid+'">'+avatarHtml(p,'sm')+'<div style="flex:1;min-width:0"><b>'+esc(p.nick||'?')+'</b> '+roleBadge(p)+'<div style="font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(last?(last.deleted?'🚫':esc(last.text)):'Нет сообщений')+'</div></div></div>';}
+  box.innerHTML=html;
+  box.querySelectorAll('[data-dm]').forEach(el=>el.onclick=async()=>{const uid=el.dataset.dm;const s=await get(ref(db,'users/'+uid));openDM(uid,s.val()||{nick:'?'});});}
+ catch(e){box.innerHTML='<div style="color:var(--txt2)">Нет чатов</div>';}}
+async function sendGlobalChat(){const t=$('global-chat-input').value.trim();if((!t&&!chatImage)||isGuest()||isBanned())return;
+ await push(ref(db,'globalChat'),{uid:currentUser.uid,nick:currentUser.nick,nickColor:currentUser.nickColor||'',text:t,ts:Date.now(),deleted:false,avatar:currentUser.avatar||'',role:currentUser.role||'',image:chatImage||null});
+ chatImage=null;$('chat-attach-note').textContent='';
+ bump(currentUser.uid,'chatMsgs',1);currentUser.chatMsgs=(currentUser.chatMsgs||0)+1;
+ $('global-chat-input').value='';checkAchievements();}
 function renderGameChat(chatObj){const box=$('game-chat-box');box.innerHTML='';
  Object.entries(chatObj||{}).sort((a,b)=>a[1].ts-b[1].ts).forEach(([key,m])=>{const own=m.uid===currentUser?.uid&&!(G&&G.spectator);
   const d=document.createElement('div');d.className='gchat-msg'+(own?' own':'')+(m.deleted?' deleted':'');
-  d.innerHTML='<div class="gm-header"><button class="nick-link" data-uid="'+esc(m.uid)+'">'+nickHtml(m)+'</button>'+roleBadge(m)+(own&&!m.deleted?'<button class="del-msg" data-key="'+key+'" style="margin-left:auto">🗑</button>':'')+'</div><div>'+(m.deleted?'🚫 удалено':esc(m.text))+'</div>';
+  d.innerHTML='<div class="gm-header"><button class="nick-link" data-uid="'+esc(m.uid)+'">'+nickHtml(m)+'</button>'+roleBadge(m)+(own&&!m.deleted?'<button class="del-msg" data-key="'+key+'" data-path="rooms/'+G.roomId+'/chat" style="margin-left:auto">🗑</button>':'')+'</div><div>'+(m.deleted?'🚫 удалено':esc(m.text))+'</div>';
   box.appendChild(d);});
- box.scrollTop=box.scrollHeight;
- box.querySelectorAll('.nick-link').forEach(el=>el.onclick=()=>{if(!isGuest())showProfileModal(el.dataset.uid);});
- box.querySelectorAll('.del-msg').forEach(el=>el.onclick=()=>update(ref(db,'rooms/'+G.roomId+'/chat/'+el.dataset.key),{deleted:true}));}
+ box.scrollTop=box.scrollHeight;bindMsgBox(box);}
 async function sendGameChat(){const t=$('game-chat-input').value.trim();if(!t||isGuest()||isBanned()||!G||G.spectator)return;
  if(G.mode==='online'&&G.roomId){await push(ref(db,'rooms/'+G.roomId+'/chat'),{uid:currentUser.uid,nick:currentUser.nick,nickColor:currentUser.nickColor||'',text:t,ts:Date.now(),deleted:false,role:currentUser.role||''});bump(currentUser.uid,'chatMsgs',1);}
  else{const box=$('game-chat-box');const d=document.createElement('div');d.className='gchat-msg own';d.innerHTML='<b>'+esc(currentUser.nick)+'</b>: '+esc(t);box.appendChild(d);box.scrollTop=box.scrollHeight;}
  $('game-chat-input').value='';checkAchievements();}
-on('game-chat-send',sendGameChat);
-$('game-chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendGameChat();});
+// ===== ПРОФИЛЬ/СОЦ =====
+function eloLineL(l,u,fE,fW){return'<div class="elo-row"><span class="lab">'+l+'</span><span><b style="color:var(--gold)">'+(u[fE]||1000)+'</b> · <span style="color:var(--green)">'+(u[fW]||0)+'W</span></span></div>';}
+function lum(hex){const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');if(!m)return 0;return(0.299*parseInt(m[1],16)+0.587*parseInt(m[2],16)+0.114*parseInt(m[3],16))/255;}
+function applyGrad(el,u){if(!u||!u.profileGrad||!u.profileGrad.c1){el.style.background='';['--txt','--txt2','--gold','--bg2','--bg3'].forEach(v=>el.style.removeProperty(v));return;}
+ el.style.background='linear-gradient(180deg,'+u.profileGrad.c1+','+u.profileGrad.c2+')';
+ const bright=(lum(u.profileGrad.c1)+lum(u.profileGrad.c2))/2>0.55;
+ if(bright){el.style.setProperty('--txt','#241436');el.style.setProperty('--txt2','#54406a');el.style.setProperty('--gold','#7a5200');el.style.setProperty('--bg2','rgba(255,255,255,.45)');el.style.setProperty('--bg3','rgba(255,255,255,.6)');}
+ else{el.style.setProperty('--txt','#f3e9dc');el.style.setProperty('--txt2','#b9a8c9');el.style.setProperty('--gold','#ffd54f');el.style.setProperty('--bg2','rgba(0,0,0,.25)');el.style.setProperty('--bg3','rgba(0,0,0,.35)');}}
+function profileHTML(u,isMe,slotId){const rk=getRank(u.elo||1000),rkCh=getRank(u.chessElo||1000);
+ const bw=(u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
+ const cbw=(u.chessBotWins_easy||0)+(u.chessBotWins_normal||0)+(u.chessBotWins_hard||0)+(u.chessBotWins_impossible||0);
+ const kd=u.losses===0?(u.wins||0):((u.wins||0)/u.losses).toFixed(2);
+ const ckd=u.chessLosses===0?(u.chessWins||0):((u.chessWins||0)/u.chessLosses).toFixed(2);
+ const fire=(u.lastDailyWinMSK===mskDateStr(0))?'<span class="fire-streak">🔥</span>':'';
+ const xp=u.xp||0,lv=levelOf(xp),pr=levelProgress(xp);
+ return'<div class="profile-head">'+avatarHtml(u,'')+'<div style="flex:1;min-width:200px"><div class="pname">'+nickHtml(u)+(u.tag?' <span class="ptag">'+esc(u.tag)+'</span>':'')+(u.clan?' <span class="pclan">⚔ '+esc(u.clan)+'</span>':'')+' '+roleBadge(u)+' '+fire+banBadge(u)+' <span id="'+slotId+'"></span></div>'+
+ '<div style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap"><span class="rank-badge">'+rk.icon+' '+rk.n+' · '+(u.elo||1000)+'</span><span class="rank-badge" style="background:linear-gradient(90deg,#555,#222)">'+rkCh.icon+' '+rkCh.n+' · '+(u.chessElo||1000)+' ♟</span><span class="level-badge">⭐ Ур. '+lv+(lv>=11?' MAX':'')+'</span></div>'+
+ '<div class="xp-bar"><div class="xp-fill" style="width:'+Math.min(100,(pr.cur/pr.need)*100)+'%"></div></div><div style="font-size:11px;color:var(--txt2);margin-top:3px">'+(pr.max?'MAX · '+xp+' XP':pr.cur+' / '+pr.need+' XP (всего '+xp+')')+'</div>'+
+ '<div style="font-size:12px;margin-top:6px;color:var(--txt2)">👥 '+(u.followersCount||0)+' · подписки '+(u.followingCount||0)+'</div>'+
+ '<div class="pabout">'+(u.bio?esc(u.bio):'<i>Нет описания</i>')+'</div></div>'+
+ (isMe?'<button class="btn small secondary" id="open-edit-btn">✏️ Редактировать</button>':'')+'</div>'+
+ '<div class="stat-grid"><div class="stat-card"><div class="v">'+(u.elo||1000)+'</div><div class="l">🌿 Elo (макс '+(u.maxElo||1000)+')</div></div><div class="stat-card"><div class="v">'+(u.chessElo||1000)+'</div><div class="l">♟ Elo шах (макс '+(u.chessMaxElo||1000)+')</div></div><div class="stat-card"><div class="v">'+(u.wins||0)+'</div><div class="l">🌐 Побед 🌿</div></div><div class="stat-card"><div class="v">'+(u.chessWins||0)+'</div><div class="l">🌐 Побед ♟</div></div><div class="stat-card"><div class="v">'+bw+'</div><div class="l">🤖 Боты 🌿</div></div><div class="stat-card"><div class="v">'+cbw+'</div><div class="l">🤖 Боты ♟</div></div><div class="stat-card"><div class="v">'+kd+'</div><div class="l">K/D 🌿</div></div><div class="stat-card"><div class="v">'+ckd+'</div><div class="l">K/D ♟</div></div><div class="stat-card"><div class="v">'+(u.dailyStreak||0)+'</div><div class="l">🔥 Серия дней</div></div><div class="stat-card"><div class="v">'+fmtPlaytime(u.playtime||0)+'</div><div class="l">Плейтайм</div></div><div class="stat-card"><div class="v">'+xp+'</div><div class="l">✨ XP</div></div><div class="stat-card"><div class="v">'+(u.winStreak||0)+'</div><div class="l">Винстрик 🌿</div></div></div>'+
+ '<h3 style="margin:16px 0 8px;font-size:15px">🌿 Шашки</h3>'+eloLineL('🟢 Лёгкий',u,'botElo_easy','botWins_easy')+eloLineL('🔵 Обычный',u,'botElo_normal','botWins_normal')+eloLineL('🟠 Сложный',u,'botElo_hard','botWins_hard')+eloLineL('🔥 Невозможный',u,'botElo_impossible','botWins_impossible')+
+ '<h3 style="margin:16px 0 8px;font-size:15px">♟ Шахматы</h3>'+eloLineL('🟢 Лёгкий',u,'chessBotElo_easy','chessBotWins_easy')+eloLineL('🔵 Обычный',u,'chessBotElo_normal','chessBotWins_normal')+eloLineL('🟠 Сложный',u,'chessBotElo_hard','chessBotWins_hard')+eloLineL('🔥 Невозможный',u,'chessBotElo_impossible','chessBotWins_impossible')+
+ achievementsHTML(u);}
+function renderMyProfile(){if(!currentUser)return;
+ if(isGuest()){$('my-profile-box').innerHTML='<div class="profile-head">'+avatarHtml(currentUser,'')+'<div><div class="pname">'+esc(currentUser.nick)+' <span class="role-badge" style="background:#555">👻 ГОСТЬ</span></div><div class="pabout">Чат, лента, XP недоступны.</div></div></div>';return;}
+ $('my-profile-box').innerHTML=profileHTML(currentUser,true,'top1-main')+'<div class="row" style="margin-top:16px"><button class="btn small secondary" id="my-followers-btn">👥 Подписчики</button><button class="btn small secondary" data-nav="history">📜 История</button></div>';
+ applyGrad($('my-profile-box'),currentUser);
+ getTop1().then(t=>{const el=$('top1-main');if(el)el.innerHTML=top1BadgeHTML(t,currentUser.uid);});
+ on('open-edit-btn',()=>{$('edit-tag').value=currentUser.tag||'';$('edit-clan').value=currentUser.clan||'';$('edit-about').value=currentUser.bio||'';$('edit-avatar-url').value=(currentUser.avatar||'').startsWith('http')?currentUser.avatar:'';$('nickcolor-field').style.display=isPremium(currentUser)?'block':'none';$('edit-nickcolor').value=currentUser.nickColor||'#ffd54f';showScreen('profile-edit');});
+ on('my-followers-btn',()=>showFollowers(currentUser.uid));}
+async function showProfileModal(uid){const snap=await get(ref(db,'users/'+uid));if(!snap.exists()){toast('Не найден','error');return;}
+ const u=snap.val();if(uid!==currentUser?.uid)setFlag('viewedOther');
+ const isF=!!((currentUser?.following||{})[uid]);
+ openModal(profileHTML(u,false,'top1-modal')+'<div class="row" style="margin-top:16px">'+(uid!==currentUser?.uid?'<button class="btn small" id="pm-dm-btn">✉️ Написать</button><button class="btn small '+(isF?'danger':'secondary')+'" id="pm-follow-btn">'+(isF?'✓ Отписаться':'+ Подписаться')+'</button>':'')+'<button class="btn small secondary" id="pm-followers-btn">👥 Подписчики</button></div>');
+ applyGrad($('modal-content'),u);
+ getTop1().then(t=>{const el=$('top1-modal');if(el)el.innerHTML=top1BadgeHTML(t,uid);});
+ if(uid!==currentUser?.uid){on('pm-dm-btn',()=>startDMWith(uid,u));
+  on('pm-follow-btn',async()=>{if(isGuest())return;const fRef=ref(db,'users/'+uid+'/followers/'+currentUser.uid);const s=await get(fRef);
+   if(s.exists()){await set(fRef,null);await set(ref(db,'users/'+currentUser.uid+'/following/'+uid),null);bump(uid,'followersCount',-1);bump(currentUser.uid,'followingCount',-1);}
+   else{await set(fRef,true);await set(ref(db,'users/'+currentUser.uid+'/following/'+uid),true);bump(uid,'followersCount',1);bump(currentUser.uid,'followingCount',1);addXPTo(uid,25,'новый подписчик');notifyUser(uid,'👥 Подписка от '+currentUser.nick,'👥');}
+   closeModal();showProfileModal(uid);checkAchievements();});}
+ on('pm-followers-btn',()=>showFollowers(uid));}
+async function showFollowers(uid){const s=await get(ref(db,'users/'+uid+'/followers'));const ids=Object.keys(s.val()||{});if(!ids.length){toast('Нет подписчиков');return;}
+ const users=(await get(ref(db,'users'))).val()||{};
+ openModal('<h3 style="margin-bottom:12px">👥 Подписчики ('+ids.length+')</h3>'+ids.map(id=>'<div class="chat-item" data-fu="'+id+'">'+avatarHtml(users[id]||{},'sm')+'<b>'+esc((users[id]||{}).nick||'?')+'</b></div>').join(''));
+ document.querySelectorAll('[data-fu]').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.fu));}
+// ===== РЕЙТИНГ/ИГРОКИ/ИСТОРИЯ =====
+let ratingFilter='total';
+async function renderRating(){const box=$('rating-box');box.innerHTML='Загрузка...';
+ try{const snap=await get(ref(db,'users'));let list=Object.entries(snap.val()||{}).filter(([_,u])=>!u.deleted).map(([uid,u])=>Object.assign({uid},u));
+  if(ratingFilter==='clans'){const clans={};list.forEach(u=>{if(u.clan&&u.clan.trim()){const c=u.clan.trim();clans[c]=clans[c]||{elo:0,n:0};clans[c].elo+=(u.elo||1000)+(u.chessElo||1000);clans[c].n++;}});
+   const arr=Object.entries(clans).sort((a,b)=>b[1].elo-a[1].elo).slice(0,50);
+   box.innerHTML=arr.map(([name,c],i)=>'<div class="lb-item"><div class="lb-rank">#'+(i+1)+'</div><div style="flex:1"><b>⚔ '+esc(name)+'</b><div style="font-size:11px;color:var(--txt2)">Состав: '+c.n+' · Средний: '+Math.round(c.elo/c.n/2)+'</div></div><div class="lb-val">'+c.elo+'</div></div>').join('')||'Кланов пока нет';return;}
+  const val=u=>{if(ratingFilter==='total')return calcTotalBotElo(u);if(ratingFilter==='online')return u.elo||1000;if(ratingFilter==='wins')return u.wins||0;if(ratingFilter==='chessElo')return u.chessElo||1000;if(ratingFilter==='chessWins')return u.chessWins||0;if(ratingFilter==='maxElo')return u.maxElo||1000;if(ratingFilter==='xp')return u.xp||0;if(ratingFilter.startsWith('chessBotElo_'))return u[ratingFilter]||1000;return u['botElo_'+ratingFilter]||1000;};
+  list.sort((a,b)=>val(b)-val(a));list=list.slice(0,50);
+  box.innerHTML=list.map((u,i)=>'<div class="lb-item" data-uid="'+u.uid+'"><div class="lb-rank">#'+(i+1)+'</div>'+avatarHtml(u,'sm')+'<div style="flex:1"><div style="font-weight:700">'+nickHtml(u)+' '+roleBadge(u)+' '+banBadge(u)+'</div><div style="font-size:11px;color:var(--txt2)">Ур. '+levelOf(u.xp||0)+' · 🌿'+getRank(u.elo||1000).n+' / ♟'+getRank(u.chessElo||1000).n+'</div></div><div class="lb-val">'+val(u)+'</div></div>').join('')||'Нет данных';
+  box.querySelectorAll('.lb-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));}catch(e){box.innerHTML='Ошибка';}}
+async function renderPlayers(){const box=$('players-box');box.innerHTML='Загрузка...';
+ try{const snap=await get(ref(db,'users'));const users=snap.val()||{};const now=Date.now();
+  const all=Object.entries(users).filter(([_,u])=>u&&typeof u==='object'&&!u.deleted);
+  $('players-count').textContent=all.filter(([_,u])=>now-(u.lastSeen||0)<3e5).length;
+  all.sort((a,b)=>{const oa=now-(a[1].lastSeen||0)<3e5?1:0,ob=now-(b[1].lastSeen||0)<3e5?1:0;if(ob!==oa)return ob-oa;return(b[1].lastSeen||0)-(a[1].lastSeen||0);});
+  if(!all.length){box.innerHTML='<div style="color:var(--txt2);font-size:13px">Игроков пока нет</div>';return;}
+  box.innerHTML=all.map(([uid,u])=>{const onl=now-(u.lastSeen||0)<3e5;
+   return'<div class="player-item" data-uid="'+uid+'"><span class="online-dot '+(onl?'on':'off')+'"></span>'+avatarHtml(u,'sm')+'<div style="flex:1"><b>'+nickHtml(u)+'</b> '+roleBadge(u)+' '+banBadge(u)+((u.lastDailyWinMSK===mskDateStr(0))?' <span class="fire-streak">🔥</span>':'')+'<div style="font-size:11px;color:var(--txt2)">'+(onl?'🟢 онлайн сейчас':fmtTimeAgo(u.lastSeen))+' · '+fmtPlaytime(u.playtime||0)+'</div></div><div class="lb-val">🌿'+(u.elo||1000)+' ♟'+(u.chessElo||1000)+'</div></div>';}).join('');
+  box.querySelectorAll('.player-item').forEach(el=>el.onclick=()=>showProfileModal(el.dataset.uid));}
+ catch(e){devLog('players: '+e.message,'err');box.innerHTML='<div style="color:var(--red);font-size:13px">Ошибка: '+esc(e.message)+'</div>';}}
+async function renderHistory(){if(isGuest())return;const box=$('history-list');box.innerHTML='Загрузка...';
+ const s=await get(ref(db,'users/'+currentUser.uid+'/history'));const list=Object.entries(s.val()||{}).sort((a,b)=>b[1].ts-a[1].ts);
+ if(!list.length){box.innerHTML='<div style="color:var(--txt2)">Пока нет онлайн-игр</div>';return;}
+ box.innerHTML=list.map(([k,h])=>'<div class="hist-item"><div class="hist-res '+(h.result==='win'?'win':'loss')+'">'+(h.result==='win'?'ПОБЕДА':'ПОРАЗ.')+'</div><div style="flex:1"><b>'+esc(h.oppNick)+'</b> '+(h.game==='chess'?'♟':'🌿')+(h.noElo?' <span style="font-size:10px;color:var(--txt2)">(без Elo)</span>':'')+(h.kingRules==='short'?' 👑':'')+'<div style="font-size:11px;color:var(--txt2)">'+fmtTimeHM(h.ts)+' · счёт <b style="color:var(--gold)">'+h.myScore+'-'+h.oppScore+'</b></div></div><button class="btn small secondary" data-share="'+k+'">📤</button></div>').join('');
+ box.querySelectorAll('[data-share]').forEach(b=>b.onclick=async()=>{const h=(s.val()||{})[b.dataset.share];
+  await push(ref(db,'globalChat'),{uid:currentUser.uid,nick:currentUser.nick,text:'📊 '+(h.game==='chess'?'♟':'🌿')+' Игра vs '+h.oppNick+': '+(h.result==='win'?'ПОБЕДА':'ПОРАЖЕНИЕ')+' '+h.myScore+'-'+h.oppScore,type:'game',ts:Date.now(),deleted:false,avatar:currentUser.avatar||'',role:currentUser.role||''});
+  toast('📤 В чат!','success');showScreen('chat');});}
+// ===== УВЕДОМЛЕНИЯ =====
+let notifUnsub=null;
+function startNotifListener(){if(notifUnsub)notifUnsub();notifUnsub=onValue(ref(db,'users/'+currentUser.uid+'/notifications'),snap=>{const list=[];snap.forEach(c=>list.unshift(Object.assign({key:c.key},c.val())));const un=list.filter(n=>!n.read).length;const b=$('notif-badge');b.textContent=un;b.classList.toggle('hidden',un===0);renderNotifList(list);});}
+async function renderNotifList(list){const box=$('notif-list');let html='';
+ const rs=await get(ref(db,'users/'+currentUser.uid+'/pendingDMs'));
+ for(const[uid,r]of Object.entries(rs.val()||{}))html+='<div class="notif-item unread"><span>💌</span><div class="nt"><b>'+esc(r.nick)+'</b> хочет писать</div><button class="btn small" data-acc="'+uid+'">✅</button><button class="btn small danger" data-dec="'+uid+'">❌</button></div>';
+ html+=list.slice(0,15).map(n=>'<div class="notif-item'+(n.read?'':' unread')+'" data-notif="'+n.key+'"><span>'+(n.icon||'🔔')+'</span><div class="nt">'+esc(n.text)+'</div></div>').join('')||'<div style="font-size:11px;color:var(--txt2)">Пока пусто</div>';
+ box.innerHTML=html;
+ box.querySelectorAll('[data-acc]').forEach(b=>b.onclick=async e=>{e.stopPropagation();await acceptDM(b.dataset.acc);});
+ box.querySelectorAll('[data-dec]').forEach(b=>b.onclick=async e=>{e.stopPropagation();await set(ref(db,'users/'+currentUser.uid+'/pendingDMs/'+b.dataset.dec),null);});
+ box.querySelectorAll('[data-notif]').forEach(el=>el.onclick=()=>update(ref(db,'users/'+currentUser.uid+'/notifications/'+el.dataset.notif),{read:true}).catch(()=>{}));}
+async function acceptDM(fromUid){const r=(await get(ref(db,'users/'+currentUser.uid+'/pendingDMs/'+fromUid))).val();if(!r)return;
+ await set(ref(db,'users/'+currentUser.uid+'/pendingDMs/'+fromUid),null);
+ await update(ref(db,'users/'+currentUser.uid+'/acceptedDMs/'+fromUid),{nick:r.nick,avatar:r.avatar||''});
+ await update(ref(db,'users/'+fromUid+'/acceptedDMs/'+currentUser.uid),{nick:currentUser.nick,avatar:currentUser.avatar||''});
+ notifyUser(fromUid,'✅ Заявка принята','✅');toast('Принято!','success');}
+// ===== РИСОВАНИЕ / ПАСХАЛКА / САПЁР =====
+let drawTarget='avatar',drawing=false,dctx=null;
+function openDrawModal(target){if(isGuest()){toast('Гостям нельзя','error');return;}drawTarget=target||'avatar';$('draw-modal').classList.add('active');const cv=$('draw-canvas');dctx=cv.getContext('2d');dctx.fillStyle='#fff';dctx.fillRect(0,0,240,240);dctx.lineCap='round';dctx.lineJoin='round';
+ const pos=e=>{const r=cv.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return{x:(p.clientX-r.left)*(240/r.width),y:(p.clientY-r.top)*(240/r.height)};};
+ cv.onmousedown=cv.ontouchstart=e=>{e.preventDefault();drawing=true;const q=pos(e);dctx.beginPath();dctx.moveTo(q.x,q.y);};
+ cv.onmousemove=cv.ontouchmove=e=>{if(!drawing)return;e.preventDefault();const q=pos(e);dctx.strokeStyle=$('draw-color').value;dctx.lineWidth=$('draw-size').value;dctx.lineTo(q.x,q.y);dctx.stroke();};
+ cv.onmouseup=cv.ontouchend=cv.onmouseleave=()=>{drawing=false;};}
+function saveDraw(){const data=$('draw-canvas').toDataURL('image/png');$('draw-modal').classList.remove('active');
+ if(drawTarget==='avatar-field'){$('edit-avatar-url').value=data;toast('🎨 → аватар');}
+ else if(drawTarget==='chat'){chatImage=data;$('chat-attach-note').textContent='🎨 прикреплено';}
+ else if(drawTarget==='dm'){dmImage=data;const n=$('dm-attach-note');if(n)n.textContent='🎨 прикреплено';}
+ else{update(ref(db,'users/'+currentUser.uid),{avatar:data});currentUser.avatar=data;const f=currentUser.xpFlags||{};if(!f.avatar){update(ref(db,'users/'+currentUser.uid+'/xpFlags/avatar'),true);addXP(10,'аватарка');}renderMyProfile();}}
+let mines={grid:[],open:0,over:false};
+function openMines(){$('mines-modal').classList.remove('hidden');initMines();}
+function initMines(){mines={grid:[],open:0,over:false};const g=[];for(let i=0;i<81;i++)g.push({m:false,o:false,f:false});let p=0;while(p<10){const r=Math.floor(Math.random()*81);if(!g[r].m){g[r].m=true;p++;}}mines.grid=g;renderMines();}
+function renderMines(){$('mines-grid').innerHTML='';mines.grid.forEach((c,i)=>{const b=document.createElement('button');b.className='mine-cell'+(c.o?' open':'');
+ if(c.o){if(c.m){b.classList.add('boom');b.textContent='💣';}else{const n=mineNear(i);b.textContent=n||'';}}else if(c.f)b.textContent='🚩';
+ b.onclick=()=>reveal(i);b.oncontextmenu=e=>{e.preventDefault();if(!c.o&&!mines.over){c.f=!c.f;renderMines();}};$('mines-grid').appendChild(b);});}
+function mineNear(i){const r=Math.floor(i/9),c=i%9;let n=0;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const rr=r+dr,cc=c+dc;if(rr>=0&&rr<9&&cc>=0&&cc<9&&mines.grid[rr*9+cc].m)n++;}return n;}
+function reveal(i){if(mines.over)return;const c=mines.grid[i];if(c.f||c.o)return;
+ if(c.m){mines.over=true;c.o=true;mines.grid.forEach(x=>{if(x.m)x.o=true;});renderMines();$('mines-status').textContent='💥 Бум!';return;}
+ const flood=k=>{const q=mines.grid[k];if(q.o||q.f)return;q.o=true;mines.open++;if(mineNear(k)===0){const r=Math.floor(k/9),c2=k%9;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const rr=r+dr,cc=c2+dc;if(rr>=0&&rr<9&&cc>=0&&cc<9)flood(rr*9+cc);}}};
+ flood(i);renderMines();if(mines.open===71){mines.over=true;$('mines-status').textContent='🏆 Победа!';}}
 // ===== ВОЙС =====
 const GLOBAL_VOICE=[{id:'voice_1',n:'🎙 Войс 1'},{id:'voice_2',n:'🎙 Войс 2'},{id:'voice_3',n:'🎙 Войс 3'}];
 async function ensureMic(){if(!voice.stream)voice.stream=await navigator.mediaDevices.getUserMedia({audio:true});return voice.stream;}
@@ -1338,7 +1188,7 @@ function renderVoiceUI(){const box=$('voice-rooms-box');
   return'<div class="voice-card'+(inIt?' on':'')+'"><div style="font-weight:700;font-size:13px">'+v.n+' · '+ids.length+'</div><div class="voice-avs">'+ids.slice(0,6).map(id=>'<div class="avatar xs">'+(u[id].avatar?'<img src="'+esc(u[id].avatar)+'">':esc((u[id].nick||'?')[0].toUpperCase()))+'</div>').join('')+'</div><button class="btn small '+(inIt?'danger':'secondary')+'" data-voice="'+v.id+'">'+(inIt?'Выйти':'Зайти')+'</button></div>';}).join('');
   box.querySelectorAll('[data-voice]').forEach(b=>b.onclick=()=>{const k=b.dataset.voice;if(voice.room===k)leaveVoice();else joinVoice(k);});}
  const mb=$('voice-match-btn');if(mb){const inM=voice.room&&voice.room.startsWith('match_');mb.textContent=inM?(voice.isMuted?'🔇 мьют':'🎙 вкл'):'🎙 Войс: выкл';}}
-on('voice-match-btn',()=>{if(!G||!G.roomId){toast('Только в онлайн-матче','error');return;}const key='match_'+G.roomId;if(voice.room===key)leaveVoice();else joinVoice(key);});
+// ===== ЗВУКИ =====
 let audioCtx=null;
 function playSound(t){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const now=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);
  if(t==='move'){o.frequency.value=400;g.gain.setValueAtTime(.12,now);g.gain.exponentialRampToValueAtTime(.001,now+.15);o.start(now);o.stop(now+.15);}
@@ -1346,12 +1196,134 @@ function playSound(t){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.
  else if(t==='tick'){o.frequency.value=1000;g.gain.setValueAtTime(.06,now);g.gain.exponentialRampToValueAtTime(.001,now+.08);o.start(now);o.stop(now+.08);}
  else if(t==='win'){o.frequency.value=523;g.gain.setValueAtTime(.15,now);g.gain.exponentialRampToValueAtTime(.001,now+.5);o.start(now);o.stop(now+.5);}
  else if(t==='lose'){o.frequency.value=300;g.gain.setValueAtTime(.15,now);g.gain.exponentialRampToValueAtTime(.001,now+.5);o.start(now);o.stop(now+.5);}}catch(e){}}
+// ===== АВТОРИЗАЦИЯ/ВХОД =====
+let authMode='login';
+function enterApp(){$('side-nav').classList.remove('hidden');if(!isGuest())$('bl-panels').classList.remove('hidden');
+ if(isBanned()){$('ban-banner').classList.remove('hidden');$('ban-banner').textContent='🚫 Аккаунт заблокирован до '+new Date(currentUser.banUntil).toLocaleString();}
+ showScreen(isBanned()?'profile-view':'mode');applyTheme();if(!isGuest()){startNotifListener();checkTopPos();}
+ $('music-url').value=localStorage.getItem('customMusicUrl')||'';devLog('Вход: '+currentUser.nick,'ok');}
+onAuthStateChanged(auth,async user=>{if(user){const snap=await get(ref(db,'users/'+user.uid));
+  if(snap.exists()){currentUser=Object.assign({uid:user.uid},snap.val());
+    const defs={xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',followersCount:0,followingCount:0,chatMsgs:0,role:'',nickColor:'',tag:'',clan:'',bio:'',avatar:'',banUntil:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0};
+    const up={};for(const k in defs){if(currentUser[k]===undefined){currentUser[k]=defs[k];up[k]=defs[k];}}
+    if(Object.keys(up).length)update(ref(db,'users/'+user.uid),up).catch(()=>{});
+    update(ref(db,'users/'+user.uid),{lastSeen:Date.now()}).catch(()=>{});enterApp();}}
+ else if(!currentUser?.guest){currentUser=null;$('side-nav').classList.add('hidden');$('bl-panels').classList.add('hidden');showScreen('auth');}});
+setInterval(()=>{if(currentUser&&!isGuest()){update(ref(db,'users/'+currentUser.uid),{lastSeen:Date.now()}).catch(()=>{});runTransaction(ref(db,'users/'+currentUser.uid+'/playtime'),c=>(c||0)+60).catch(()=>{});currentUser.playtime=(currentUser.playtime||0)+60;checkAchievements();}},60000);
+// ===== ВСЕ ПРИВЯЗКИ КНОПОК (в конце, с защитой) =====
+function initBindings(){
+ try{
+  document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>showScreen(b.dataset.nav)));
+  on('auth-toggle',()=>{authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход':'Регистрация';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';});
+  on('auth-submit',async()=>{const name=$('auth-name').value.trim(),pass=$('auth-pass').value;
+   if(name.length<2){toast('Ник мин. 2','error');return;}if(pass.length<6){toast('Пароль мин. 6','error');return;}
+   const email=name.toLowerCase().replace(/[^a-z0-9]/g,'')+'@shashki.app';
+   try{if(authMode==='register'){const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));if(ns.exists()){toast('❌ Ник занят!','error');return;}
+     const cred=await createUserWithEmailAndPassword(auth,email,pass);const uid=cred.user.uid;
+     const ctr=await runTransaction(ref(db,'system/userCounter'),c=>c===null?1:c+1).catch(()=>null);
+     const did=ctr&&ctr.snapshot.exists()?String(ctr.snapshot.val()).padStart(5,'0'):String(Math.floor(10000+Math.random()*89999));
+     const profile={nick:name,tag:'',avatar:'',bio:'',clan:'',nickColor:'',profileGrad:null,displayId:did,role:'',xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',followersCount:0,followingCount:0,chatMsgs:0,elo:1000,maxElo:1000,botElo_easy:1000,botElo_normal:1000,botElo_hard:1000,botElo_impossible:1000,botWins_easy:0,botWins_normal:0,botWins_hard:0,botWins_impossible:0,wins:0,losses:0,winStreak:0,maxWinStreak:0,onlineGames:0,botGames:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0,playtime:0,lastSeen:Date.now(),lastNickChange:0,createdAt:Date.now(),deleted:false,banUntil:0};
+     await set(ref(db,'users/'+uid),profile);await set(ref(db,'nicknames/'+name.toLowerCase()),uid);toast('🌿 Аккаунт создан!','success');}
+    else{await signInWithEmailAndPassword(auth,email,pass);toast('Добро пожаловать!','success');}}
+   catch(e){toast(e.code||'Ошибка','error');}});
+  on('guest-btn',()=>{const n=parseInt(localStorage.getItem('guestNum')||'0')+1;localStorage.setItem('guestNum',String(n));currentUser={uid:'guest_'+Date.now(),nick:'Шашист'+String(n).padStart(2,'0'),guest:true,xp:0,elo:1000,chessElo:1000};enterApp();toast('👻 Гость: только боты');});
+  on('nav-logout',()=>{closeNav();if(currentUser?.guest){location.reload();return;}leaveVoice();signOut(auth);});
+  on('toggle-notif',()=>$('notif-panel').classList.toggle('hidden'));
+  $('set-color').addEventListener('input',e=>{localStorage.setItem('themeColor',e.target.value);applyTheme();});
+  on('reset-halloween',()=>{localStorage.setItem('themeColor','#ff7a1a');applyTheme();});
+  on('reset-leaf',()=>{localStorage.setItem('themeColor','#4caf50');applyTheme();});
+  $('set-vol').addEventListener('input',e=>{const v=e.target.value/100;localStorage.setItem('musicVol',v);$('vol-val').textContent=e.target.value+'%';setVolume(v);});
+  on('music-toggle-btn',()=>{const m=localStorage.getItem('musicOn')!=='false';localStorage.setItem('musicOn',String(!m));applyTheme();});
+  on('save-music-url',()=>{const v=$('music-url').value.trim();if(v)localStorage.setItem('customMusicUrl',v);else localStorage.removeItem('customMusicUrl');applyTheme();setFlag('customMusic');toast('🎵 Применено','success');});
+  on('save-mute-key',()=>{recMute=true;$('mute-key-input').value='Нажми клавишу...';});
+  $('mute-key-input').addEventListener('keydown',e=>{if(!recMute)return;e.preventDefault();muteKeyCode=e.code;localStorage.setItem('muteKeyCode',muteKeyCode);$('mute-key-cur').textContent=muteKeyCode;$('mute-key-input').value='';recMute=false;});
+  $('msg-privacy').addEventListener('change',e=>{if(!isGuest())update(ref(db,'users/'+currentUser.uid),{msgPrivacy:e.target.value});});
+  on('nick-btn',async()=>{const u=currentUser;if(!u||u.guest)return;const nn=$('set-newnick').value.trim();if(nn.length<2){toast('Коротко','error');return;}const s=await get(ref(db,'nicknames/'+nn.toLowerCase()));if(s.exists()){toast('Занят','error');return;}await update(ref(db),{['users/'+u.uid+'/nick']:nn,['users/'+u.uid+'/lastNickChange']:Date.now(),['nicknames/'+u.nick.toLowerCase()]:null,['nicknames/'+nn.toLowerCase()]:u.uid});u.nick=nn;$('set-newnick').value='';toast('✔','success');});
+  on('save-grad',async()=>{if(isGuest())return;const g={c1:$('grad-c1').value,c2:$('grad-c2').value};await update(ref(db,'users/'+currentUser.uid),{profileGrad:g});currentUser.profileGrad=g;setFlag('profileGradFlag');toast('🎨 Градиент','success');renderMyProfile();});
+  on('save-profile-btn',async()=>{if(isGuest())return;
+   const a=$('edit-avatar-url').value.trim(),t=$('edit-tag').value.trim().slice(0,20),c=$('edit-clan').value.trim().slice(0,20),b=$('edit-about').value.trim().slice(0,160);
+   const nc=isPremium(currentUser)?$('edit-nickcolor').value:'';
+   const flags=currentUser.xpFlags||{};let bonus=0;const nf={...flags};
+   if(a&&!flags.avatar){nf.avatar=1;bonus+=10;}if(t&&!flags.tag){nf.tag=1;bonus+=10;}if(c&&!flags.clan){nf.clan=1;bonus+=10;}if(b&&!flags.bio){nf.bio=1;bonus+=10;}
+   await update(ref(db,'users/'+currentUser.uid),{avatar:a,tag:t,clan:c,bio:b,nickColor:nc,xpFlags:nf});
+   Object.assign(currentUser,{avatar:a,tag:t,clan:c,bio:b,nickColor:nc,xpFlags:nf});
+   if(bonus)addXP(bonus,'заполнение профиля');setFlag('editedProfile');
+   toast('Сохранено ✔','success');showScreen('profile-view');checkAchievements();});
+  $('edit-avatar-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>$('edit-avatar-url').value=ev.target.result;r.readAsDataURL(f);});
+  on('edit-draw-btn',()=>openDrawModal('avatar-field'));
+  on('gametab-checkers',()=>{$('gametab-checkers').classList.add('on');$('gametab-chess').classList.remove('on');$('mode-checkers').classList.remove('hidden');$('mode-chess').classList.add('hidden');});
+  on('gametab-chess',()=>{$('gametab-chess').classList.add('on');$('gametab-checkers').classList.remove('on');$('mode-chess').classList.remove('hidden');$('mode-checkers').classList.add('hidden');});
+  ['easy','normal','hard','impossible'].forEach(d=>{on('diff-'+d,()=>{pendingGame='checkers';pendingDiff=d;$('bot-modal-title').textContent='🌿 Шашки: режим с ботом';$('bot-mode-modal').classList.remove('hidden');});
+   on('chdiff-'+d,()=>{pendingGame='chess';pendingDiff=d;$('bot-modal-title').textContent='♟ Шахматы: режим с ботом';$('bot-mode-modal').classList.remove('hidden');});});
+  on('bot-cancel-btn',()=>{$('bot-mode-modal').classList.add('hidden');pendingDiff=null;});
+  on('bot-with-elo-btn',()=>{pendingGame==='chess'?startChessBot(pendingDiff,false):startBotGame(pendingDiff,false);});
+  on('bot-no-elo-btn',()=>{pendingGame==='chess'?startChessBot(pendingDiff,true):startBotGame(pendingDiff,true);});
+  on('bot-control-btn',()=>{botControl=!botControl;$('bot-control-btn').textContent='🎮 Обе: '+(botControl?'вкл':'выкл');$('bot-control-btn').classList.toggle('danger',botControl);});
+  on('play-online-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=false;myGameType='checkers';startOnlineSearch();});
+  on('play-online-noelo-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=true;myGameType='checkers';startOnlineSearch();});
+  on('play-chess-online-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=false;myGameType='chess';startOnlineSearch();});
+  on('play-chess-online-noelo-btn',()=>{if(isGuest()||isBanned()){toast('Недоступно','error');return;}myNoElo=true;myGameType='chess';startOnlineSearch();});
+  on('cancel-search-btn',async()=>{if(!isSearching)return;isSearching=false;cleanupSearch();if(currentUser)await set(ref(db,'matchmaking/'+currentUser.uid),null).catch(()=>{});$('search-overlay').classList.add('hidden');});
+  on('spectate-btn',async()=>{if(isGuest()){toast('Гостям нельзя','error');return;}const code=$('spectate-code').value.trim();if(code.length!==4){toast('4 цифры','error');return;}
+   const cs=await get(ref(db,'matchCodes/'+code));if(!cs.exists()){toast('Не найден','error');return;}
+   const roomId=cs.val();const rs=await get(ref(db,'rooms/'+roomId));if(!rs.exists()){toast('Нет комнаты','error');return;}
+   const data=rs.val();currentKingRules=data.kingRules||'flying';
+   const[ws,bs]=await Promise.all([get(ref(db,'users/'+data.white)),get(ref(db,'users/'+data.black))]);
+   const wp=ws.val()||{nick:'Белый',elo:1000},bp=bs.val()||{nick:'Чёрный',elo:1000};
+   resetMoveState();const gType=data.gameType||'checkers';
+   G={type:gType,mode:'spectate',roomId,myColor:null,turn:data.turn,timers:data.timers||{w:TURN_SECONDS,b:TURN_SECONDS},over:data.status==='finished',timerInt:null,eloUp:true,moveCount:data.moveCount||0,startTime:Date.now(),spectator:true,matchCode:data.matchCode||code,oppUid:data.black,oppProfile:bp,diff:'normal',botColor:null,whiteUid:data.white,noElo:!!data.noElo,chLast:data.lastMove||null};
+   if(gType==='chess')G.ch=JSON.parse(data.board);else G.board=JSON.parse(data.board);
+   setCard('me',wp);setCard('opp',bp);$('spectator-badge').classList.remove('hidden');$('match-code-box').classList.remove('hidden');$('match-code-val').textContent=G.matchCode;$('game-chat-box').innerHTML='';$('bot-control-btn').classList.add('hidden');$('voice-match-btn').classList.remove('hidden');
+   showScreen('game');renderBoard();startTurnTimer();renderGameChat(data.chat||{});renderVoiceUI();
+   if(roomUnsub)roomUnsub();
+   roomUnsub=onValue(ref(db,'rooms/'+roomId),s2=>{const d=s2.val();if(!d||!G||!G.spectator)return;
+    if(G.type==='chess')G.ch=JSON.parse(d.board);else G.board=JSON.parse(d.board);
+    G.turn=d.turn;G.timers=d.timers||G.timers;G.chLast=d.lastMove||null;G.over=d.status==='finished';renderBoard();renderGameChat(d.chat||{});
+    if(d.status==='finished'){$('turn-banner').textContent='🏁 Завершён';setTimeout(()=>{if(G&&G.spectator)leaveGame(true);},5000);}});});
+  on('surrender-btn',async()=>{if(!G||G.over||G.spectator)return;if(!confirm('Сдаться?'))return;doSurrender();});
+  on('leave-btn',()=>leaveGame(false));
+  on('opp-card',()=>{if(G&&G.oppUid&&!isGuest())showProfileModal(G.oppUid);});
+  on('me-card',()=>{if(!isGuest()&&(!G||!G.spectator))showProfileModal(currentUser.uid);});
+  on('game-chat-send',sendGameChat);
+  $('game-chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendGameChat();});
+  on('global-chat-send',sendGlobalChat);
+  $('global-chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendGlobalChat();});
+  on('chat-draw-btn',()=>openDrawModal('chat'));
+  $('chat-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>{chatImage=ev.target.result;$('chat-attach-note').textContent='📷 прикреплено';};r.readAsDataURL(f);});
+  on('draw-clear',()=>{dctx.fillStyle='#fff';dctx.fillRect(0,0,240,240);});
+  on('draw-cancel',()=>$('draw-modal').classList.remove('active'));
+  on('draw-save',saveDraw);
+  on('egg-btn',()=>{setFlag('eggFound');$('egg-modal').classList.remove('hidden');});
+  on('egg-close',()=>$('egg-modal').classList.add('hidden'));
+  on('egg-submit',()=>{if($('egg-input').value.trim()==='20251811'){$('egg-modal').classList.add('hidden');setFlag('eggCode');
+    if(!isGuest()){update(ref(db,'users/'+currentUser.uid),{eggPremium:true});currentUser.eggPremium=true;notify('💎 PREMIUM (пасхалка)!','💎');}
+    toast('💎 Верно!','success');$('egg-input').value='';}else toast('Неверно...','error');});
+  on('mines-restart',initMines);on('mines-close',()=>$('mines-modal').classList.add('hidden'));
+  on('voice-match-btn',()=>{if(!G||!G.roomId){toast('Только в онлайн-матче','error');return;}const key='match_'+G.roomId;if(voice.room===key)leaveVoice();else joinVoice(key);});
+  on('creator-link',async()=>{let s=await get(ref(db,'nicknames/larp'));if(!s.exists())s=await get(ref(db,'nicknames/xxxspk'));if(s.exists())showProfileModal(s.val());else toast('Не найден','error');});
+  document.querySelectorAll('#rating-filter .chip').forEach(ch=>ch.addEventListener('click',()=>{ratingFilter=ch.dataset.f;document.querySelectorAll('#rating-filter .chip').forEach(c=>c.classList.toggle('on',c===ch));renderRating();}));
+  $('console-input').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const v=e.target.value.trim();e.target.value='';if(v==='/minesweeper')openMines();else if(v)toast('Неизвестная команда');});
+  on('dev-clear',()=>$('dev-log').innerHTML='');
+  on('dev-close',()=>$('dev-console').classList.remove('open'));
+  on('ui-pc',()=>setUI('pc'));on('ui-mobile-btn',()=>setUI('mobile'));
+  const sideNav=$('side-nav'),navShade=$('nav-shade');
+  if(window.matchMedia('(hover:hover)').matches){sideNav.addEventListener('mouseenter',openNav);sideNav.addEventListener('mouseleave',closeNav);}
+  $('nav-handle').addEventListener('click',e=>{e.stopPropagation();sideNav.classList.contains('open')?closeNav():openNav();});
+  on('nav-mobile-toggle',()=>{sideNav.classList.contains('open')?closeNav():openNav();});
+  navShade.addEventListener('click',closeNav);
+  devLog('✅ Все кнопки привязаны','ok');
+ }catch(e){devLog('initBindings: '+e.message,'err');toast('Ошибка инициализации: '+e.message,'error');}
+}
+function openNav(){$('side-nav').classList.add('open');$('nav-shade').classList.add('on');document.body.classList.add('nav-open');}
+function closeNav(){$('side-nav').classList.remove('open');$('nav-shade').classList.remove('on');document.body.classList.remove('nav-open');}
+let muteKeyCode=localStorage.getItem('muteKeyCode')||'PageUp',recMute=false;
 $('ranks-box').innerHTML=RANKS.map(r=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:'+r.c+';font-weight:bold">'+r.icon+' '+r.n+'</span><span>'+r.min+'+</span></div>').join('');
 $('levels-box').innerHTML=LEVELS.map((x,i)=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:var(--gold);font-weight:bold">⭐ Уровень '+(i+1)+(i===10?' (MAX)':'')+'</span><span>'+x+' - '+((LEVELS[i+1]!==undefined)?(LEVELS[i+1]-1):'∞')+' XP</span></div>').join('');
 setUI(localStorage.getItem('uiMode')||'pc');
 applyTheme();
+initBindings();
 window.__APP_OK=true;
-devLog('✅ v1.2.3 full build loaded (шашки + шахматы + войс)','ok');
+devLog('✅ v1.3 full build loaded','ok');
 </script>
-</body>                 
-</html>
+</body>
+</html> 
