@@ -1333,6 +1333,41 @@ if(voice.room&&e.code===muteKeyCode&&!['INPUT','TEXTAREA'].includes(document.act
 $('mute-key-cur').textContent=muteKeyCode;
 $('ranks-box').innerHTML=RANKS.map(r=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:'+r.c+';font-weight:bold">'+r.icon+' '+r.n+'</span><span>'+r.min+'+</span></div>').join('');
 $('levels-box').innerHTML=LEVELS.map((x,i)=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:var(--gold);font-weight:bold">⭐ Уровень '+(i+1)+(i===10?' (MAX)':'')+'</span><span>'+x+' - '+((LEVELS[i+1]!==undefined)?(LEVELS[i+1]-1):'∞')+' XP</span></div>').join('');
+  // ===== ПАТЧ v1.3.1 =====
+function chGenPseudo(st,color){const b=st.b,mv=[];
+for(let i=0;i<64;i++){const p=b[i];if(!p||p.c!==color)continue;const r=i>>3,c=i&7;
+if(p.t==='p'){const dir=color==='w'?-1:1;const startRow=color==='w'?6:1;const promoRow=color==='w'?0:7;
+const nr=r+dir;if(nr>=0&&nr<8){const f1=nr*8+c;if(!b[f1]){mv.push({from:i,to:f1,promo:nr===promoRow?'q':null});const nr2=r+2*dir;if(r===startRow&&!b[nr2*8+c])mv.push({from:i,to:nr2*8+c,dbl:true});}
+for(const dc of[-1,1]){const nc=c+dc;if(nc<0||nc>7)continue;const t=nr*8+nc;if(b[t]&&b[t].c!==color)mv.push({from:i,to:t,promo:nr===promoRow?'q':null});else if(st.ep===t&&!b[t])mv.push({from:i,to:t,ep:true});}}}
+else if(p.t==='n'){for(const[dr,dc]of[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]]){const nr=r+dr,nc=c+dc;if(nr<0||nr>7||nc<0||nc>7)continue;const t=nr*8+nc;if(!b[t]||b[t].c!==color)mv.push({from:i,to:t});}}
+else if(p.t==='k'){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const nr=r+dr,nc=c+dc;if(nr<0||nr>7||nc<0||nc>7)continue;const t=nr*8+nc;if(!b[t]||b[t].c!==color)mv.push({from:i,to:t});}
+const home=color==='w'?56:0;const opp=color==='w'?'b':'w';
+if(i===home+4&&!chAttacked(b,i,opp)){
+if(st.rights[color+'k']&&!b[home+5]&&!b[home+6]&&b[home+7]&&b[home+7].t==='r'&&b[home+7].c===color&&!chAttacked(b,home+5,opp)&&!chAttacked(b,home+6,opp))mv.push({from:i,to:home+6,castle:'k'});
+if(st.rights[color+'q']&&!b[home+3]&&!b[home+2]&&!b[home+1]&&b[home]&&b[home].t==='r'&&b[home].c===color&&!chAttacked(b,home+3,opp)&&!chAttacked(b,home+2,opp))mv.push({from:i,to:home+2,castle:'q'});}}
+else{const dirs=p.t==='r'?[[1,0],[-1,0],[0,1],[0,-1]]:p.t==='b'?[[1,1],[1,-1],[-1,1],[-1,-1]]:[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){const t=nr*8+nc;if(!b[t])mv.push({from:i,to:t});else{if(b[t].c!==color)mv.push({from:i,to:t});break;}nr+=dr;nc+=dc;}}}
+}
+return mv;}
+function scheduleChessBot(ctrl){setTimeout(()=>{if(!G||G.over)return;if(G.turn!==G.botColor)return;const m=chBotMove(G.ch,G.diff);
+if(!m){chEnd(ctrl);return;}
+chExecute(m,G.botColor).then(()=>{if(G&&!G.over&&G.mode==='bot'&&G.turn===G.myColor)startTurnTimer();});},450);}
+async function showProfileModal(uid){try{
+if(!uid){toast('Профиль недоступен','error');return;}
+const snap=await get(ref(db,'users/'+uid));if(!snap.exists()){toast('Игрок не найден','error');return;}
+const u=snap.val();if(uid!==currentUser?.uid)setFlag('viewedOther');
+const isF=!!((currentUser?.following||{})[uid]);
+openModal(profileHTML(u,false,'top1-modal')+'<div class="row" style="margin-top:16px">'+(uid!==currentUser?.uid?'<button class="btn small" id="pm-dm-btn">✉️ Написать</button><button class="btn small '+(isF?'danger':'secondary')+'" id="pm-follow-btn">'+(isF?'✓ Отписаться':'+ Подписаться')+'</button>':'')+'<button class="btn small secondary" id="pm-followers-btn">👥 Подписчики</button></div>');
+applyGrad($('modal-content'),u);
+getTop1().then(t=>{const el=$('top1-modal');if(el)el.innerHTML=top1BadgeHTML(t,uid);});
+if(uid!==currentUser?.uid){on('pm-dm-btn',()=>startDMWith(uid,u));
+on('pm-follow-btn',async()=>{if(isGuest())return;const fRef=ref(db,'users/'+uid+'/followers/'+currentUser.uid);const s=await get(fRef);
+if(s.exists()){await set(fRef,null);await set(ref(db,'users/'+currentUser.uid+'/following/'+uid),null);bump(uid,'followersCount',-1);bump(currentUser.uid,'followingCount',-1);}
+else{await set(fRef,true);await set(ref(db,'users/'+currentUser.uid+'/following/'+uid),true);bump(uid,'followersCount',1);bump(currentUser.uid,'followingCount',1);addXPTo(uid,25,'новый подписчик');notifyUser(uid,'👥 Подписка от '+currentUser.nick,'👥');}
+closeModal();showProfileModal(uid);checkAchievements();});}
+on('pm-followers-btn',()=>showFollowers(uid));
+}catch(e){devLog('profile: '+e.message,'err');toast('Ошибка профиля: '+e.message,'error');}}
+// ===== КОНЕЦ ПАТЧА =====
 setUI(localStorage.getItem('uiMode')||'pc');
 applyTheme();
 initBindings();
