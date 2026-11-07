@@ -606,7 +606,7 @@ function chGenPseudo(st,color){const b=st.b,mv=[];
    const home=color==='w'?56:0;const opp=color==='w'?'b':'w';
    if(i===home+4&&!chAttacked(b,i,opp)){
     if(st.rights[color+'k']&&!b[home+5]&&!b[home+6]&&b[home+7]&&b[home+7].t==='r'&&b[home+7].c===color&&!chAttacked(b,home+5,opp)&&!chAttacked(b,home+6,opp))mv.push({from:i,to:home+6,castle:'k'});
-    if(st.rights[color+'q']&&!b[home+3]&&!b[home+2]&&!b[home+1]&&b[home]&&b[home].t==='r'&&b[home].c===color&&!chAttacked(b,home+3,opp)&&!chAttacked(b,home+2,opp))mv.push({from:i,to:home+2,castle:'q'});}}
+    if(st.rights[color+'q']&&!b[home+3]&&!b[home+2]&&!b[home+1]&&b[home]&&b[home].t==='r'&&b[home].c===color&&!chAttacked(b,home+3,opp)&&!chAttacked(b,home+2,opp))mv.push({from:i,to:home+2,castle:'q'});}
                       }
   else{const dirs=p.t==='r'?[[1,0],[-1,0],[0,1],[0,-1]]:p.t==='b'?[[1,1],[1,-1],[-1,1],[-1,-1]]:[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
    for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){const t=nr*8+nc;if(!b[t])mv.push({from:i,to:t});else{if(b[t].c!==color)mv.push({from:i,to:t});break;}nr+=dr;nc+=dc;}}}
