@@ -610,6 +610,7 @@ function chGenPseudo(st,color){const b=st.b,mv=[];
                       }
   else{const dirs=p.t==='r'?[[1,0],[-1,0],[0,1],[0,-1]]:p.t==='b'?[[1,1],[1,-1],[-1,1],[-1,-1]]:[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
    for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){const t=nr*8+nc;if(!b[t])mv.push({from:i,to:t});else{if(b[t].c!==color)mv.push({from:i,to:t});break;}nr+=dr;nc+=dc;}}}
+return mv;}}
  return mv;}
 function chApply(st,m){const b=st.b.slice();const p=b[m.from];const cap=b[m.to];
  b[m.to]=m.promo?{t:m.promo,c:p.c}:p;b[m.from]=null;
