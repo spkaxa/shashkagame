@@ -310,15 +310,14 @@ body.ui-mobile #dev-console{width:100%}
 <div class="panel" style="max-width:680px;margin:0 auto">
 <h2 class="ptitle">🛠 Обновления и исправления</h2>
 <div class="upd-item"><b>v1.3 — текущая</b><ul>
-<li>🐞 Полностью переписан шахматный генератор ходов (исправлены скобки и логика веток).</li>
+<li>🐞 Исправлено: setUI/renderSettings/renderNickTimer возвращены, скобки шахматного движка починены, лишняя скобка в конце удалена.</li>
 <li>🗑 Лента удалена; добавлена вкладка «Обновления и исправления».</li>
 <li>💬 Личный чат как общий: пузыри, аватарки, фотки, рисунки, реакции, удаление своих.</li>
-<li> Войс-чат: 3 комнаты в общем чате + войс в матче.</li>
 </ul></div>
-<div class="upd-item"><b>v1.2.3</b><ul><li>♟ Режим «Шахматы»: боты, онлайн, Elo, XP, достижения, рейтинг, правила.</li></ul></div>
+<div class="upd-item"><b>v1.2.3</b><ul><li>♟ Режим «Шахматы»: боты, онлайн, Elo, XP, достижения, рейтинг, правила.</li><li>🎙 Возвращён войс-чат (3 комнаты + матч).</li></ul></div>
 <div class="upd-item"><b>v1.2.2</b><ul><li>🐛 Фиксы: fmtTimeAgo, инициализация войса, вкладка «Игроки».</li><li>👑 Ребаланс дамки: летает, бьёт перешагиванием.</li><li>☰ Меню на телефоне, топ кланов, заглушка сезона.</li></ul></div>
-<div class="upd-item"><b>v1.2</b><ul><li>✨ XP и уровни, 🔥 огонёк дня, 📜 история, реакции, 🥚 пасхалка, 💣 сапёр, градиент, цветной ник, 💻 developer, 🚫 баны.</li></ul></div>
-<div class="upd-item"><b>v1.1</b><ul><li>🎃 Хэллоуин-тема, боковое меню, уведомления и чаты снизу, рулетка со стрелкой, гость.</li></ul></div>
+<div class="upd-item"><b>v1.2</b><ul><li>✨ XP и уровни, 🔥 огонёк дня, 📜 история, реакции, 🥚 пасхалка, 💣 сапёр, градиент, цветной ник, 💻 developer,  баны.</li></ul></div>
+<div class="upd-item"><b>v1.1</b><ul><li>🎃 Хэллоуин-тема, боковое меню, уведомления и чаты снизу, войс, рулетка со стрелкой, гость.</li></ul></div>
 <div class="upd-item"><b>v1.0</b><ul><li>🌿 База: онлайн-матчи, боты, достижения, TOP-1, наблюдение, код матча, рейтинг.</li></ul></div>
 </div>
 </section>
@@ -528,7 +527,13 @@ if(url)bgm.src=url;else bgm.src=DEFAULT_MUSIC;
 bgm.volume=localStorage.getItem('musicVol')?parseFloat(localStorage.getItem('musicVol')):0.4;bgm.play().catch(()=>{});}
 function setVolume(v){$('bg-music').volume=v;if(ytPlayer&&ytReady){try{ytPlayer.setVolume(Math.round(v*100));}catch(e){}}}
 function applyTheme(){const c=localStorage.getItem('themeColor')||'#ff7a1a';document.documentElement.style.setProperty('--main',c);const sc=$('set-color');if(sc)sc.value=c;const vol=localStorage.getItem('musicVol')?parseFloat(localStorage.getItem('musicVol')):0.4;$('set-vol').value=vol*100;$('vol-val').textContent=Math.round(vol*100)+'%';const mus=localStorage.getItem('musicOn')!=='false';$('music-toggle-btn').textContent=mus?'🎵 вкл':'🔇 выкл';applyMusicSource(mus);}
-const GUEST_BLOCK=['chat','chats','players','rating','settings','profile-edit','history','updates'];
+function setUI(m){localStorage.setItem('uiMode',m);document.body.classList.toggle('ui-mobile',m==='mobile');$('ui-pc').classList.toggle('on',m==='pc');$('ui-mobile-btn').classList.toggle('on',m==='mobile');}
+function renderSettings(){if(isGuest())return;$('msg-privacy').value=currentUser.msgPrivacy||'everyone';
+if(currentUser.profileGrad){$('grad-c1').value=currentUser.profileGrad.c1||'#171126';$('grad-c2').value=currentUser.profileGrad.c2||'#120c1d';}
+$('music-url').value=localStorage.getItem('customMusicUrl')||'';
+renderNickTimer();}
+function renderNickTimer(){const u=currentUser;if(!u||u.guest)return;if(u.lastNickChange){const l=u.lastNickChange+432e5-Date.now();if(l>0){$('nick-timer').textContent='Смена через '+Math.ceil(l/36e5)+' ч';$('nick-btn').disabled=true;return;}}$('nick-timer').textContent='Можно сменить';$('nick-btn').disabled=false;}
+const GUEST_BLOCK=['chat','chats','players','rating','settings','profile-edit','history'];
 function showScreen(name){if(isBanned()){toast('🚫 Забанен','error');name='profile-view';}
 if(isGuest()&&GUEST_BLOCK.includes(name)){toast('👻 Гостям недоступно','error');name='mode';}
 document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
@@ -538,7 +543,7 @@ if(name==='players')renderPlayers();if(name==='profile-view')renderMyProfile();i
 if(name==='settings')renderSettings();if(name==='history')renderHistory();
 if(name==='chat')startVoiceRoomWatch();else stopVoiceRoomWatch();
 closeNav();}
-// ===== ШАШКИ: ДВИЖОК =====
+// ===== ДВИЖКИ =====
 let currentKingRules='flying';
 function initBoard(){const b=new Array(64).fill(null);for(let r=0;r<3;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'b',king:false};for(let r=5;r<8;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'w',king:false};return b;}
 function cloneBoard(b){return b.map(p=>p?Object.assign({},p):null);}
@@ -584,7 +589,7 @@ for(let d=4;d<=12;d++){if(performance.now()>dl&&d>6)break;let cb=null,cs=-Infini
 for(const sq of sorted){if(performance.now()>dl)break;let nb=board;for(const st of sq)nb=applyStep(nb,st);const sc=minimax(nb,d-1,a,Infinity,false,color,evalAdv);if(sc>cs){cs=sc;cb=sq;}if(sc>a)a=sc;}
 if(cb)best=cb;}
 return best;}
-// ===== ШАХМАТЫ: ДВИЖОК (ИСПРАВЛЕН) =====
+// ===== ШАХМАТЫ =====
 const CH_VAL={p:1,n:3,b:3.2,r:5,q:9,k:0};
 const CH_GLYPH={k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
 function chInit(){const b=new Array(64).fill(null);const back=['r','n','b','q','k','b','n','r'];for(let c=0;c<8;c++){b[c]={t:back[c],c:'b'};b[8+c]={t:'p',c:'b'};b[48+c]={t:'p',c:'w'};b[56+c]={t:back[c],c:'w'};}return{b,turn:'w',rights:{wk:1,wq:1,bk:1,bq:1},ep:null};}
@@ -611,7 +616,8 @@ if(i===home+4&&!chAttacked(b,i,opp)){
 if(st.rights[color+'k']&&!b[home+5]&&!b[home+6]&&b[home+7]&&b[home+7].t==='r'&&b[home+7].c===color&&!chAttacked(b,home+5,opp)&&!chAttacked(b,home+6,opp))mv.push({from:i,to:home+6,castle:'k'});
 if(st.rights[color+'q']&&!b[home+3]&&!b[home+2]&&!b[home+1]&&b[home]&&b[home].t==='r'&&b[home].c===color&&!chAttacked(b,home+3,opp)&&!chAttacked(b,home+2,opp))mv.push({from:i,to:home+2,castle:'q'});}}
 else{const dirs=p.t==='r'?[[1,0],[-1,0],[0,1],[0,-1]]:p.t==='b'?[[1,1],[1,-1],[-1,1],[-1,-1]]:[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
-for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){const t=nr*8+nc;if(!b[t])mv.push({from:i,to:t});else{if(b[t].c!==color)mv.push({from:i,to:t});break;}nr+=dr;nc+=dc;}}}}
+for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){const t=nr*8+nc;if(!b[t])mv.push({from:i,to:t});else{if(b[t].c!==color)mv.push({from:i,to:t});break;}nr+=dr;nc+=dc;}}}
+}
 return mv;}
 function chApply(st,m){const b=st.b.slice();const p=b[m.from];const cap=b[m.to];
 b[m.to]=m.promo?{t:m.promo,c:p.c}:p;b[m.from]=null;
@@ -644,7 +650,7 @@ moves.sort((a,b)=>((st.b[b.to]?CH_VAL[st.b[b.to].t]:0)-(st.b[a.to]?CH_VAL[st.b[a
 let best=moves[0],bs=-Infinity,alpha=-Infinity;
 for(const m of moves){if(performance.now()>dl&&depth>3)break;const sc=chMinimax(chApply(st,m),depth-1,alpha,Infinity,st.turn);if(sc>bs){bs=sc;best=m;}if(sc>alpha)alpha=sc;}
 return best;}
-// ===== АНИМАЦИЯ/СТРЕЛКИ =====
+// ===== АНИМАЦИЯ =====
 let arrowTimers=[];
 function clearMoveArrows(){const bd=$('board');if(bd)bd.querySelectorAll('svg.move-arrow').forEach(s=>s.remove());arrowTimers.forEach(t=>clearTimeout(t));arrowTimers=[];}
 function drawMoveArrow(from,to){const bd=$('board'),cs=bd.clientWidth/8;const cen=i=>{const[r,c]=rc(i);return{x:c*cs+cs/2,y:r*cs+cs/2};};const a=cen(from),b=cen(to);const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len;const ins=cs*0.34,sx=a.x+ux*ins,sy=a.y+uy*ins,ex=b.x-ux*ins,ey=b.y-uy*ins,hd=cs*0.2,bx=ex-ux*hd,by=ey-uy*hd,px=-uy,py=ux,w=Math.max(3,cs*0.07);
@@ -760,7 +766,7 @@ if(data.status==='finished'){handleGameOver(data.result);return;}
 if(!midMoveBoard&&!animating&&!G.over)renderBoard();
 renderGameChat(data.chat||{});});}
 async function fillGameTop1(){const t=await getTop1();$('opp-top1').innerHTML=G&&G.oppUid?top1BadgeHTML(t,G.oppUid):'';$('me-top1').innerHTML=!isGuest()?top1BadgeHTML(t,currentUser.uid):'';$('opp-role').innerHTML=G&&G.oppProfile?roleBadge(G.oppProfile):'';$('me-role').innerHTML=roleBadge(currentUser);}
-// ===== РЕНДЕР ДОСКИ =====
+// ===== РЕНДЕР =====
 function renderBoard(){const bd=$('board');if(!G)return;
 bd.querySelectorAll('.cell').forEach(c=>c.remove());
 const rn=$('rebalance-note');if(rn)rn.classList.toggle('hidden',!(G.type==='checkers'&&currentKingRules==='short'));
@@ -1111,7 +1117,7 @@ catch(e){devLog('players: '+e.message,'err');box.innerHTML='<div style="color:va
 async function renderHistory(){if(isGuest())return;const box=$('history-list');box.innerHTML='Загрузка...';
 const s=await get(ref(db,'users/'+currentUser.uid+'/history'));const list=Object.entries(s.val()||{}).sort((a,b)=>b[1].ts-a[1].ts);
 if(!list.length){box.innerHTML='<div style="color:var(--txt2)">Пока нет онлайн-игр</div>';return;}
-box.innerHTML=list.map(([k,h])=>'<div class="hist-item"><div class="hist-res '+(h.result==='win'?'win':'loss')+'">'+(h.result==='win'?'ПОБЕДА':'ПОРАЗ.')+'</div><div style="flex:1"><b>'+esc(h.oppNick)+'</b> '+(h.game==='chess'?'♟':'')+(h.noElo?' <span style="font-size:10px;color:var(--txt2)">(без Elo)</span>':'')+(h.kingRules==='short'?' 👑':'')+'<div style="font-size:11px;color:var(--txt2)">'+fmtTimeHM(h.ts)+' · счёт <b style="color:var(--gold)">'+h.myScore+'-'+h.oppScore+'</b></div></div><button class="btn small secondary" data-share="'+k+'">📤</button></div>').join('');
+box.innerHTML=list.map(([k,h])=>'<div class="hist-item"><div class="hist-res '+(h.result==='win'?'win':'loss')+'">'+(h.result==='win'?'ПОБЕДА':'ПОРАЗ.')+'</div><div style="flex:1"><b>'+esc(h.oppNick)+'</b> '+(h.game==='chess'?'♟':'🌿')+(h.noElo?' <span style="font-size:10px;color:var(--txt2)">(без Elo)</span>':'')+(h.kingRules==='short'?' 👑':'')+'<div style="font-size:11px;color:var(--txt2)">'+fmtTimeHM(h.ts)+' · счёт <b style="color:var(--gold)">'+h.myScore+'-'+h.oppScore+'</b></div></div><button class="btn small secondary" data-share="'+k+'">📤</button></div>').join('');
 box.querySelectorAll('[data-share]').forEach(b=>b.onclick=async()=>{const h=(s.val()||{})[b.dataset.share];
 await push(ref(db,'globalChat'),{uid:currentUser.uid,nick:currentUser.nick,text:'📊 '+(h.game==='chess'?'♟':'🌿')+' Игра vs '+h.oppNick+': '+(h.result==='win'?'ПОБЕДА':'ПОРАЖЕНИЕ')+' '+h.myScore+'-'+h.oppScore,type:'game',ts:Date.now(),deleted:false,avatar:currentUser.avatar||'',role:currentUser.role||''});
 toast('📤 В чат!','success');showScreen('chat');});}
@@ -1213,7 +1219,7 @@ if(Object.keys(up).length)update(ref(db,'users/'+user.uid),up).catch(()=>{});
 update(ref(db,'users/'+user.uid),{lastSeen:Date.now()}).catch(()=>{});enterApp();}}
 else if(!currentUser?.guest){currentUser=null;$('side-nav').classList.add('hidden');$('bl-panels').classList.add('hidden');showScreen('auth');}});
 setInterval(()=>{if(currentUser&&!isGuest()){update(ref(db,'users/'+currentUser.uid),{lastSeen:Date.now()}).catch(()=>{});runTransaction(ref(db,'users/'+currentUser.uid+'/playtime'),c=>(c||0)+60).catch(()=>{});currentUser.playtime=(currentUser.playtime||0)+60;checkAchievements();}},60000);
-// ===== ВСЕ ПРИВЯЗКИ КНОПОК =====
+// ===== ПРИВЯЗКИ КНОПОК =====
 function initBindings(){
 try{
 document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>showScreen(b.dataset.nav)));
@@ -1293,7 +1299,7 @@ on('global-chat-send',sendGlobalChat);
 $('global-chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendGlobalChat();});
 on('chat-draw-btn',()=>openDrawModal('chat'));
 $('chat-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>{chatImage=ev.target.result;$('chat-attach-note').textContent='📷 прикреплено';};r.readAsDataURL(f);});
-on('draw-clear',()=>{dctx.fillStyle='#fff';dctx.fillRect(0,0,240,240);});
+on('draw-clear',()=>{if(dctx){dctx.fillStyle='#fff';dctx.fillRect(0,0,240,240);}});
 on('draw-cancel',()=>$('draw-modal').classList.remove('active'));
 on('draw-save',saveDraw);
 on('egg-btn',()=>{setFlag('eggFound');$('egg-modal').classList.remove('hidden');});
@@ -1320,6 +1326,11 @@ devLog('✅ Все кнопки привязаны','ok');
 function openNav(){$('side-nav').classList.add('open');$('nav-shade').classList.add('on');document.body.classList.add('nav-open');}
 function closeNav(){$('side-nav').classList.remove('open');$('nav-shade').classList.remove('on');document.body.classList.remove('nav-open');}
 let muteKeyCode=localStorage.getItem('muteKeyCode')||'PageUp',recMute=false;
+window.addEventListener('keydown',e=>{const k=e.key;
+if(k==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','i','j','c'].includes(k))||(e.ctrlKey&&['u','U'].includes(k))){e.preventDefault();toast('🚫 Отключено','error');}
+if((k==='m'||k==='M'||k==='ь')&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName))$('dev-console').classList.toggle('open');
+if(voice.room&&e.code===muteKeyCode&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();toggleMicMute();}});
+$('mute-key-cur').textContent=muteKeyCode;
 $('ranks-box').innerHTML=RANKS.map(r=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:'+r.c+';font-weight:bold">'+r.icon+' '+r.n+'</span><span>'+r.min+'+</span></div>').join('');
 $('levels-box').innerHTML=LEVELS.map((x,i)=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:var(--gold);font-weight:bold">⭐ Уровень '+(i+1)+(i===10?' (MAX)':'')+'</span><span>'+x+' - '+((LEVELS[i+1]!==undefined)?(LEVELS[i+1]-1):'∞')+' XP</span></div>').join('');
 setUI(localStorage.getItem('uiMode')||'pc');
