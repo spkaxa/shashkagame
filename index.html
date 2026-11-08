@@ -1333,6 +1333,7 @@ if(voice.room&&e.code===muteKeyCode&&!['INPUT','TEXTAREA'].includes(document.act
 $('mute-key-cur').textContent=muteKeyCode;
 $('ranks-box').innerHTML=RANKS.map(r=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:'+r.c+';font-weight:bold">'+r.icon+' '+r.n+'</span><span>'+r.min+'+</span></div>').join('');
 $('levels-box').innerHTML=LEVELS.map((x,i)=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:var(--gold);font-weight:bold">⭐ Уровень '+(i+1)+(i===10?' (MAX)':'')+'</span><span>'+x+' - '+((LEVELS[i+1]!==undefined)?(LEVELS[i+1]-1):'∞')+' XP</span></div>').join('');
+function setUI(mode){localStorage.setItem('uiMode',mode);document.body.classList.toggle('ui-mobile',mode==='mobile');$('ui-pc').classList.toggle('on',mode==='pc');$('ui-mobile-btn').classList.toggle('on',mode==='mobile');}
 setUI(localStorage.getItem('uiMode')||'pc');
 applyTheme();
 initBindings();
