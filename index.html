@@ -1051,6 +1051,18 @@ async function sendGameChat(){const t=$('game-chat-input').value.trim();if(!t||i
 if(G.mode==='online'&&G.roomId){await push(ref(db,'rooms/'+G.roomId+'/chat'),{uid:currentUser.uid,nick:currentUser.nick,nickColor:currentUser.nickColor||'',text:t,ts:Date.now(),deleted:false,role:currentUser.role||''});bump(currentUser.uid,'chatMsgs',1);}
 else{const box=$('game-chat-box');const d=document.createElement('div');d.className='gchat-msg own';d.innerHTML='<b>'+esc(currentUser.nick)+'</b>: '+esc(t);box.appendChild(d);box.scrollTop=box.scrollHeight;}
 $('game-chat-input').value='';checkAchievements();}
+  // ===== МОДАЛКИ =====
+function openModal(html){
+  $('modal-content').innerHTML='<button class="x" id="modal-x">✕</button>'+html;
+  $('modal-bg').classList.remove('hidden');
+  const xBtn=$('modal-x');
+  if(xBtn)xBtn.onclick=closeModal;
+}
+function closeModal(){
+  $('modal-bg').classList.add('hidden');
+  if(dmUnsub){dmUnsub();dmUnsub=null;}
+}
+$('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
 // ===== ПРОФИЛЬ/СОЦ =====
 function eloLineL(l,u,fE,fW){return'<div class="elo-row"><span class="lab">'+l+'</span><span><b style="color:var(--gold)">'+(u[fE]||1000)+'</b> · <span style="color:var(--green)">'+(u[fW]||0)+'W</span></span></div>';}
 function lum(hex){const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');if(!m)return 0;return(0.299*parseInt(m[1],16)+0.587*parseInt(m[2],16)+0.114*parseInt(m[3],16))/255;}
