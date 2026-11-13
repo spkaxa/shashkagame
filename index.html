@@ -1253,12 +1253,34 @@ const did=ctr&&ctr.snapshot.exists()?String(ctr.snapshot.val()).padStart(5,'0'):
 const profile={nick:name,tag:'',avatar:'',bio:'',clan:'',nickColor:'',profileGrad:null,displayId:did,loginEmail,role:'',xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',followersCount:0,followingCount:0,chatMsgs:0,elo:1000,maxElo:1000,botElo_easy:1000,botElo_normal:1000,botElo_hard:1000,botElo_impossible:1000,botWins_easy:0,botWins_normal:0,botWins_hard:0,botWins_impossible:0,wins:0,losses:0,winStreak:0,maxWinStreak:0,onlineGames:0,botGames:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0,playtime:0,lastSeen:Date.now(),lastNickChange:0,createdAt:Date.now(),deleted:false,banUntil:0};
 await set(ref(db,'users/'+uid),profile);await set(ref(db,'nicknames/'+name.toLowerCase()),uid);toast('🌿 Аккаунт создан!','success');}
 else{
-const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));
-let email=null;
-if(ns.exists()){const prof=await get(ref(db,'users/'+ns.val()));if(prof.exists()&&prof.val().loginEmail)email=prof.val().loginEmail;}
-if(!email)email=name.toLowerCase().replace(/[^a-z0-9]/g,'')+'@shashki.app';
-await signInWithEmailAndPassword(auth,email,pass);toast('Добро пожаловать!','success');}}
-catch(e){toast(e.code||'Ошибка входа','error');}});
+  const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));
+  if(!ns.exists()){toast('❌ Ник не найден','error');return;}
+  const uid=ns.val();
+  const prof=await get(ref(db,'users/'+uid));
+  if(!prof.exists()){toast('Профиль не найден','error');return;}
+  const user=prof.val();
+  let email=user.loginEmail;
+  if(!email){
+    email=name.toLowerCase().replace(/[^a-z0-9]/g,'')+'@shashki.app';
+  }
+  try{
+    await signInWithEmailAndPassword(auth,email,pass);
+    toast('Добро пожаловать!','success');
+  }catch(e){
+    if(user.loginEmail){
+      const oldEmail=name.toLowerCase().replace(/[^a-z0-9]/g,'')+'@shashki.app';
+      try{
+        await signInWithEmailAndPassword(auth,oldEmail,pass);
+        await update(ref(db,'users/'+uid),{loginEmail:oldEmail});
+        toast('Добро пожаловать! (обновлено)','success');
+      }catch(e2){
+        toast('Неверный пароль','error');
+      }
+    }else{
+      toast('Неверный пароль','error');
+    }
+  }
+}
 on('guest-btn',()=>{const n=parseInt(localStorage.getItem('guestNum')||'0')+1;localStorage.setItem('guestNum',String(n));currentUser={uid:'guest_'+Date.now(),nick:'Шашист'+String(n).padStart(2,'0'),guest:true,xp:0,elo:1000,chessElo:1000};enterApp();toast('👻 Гость: только боты');});
 on('nav-logout',()=>{closeNav();if(currentUser?.guest){location.reload();return;}leaveVoice();signOut(auth);});
 on('toggle-notif',()=>$('notif-panel').classList.toggle('hidden'));
