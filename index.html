@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
-<title>🌿 Шашки Онлайн v1.3.1</title>
+<title>🌿 Шашки и шахматы Онлайн v1.3.2</title>
 <style>
 :root{--main:#ff7a1a;--bg:#0b0710;--bg2:#151021;--bg3:#1e1730;--card:#171126;--txt:#f3e9dc;--txt2:#b9a8c9;--gold:#ffd54f;--red:#ff5c5c;--green:#69db7c;--blue:#5ba8ff;--radius:14px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -245,7 +245,7 @@ body.ui-mobile #dev-console{width:100%}
 <span class="decor" style="bottom:8px;right:60px;font-size:40px">🎃</span>
 <div id="top-banner">🎃 Хэллоуин-ивент! · ТГК <a href="https://t.me/nasvseh" target="_blank">@nasvseh</a></div>
 <header id="app-header">
-<div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки Онлайн</span><span class="ver">v1.3.1</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
+<div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки и шахматы онлайн</span><span class="ver">v1.3.2</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
 <div id="ui-switch"><button id="ui-pc" class="on">🖥️ ПК</button><button id="ui-mobile-btn">📱 Телефон</button></div>
 </header>
 <div id="nav-shade"></div>
@@ -271,7 +271,7 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen" id="screen-auth">
 <div class="panel auth-card">
 <div style="font-size:44px">🌿</div><h2 id="auth-title" style="font-size:22px;font-weight:700">Вход</h2>
-<div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.3.1 · создатель xxspk · кодил qwen &lt;3</div>
+<div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.3.2 · создатель xxspk · кодил qwen &lt;3</div>
 <div class="field"><label>Никнейм</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
 <div class="field"><label>Пароль (мин. 6, можно с ником)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
 <button class="btn big" id="auth-submit">Войти</button>
@@ -284,7 +284,8 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen hidden" id="screen-profile-edit">
 <div class="panel" style="max-width:520px;margin:0 auto">
 <h2 class="ptitle">✏️ Редактировать профиль</h2>
-<div class="field"><label>Аватар</label><div class="row"><input id="edit-avatar-url" placeholder="https://..." style="flex:1"><button class="btn small secondary" id="edit-draw-btn">🎨 Нарисовать</button><input type="file" id="edit-avatar-file" accept="image/*" style="max-width:140px"></div></div>
+<div class="field"><label>Аватар</label><div class="row"><img id="edit-avatar-preview" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--main)"><input id="edit-avatar-url" placeholder="https://..." style="flex:1"><button class="btn small secondary" id="edit-draw-btn">🎨 Нарисовать</button><input type="file" id="edit-avatar-file" accept="image/*" style="max-width:140px"></div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Аватарка не слетает при сохранении — можно менять только описание.</div></div>
+<div class="field"><label>Смена ника (раз в 12 часов)</label><div class="row"><input id="edit-newnick" maxlength="20" placeholder="Новый ник" style="flex:1"><button class="btn small" id="edit-nick-btn">Сменить</button></div><div id="edit-nick-timer" style="font-size:12px;color:var(--txt2);margin-top:5px"></div></div>
 <div class="field"><label>Приписка (tag)</label><input id="edit-tag" maxlength="20"></div>
 <div class="field"><label>Клан</label><input id="edit-clan" maxlength="20"></div>
 <div class="field"><label>Описание</label><textarea id="edit-about" rows="3" maxlength="160"></textarea></div>
@@ -301,7 +302,6 @@ body.ui-mobile #dev-console{width:100%}
 <div class="field"><label>🎵 Музыка и громкость</label><div class="row"><button class="btn small" id="music-toggle-btn">🎵 вкл</button><input type="range" id="set-vol" min="0" max="100" value="40" style="flex:1"><span id="vol-val" style="font-size:12px;color:var(--txt2)">40%</span></div></div>
 <div class="field"><label>🎙 Клавиша мута микрофона</label><div class="row"><input id="mute-key-input" placeholder="Нажми..." readonly style="flex:1"><button class="btn small" id="save-mute-key">Записать</button></div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Сейчас: <b id="mute-key-cur">PageUp</b></div></div>
 <div class="field"><label>Кто может писать мне в ЛС</label><select id="msg-privacy"><option value="everyone">Может писать каждый</option><option value="requests">Только по заявке</option><option value="nobody">Никто</option></select></div>
-<div class="field"><label>Смена ника (раз в 12ч)</label><div class="row"><input id="set-newnick" maxlength="20" style="flex:1"><button class="btn small" id="nick-btn">Сменить</button></div><div id="nick-timer" style="font-size:12px;color:var(--txt2);margin-top:5px"></div></div>
 <div class="field"><label>👁 Наблюдение за матчем</label><div class="row"><input id="spectate-code" maxlength="4" placeholder="Код" style="flex:1;text-align:center;letter-spacing:3px;font-weight:700"><button class="btn small" id="spectate-btn">Наблюдать</button></div></div>
 </div>
 </section>
@@ -309,21 +309,18 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen hidden" id="screen-updates">
 <div class="panel" style="max-width:680px;margin:0 auto">
 <h2 class="ptitle">🛠 Обновления и исправления</h2>
-<div class="upd-item"><b>v1.3.1 — текущая</b><ul>
-<li>🐞 Исправлен баг: бот в шахматах больше не ходит за игрока.</li>
-<li>🐞 Исправлено: профиль открывается при клике на игрока в рейтинге, списке игроков и чате.</li>
-<li>🐞 Исправлено: ЛС открывается корректно с кнопками рисования и фото.</li>
+<div class="upd-item"><b>v1.3.2 — текущая</b><ul>
+<li>🔑 Вход больше не ломается после смены ника: постоянный loginEmail.</li>
+<li>✏️ Смена ника перенесена в «Редактировать профиль».</li>
+<li>🖼 Аватарка не слетает при сохранении профиля + превью.</li>
+<li>🤖 Нику бота присвоено «кипарк228».</li>
+<li>🐞 Восстановлены openModal/closeModal, починен генератор ходов шахмат и очередность бота.</li>
 </ul></div>
-<div class="upd-item"><b>v1.3</b><ul>
-<li>🗑 Лента удалена; добавлена вкладка «Обновления и исправления».</li>
-<li>💬 Личный чат теперь как общий: пузыри, аватарки, фотки, рисунки, реакции ❤️👍😂😮, удаление своих сообщений.</li>
-<li>🐞 Исправлено «ничего не нажимается»: все кнопки вешаются одним блоком в конце загрузки + защита от падений.</li>
-</ul></div>
-<div class="upd-item"><b>v1.2.3</b><ul><li>♟ Режим «Шахматы»: боты, онлайн, Elo, XP, достижения, рейтинг, правила.</li><li>🎙 Возвращён войс-чат (3 комнаты + матч).</li></ul></div>
-<div class="upd-item"><b>v1.2.2</b><ul><li>🐛 Фиксы: fmtTimeAgo, инициализация войса, вкладка «Игроки».</li><li>👑 Ребаланс дамки: летает, бьёт перешагиванием.</li><li>☰ Меню на телефоне, топ кланов, заглушка сезона.</li></ul></div>
-<div class="upd-item"><b>v1.2</b><ul><li>✨ XP и уровни, 🔥 огонёк дня, 📜 история игр, реакции, 🥚 пасхалка, 💣 сапёр, градиент профиля, цветной ник, 💻 developer, 🚫 баны.</li></ul></div>
-<div class="upd-item"><b>v1.1</b><ul><li>🎃 Хэллоуин-тема, боковое меню, уведомления и чаты снизу, войс, рулетка со стрелкой, гость.</li></ul></div>
-<div class="upd-item"><b>v1.0</b><ul><li>🌿 База: онлайн-матчи, боты, достижения, TOP-1, наблюдение, код матча, рейтинг.</li></ul></div>
+<div class="upd-item"><b>v1.3</b><ul><li>🗑 Лента удалена; вкладка «Обновления».</li><li>💬 ЛС как общий чат: пузыри, фотки, рисунки, реакции.</li></ul></div>
+<div class="upd-item"><b>v1.2.3</b><ul><li>♟ Шахматы: боты, онлайн, Elo, XP, достижения.</li><li>🎙 Войс-чат.</li></ul></div>
+<div class="upd-item"><b>v1.2</b><ul><li>✨ XP, уровни, огонёк дня, история, пасхалка, сапёр, градиент, баны.</li></ul></div>
+<div class="upd-item"><b>v1.1</b><ul><li>🎃 Хэллоуин, боковое меню, уведомления, рулетка, гость.</li></ul></div>
+<div class="upd-item"><b>v1.0</b><ul><li>🌿 База: онлайн, боты, достижения, TOP-1, наблюдение.</li></ul></div>
 </div>
 </section>
 <section class="screen hidden" id="screen-rating">
@@ -468,6 +465,7 @@ function notify(t,i){if(!isGuest())notifyUser(currentUser.uid,t,i);}
 async function markDailyWin(){if(isGuest())return;const t=mskDateStr(0);if(currentUser.lastDailyWinMSK===t)return;const s=currentUser.lastDailyWinMSK===mskDateStr(-1)?(currentUser.dailyStreak||0)+1:1;currentUser.lastDailyWinMSK=t;currentUser.dailyStreak=s;await update(ref(db,'users/'+currentUser.uid),{lastDailyWinMSK:t,dailyStreak:s}).catch(()=>{});notify('🔥 Победа дня! Серия: '+s,'🔥');}
 const BOT_DIFF_NAMES={easy:'Лёгкий',normal:'Обычный',hard:'Сложный',impossible:'Невозможный'};
 const BOT_META={easy:{elo:800,xp:5},normal:{elo:1500,xp:10},hard:{elo:2200,xp:15},impossible:{elo:3500,xp:25}};
+const BOT_NICK='кипарк228';
 function buildAchievements(){const L=[];
 [[1,'🌐','Онлайн-победа I','wins',1],[5,'🌐','Онлайн-победа II','wins',5],[10,'🌐','Онлайн-победа III','wins',10],[25,'🌐','Онлайн-победа IV','wins',25],[50,'🌐','Онлайн-победа V','wins',50],[100,'🌐','Онлайн-победа VI','wins',100]].forEach(([n,ic,nm,f,c])=>L.push({id:'ow'+n,icon:ic,name:nm,desc:'Выиграть '+c+' онлайн игр (шашки)',check:u=>(u[f]||0)>=c}));
 [[1,'♟','Шах-победа I','chessWins',1],[5,'♟','Шах-победа II','chessWins',5],[10,'♟','Шах-победа III','chessWins',10],[25,'♟','Шах-победа IV','chessWins',25],[50,'♟','Шах-победа V','chessWins',50],[100,'♟','Шах-победа VI','chessWins',100]].forEach(([n,ic,nm,f,c])=>L.push({id:'chow'+n,icon:ic,name:nm,desc:'Выиграть '+c+' онлайн игр (шахматы)',check:u=>(u[f]||0)>=c}));
@@ -541,13 +539,18 @@ const el=$('screen-'+name);if(el)el.classList.remove('hidden');
 if(name==='chat')renderGlobalChat();if(name==='rating')renderRating();
 if(name==='players')renderPlayers();if(name==='profile-view')renderMyProfile();if(name==='chats')renderChatsList();
 if(name==='settings')renderSettings();if(name==='history')renderHistory();
+if(name==='profile-edit')renderNickTimer();
 if(name==='chat')startVoiceRoomWatch();else stopVoiceRoomWatch();
 closeNav();}
 function renderSettings(){if(isGuest())return;$('msg-privacy').value=currentUser.msgPrivacy||'everyone';
 if(currentUser.profileGrad){$('grad-c1').value=currentUser.profileGrad.c1||'#171126';$('grad-c2').value=currentUser.profileGrad.c2||'#120c1d';}
-$('music-url').value=localStorage.getItem('customMusicUrl')||'';
-renderNickTimer();}
-function renderNickTimer(){const u=currentUser;if(!u||u.guest)return;if(u.lastNickChange){const l=u.lastNickChange+432e5-Date.now();if(l>0){$('nick-timer').textContent='Смена через '+Math.ceil(l/36e5)+' ч';$('nick-btn').disabled=true;return;}}$('nick-timer').textContent='Можно сменить';$('nick-btn').disabled=false;}
+$('music-url').value=localStorage.getItem('customMusicUrl')||'';}
+function renderNickTimer(){const u=currentUser;if(!u||u.guest)return;const btn=$('edit-nick-btn'),tim=$('edit-nick-timer');if(!btn||!tim)return;
+if(u.lastNickChange){const l=u.lastNickChange+432e5-Date.now();if(l>0){tim.textContent='Смена ника через '+Math.ceil(l/36e5)+' ч';btn.disabled=true;return;}}
+tim.textContent='Можно сменить ник';btn.disabled=false;}
+// ===== МОДАЛКИ =====
+function openModal(html){$('modal-content').innerHTML='<button class="x" id="modal-x">✕</button>'+html;$('modal-bg').classList.remove('hidden');on('modal-x',closeModal);}
+function closeModal(){$('modal-bg').classList.add('hidden');if(dmUnsub){dmUnsub();dmUnsub=null;}}
 // ===== ДВИЖКИ =====
 let currentKingRules='flying';
 function initBoard(){const b=new Array(64).fill(null);for(let r=0;r<3;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'b',king:false};for(let r=5;r<8;r++)for(let c=0;c<8;c++)if((r+c)%2===1)b[r*8+c]={color:'w',king:false};return b;}
@@ -687,14 +690,14 @@ currentKingRules=$('chk-king-rules').checked?'short':'flying';
 if(currentKingRules==='short')setFlag('rebalancePlayed');
 G={type:'checkers',mode:'bot',diff,noElo:!!noElo,board:initBoard(),turn:'w',myColor:'w',botColor:'b',timers:{w:TURN_SECONDS,b:TURN_SECONDS},timerInt:null,over:false,eloUp:false,moveCount:0,startTime:Date.now(),oppUid:null,roomId:null,spectator:false,matchCode:null,whiteUid:null};
 setCard('me',currentUser);$('me-av').innerHTML=currentUser.avatar?'<img src="'+esc(currentUser.avatar)+'">':'🙂';
-setCard('opp',{nick:BOT_DIFF_NAMES[diff]+' бот 🌿',elo:BOT_META[diff].elo});$('opp-av').innerHTML='🤖';
+setCard('opp',{nick:BOT_NICK,elo:BOT_META[diff].elo});$('opp-av').innerHTML='🤖';$('opp-rank').textContent=BOT_DIFF_NAMES[diff]+' бот 🌿';
 $('game-chat-box').innerHTML='';$('match-code-box').classList.add('hidden');$('spectator-badge').classList.add('hidden');
 showScreen('game');renderBoard();startTurnTimer();}
 function startChessBot(diff,noElo){$('bot-mode-modal').classList.add('hidden');resetMoveState();animating=false;botControl=false;
 $('bot-control-btn').textContent='🎮 Обе: выкл';$('bot-control-btn').classList.toggle('hidden',!noElo);$('voice-match-btn').classList.add('hidden');
 G={type:'chess',mode:'bot',diff,noElo:!!noElo,ch:chInit(),turn:'w',myColor:'w',botColor:'b',timers:{w:TURN_SECONDS,b:TURN_SECONDS},timerInt:null,over:false,eloUp:false,moveCount:0,startTime:Date.now(),oppUid:null,roomId:null,spectator:false,matchCode:null,whiteUid:null,chLast:null};
 setCard('me',currentUser);$('me-av').innerHTML=currentUser.avatar?'<img src="'+esc(currentUser.avatar)+'">':'🙂';
-setCard('opp',{nick:BOT_DIFF_NAMES[diff]+' бот ♟',elo:BOT_META[diff].elo});$('opp-av').innerHTML='🤖';
+setCard('opp',{nick:BOT_NICK,elo:BOT_META[diff].elo});$('opp-av').innerHTML='🤖';$('opp-rank').textContent=BOT_DIFF_NAMES[diff]+' бот ♟';
 $('game-chat-box').innerHTML='';$('match-code-box').classList.add('hidden');$('spectator-badge').classList.add('hidden');$('rebalance-note').classList.add('hidden');
 showScreen('game');renderBoard();startTurnTimer();}
 // ===== МАТЧМЕЙКИНГ =====
@@ -852,11 +855,9 @@ function chEnd(result){if(result==='draw'){G.over=true;if(G.timerInt)clearInterv
 if(G.mode==='online'&&G.roomId)update(ref(db,'rooms/'+G.roomId),{status:'finished',result:'draw'}).catch(()=>{});
 if(G.mode==='bot'){G.eloUp=true;scheduleAutoExit();}else handleGameOver('draw');return;}
 if(G.mode==='bot')endGame(result);else handleGameOver(result);}
-function scheduleChessBot(){setTimeout(()=>{if(!G||G.over)return;
-if(G.turn!==G.botColor)return;
-const m=chBotMove(G.ch,G.diff);
+function scheduleChessBot(){setTimeout(()=>{if(!G||G.over)return;if(G.turn!==G.botColor)return;const m=chBotMove(G.ch,G.diff);
 if(!m){chEnd(G.myColor);return;}
-chExecute(m,G.botColor);},450);}
+chExecute(m,G.botColor).then(()=>{if(G&&!G.over&&G.mode==='bot'&&G.turn===G.myColor)startTurnTimer();});},450);}
 // ===== ЗАВЕРШЕНИЕ / ELO =====
 function boardStats(board,myColor){let myP=0,myK=0,opP=0,opK=0;const opC=myColor==='w'?'b':'w';
 for(let i=0;i<64;i++){const p=board[i];if(!p)continue;if(p.color===myColor){myP++;if(p.king)myK++;}else if(p.color===opC){opP++;if(p.king)opK++;}}
@@ -974,7 +975,7 @@ if(roomUnsub){roomUnsub();roomUnsub=null;}
 if(G&&G.matchCode&&G.mode!=='spectate')set(ref(db,'matchCodes/'+G.matchCode),null).catch(()=>{});
 G=null;resetMoveState();animating=false;showScreen('mode');}
 // ===== ЧАТЫ =====
-const REACTS=['❤️','👍','😂','😮'];
+const REACTS=['❤️','👍','','😮'];
 function msgHTML(key,m,own,canDel,reactPath){
 let reacts='';if(!m.deleted)reacts='<div class="react-row">'+REACTS.map(e=>{const rs=Object.keys((m.reactions||{})[e]||{});return'<button class="react-btn'+(rs.includes(currentUser?.uid)?' mine':'')+'" data-react="'+key+'" data-emoji="'+e+'" data-path="'+reactPath+'">'+e+' '+(rs.length||'')+'</button>';}).join('')+'</div>';
 return'<div class="meta"><span class="msg-av">'+(m.avatar?'<img src="'+esc(m.avatar)+'">':esc((m.nick||'?')[0].toUpperCase()))+'</span><button class="nick-link" data-uid="'+esc(m.uid)+'">'+nickHtml(m)+'</button>'+roleBadge(m)+'<span class="time">'+fmtTimeHM(m.ts)+'</span>'+(canDel?'<button class="del-msg" data-key="'+key+'" data-path="'+reactPath+'">🗑</button>':'')+'</div>'+
@@ -1051,18 +1052,6 @@ async function sendGameChat(){const t=$('game-chat-input').value.trim();if(!t||i
 if(G.mode==='online'&&G.roomId){await push(ref(db,'rooms/'+G.roomId+'/chat'),{uid:currentUser.uid,nick:currentUser.nick,nickColor:currentUser.nickColor||'',text:t,ts:Date.now(),deleted:false,role:currentUser.role||''});bump(currentUser.uid,'chatMsgs',1);}
 else{const box=$('game-chat-box');const d=document.createElement('div');d.className='gchat-msg own';d.innerHTML='<b>'+esc(currentUser.nick)+'</b>: '+esc(t);box.appendChild(d);box.scrollTop=box.scrollHeight;}
 $('game-chat-input').value='';checkAchievements();}
-  // ===== МОДАЛКИ =====
-function openModal(html){
-  $('modal-content').innerHTML='<button class="x" id="modal-x">✕</button>'+html;
-  $('modal-bg').classList.remove('hidden');
-  const xBtn=$('modal-x');
-  if(xBtn)xBtn.onclick=closeModal;
-}
-function closeModal(){
-  $('modal-bg').classList.add('hidden');
-  if(dmUnsub){dmUnsub();dmUnsub=null;}
-}
-$('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
 // ===== ПРОФИЛЬ/СОЦ =====
 function eloLineL(l,u,fE,fW){return'<div class="elo-row"><span class="lab">'+l+'</span><span><b style="color:var(--gold)">'+(u[fE]||1000)+'</b> · <span style="color:var(--green)">'+(u[fW]||0)+'W</span></span></div>';}
 function lum(hex){const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');if(!m)return 0;return(0.299*parseInt(m[1],16)+0.587*parseInt(m[2],16)+0.114*parseInt(m[3],16))/255;}
@@ -1071,6 +1060,8 @@ el.style.background='linear-gradient(180deg,'+u.profileGrad.c1+','+u.profileGrad
 const bright=(lum(u.profileGrad.c1)+lum(u.profileGrad.c2))/2>0.55;
 if(bright){el.style.setProperty('--txt','#241436');el.style.setProperty('--txt2','#54406a');el.style.setProperty('--gold','#7a5200');el.style.setProperty('--bg2','rgba(255,255,255,.45)');el.style.setProperty('--bg3','rgba(255,255,255,.6)');}
 else{el.style.setProperty('--txt','#f3e9dc');el.style.setProperty('--txt2','#b9a8c9');el.style.setProperty('--gold','#ffd54f');el.style.setProperty('--bg2','rgba(0,0,0,.25)');el.style.setProperty('--bg3','rgba(0,0,0,.35)');}}
+let editAvatarCur='';
+function setEditAvatarPreview(){const p=$('edit-avatar-preview');if(!p)return;if(editAvatarCur){p.src=editAvatarCur;p.style.display='block';}else{p.style.display='none';}}
 function profileHTML(u,isMe,slotId){const rk=getRank(u.elo||1000),rkCh=getRank(u.chessElo||1000);
 const bw=(u.botWins_easy||0)+(u.botWins_normal||0)+(u.botWins_hard||0)+(u.botWins_impossible||0);
 const cbw=(u.chessBotWins_easy||0)+(u.chessBotWins_normal||0)+(u.chessBotWins_hard||0)+(u.chessBotWins_impossible||0);
@@ -1093,7 +1084,12 @@ if(isGuest()){$('my-profile-box').innerHTML='<div class="profile-head">'+avatarH
 $('my-profile-box').innerHTML=profileHTML(currentUser,true,'top1-main')+'<div class="row" style="margin-top:16px"><button class="btn small secondary" id="my-followers-btn">👥 Подписчики</button><button class="btn small secondary" data-nav="history">📜 История</button></div>';
 applyGrad($('my-profile-box'),currentUser);
 getTop1().then(t=>{const el=$('top1-main');if(el)el.innerHTML=top1BadgeHTML(t,currentUser.uid);});
-on('open-edit-btn',()=>{$('edit-tag').value=currentUser.tag||'';$('edit-clan').value=currentUser.clan||'';$('edit-about').value=currentUser.bio||'';$('edit-avatar-url').value=(currentUser.avatar||'').startsWith('http')?currentUser.avatar:'';$('nickcolor-field').style.display=isPremium(currentUser)?'block':'none';$('edit-nickcolor').value=currentUser.nickColor||'#ffd54f';showScreen('profile-edit');});
+on('open-edit-btn',()=>{editAvatarCur=currentUser.avatar||'';setEditAvatarPreview();
+$('edit-tag').value=currentUser.tag||'';$('edit-clan').value=currentUser.clan||'';$('edit-about').value=currentUser.bio||'';
+$('edit-avatar-url').value=(currentUser.avatar||'').startsWith('http')?currentUser.avatar:'';
+$('edit-newnick').value='';
+$('nickcolor-field').style.display=isPremium(currentUser)?'block':'none';$('edit-nickcolor').value=currentUser.nickColor||'#ffd54f';
+showScreen('profile-edit');});
 on('my-followers-btn',()=>showFollowers(currentUser.uid));}
 async function showProfileModal(uid){try{
 if(!uid){toast('Профиль недоступен','error');return;}
@@ -1109,7 +1105,7 @@ if(s.exists()){await set(fRef,null);await set(ref(db,'users/'+currentUser.uid+'/
 else{await set(fRef,true);await set(ref(db,'users/'+currentUser.uid+'/following/'+uid),true);bump(uid,'followersCount',1);bump(currentUser.uid,'followingCount',1);addXPTo(uid,25,'новый подписчик');notifyUser(uid,'👥 Подписка от '+currentUser.nick,'👥');}
 closeModal();showProfileModal(uid);checkAchievements();});}
 on('pm-followers-btn',()=>showFollowers(uid));
-}catch(e){devLog('profile error: '+e.message,'err');toast('Ошибка профиля: '+e.message,'error');}}
+}catch(e){devLog('profile: '+e.message,'err');toast('Ошибка профиля: '+e.message,'error');}}
 async function showFollowers(uid){const s=await get(ref(db,'users/'+uid+'/followers'));const ids=Object.keys(s.val()||{});if(!ids.length){toast('Нет подписчиков');return;}
 const users=(await get(ref(db,'users'))).val()||{};
 openModal('<h3 style="margin-bottom:12px">👥 Подписчики ('+ids.length+')</h3>'+ids.map(id=>'<div class="chat-item" data-fu="'+id+'">'+avatarHtml(users[id]||{},'sm')+'<b>'+esc((users[id]||{}).nick||'?')+'</b></div>').join(''));
@@ -1166,7 +1162,7 @@ cv.onmousedown=cv.ontouchstart=e=>{e.preventDefault();drawing=true;const q=pos(e
 cv.onmousemove=cv.ontouchmove=e=>{if(!drawing)return;e.preventDefault();const q=pos(e);dctx.strokeStyle=$('draw-color').value;dctx.lineWidth=$('draw-size').value;dctx.lineTo(q.x,q.y);dctx.stroke();};
 cv.onmouseup=cv.ontouchend=cv.onmouseleave=()=>{drawing=false;};}
 function saveDraw(){const data=$('draw-canvas').toDataURL('image/png');$('draw-modal').classList.remove('active');
-if(drawTarget==='avatar-field'){$('edit-avatar-url').value=data;toast('🎨 → аватар');}
+if(drawTarget==='avatar-field'){editAvatarCur=data;$('edit-avatar-url').value='';setEditAvatarPreview();toast('🎨 Рисунок поставлен как аватар (не забудь сохранить)');}
 else if(drawTarget==='chat'){chatImage=data;$('chat-attach-note').textContent='🎨 прикреплено';}
 else if(drawTarget==='dm'){dmImage=data;const n=$('dm-attach-note');if(n)n.textContent='🎨 прикреплено';}
 else{update(ref(db,'users/'+currentUser.uid),{avatar:data});currentUser.avatar=data;const f=currentUser.xpFlags||{};if(!f.avatar){update(ref(db,'users/'+currentUser.uid+'/xpFlags/avatar'),true);addXP(10,'аватарка');}renderMyProfile();}}
@@ -1236,26 +1232,33 @@ onAuthStateChanged(auth,async user=>{if(user){const snap=await get(ref(db,'users
 if(snap.exists()){currentUser=Object.assign({uid:user.uid},snap.val());
 const defs={xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',followersCount:0,followingCount:0,chatMsgs:0,role:'',nickColor:'',tag:'',clan:'',bio:'',avatar:'',banUntil:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0};
 const up={};for(const k in defs){if(currentUser[k]===undefined){currentUser[k]=defs[k];up[k]=defs[k];}}
+if(!currentUser.loginEmail&&user.email){currentUser.loginEmail=user.email;up.loginEmail=user.email;}
 if(Object.keys(up).length)update(ref(db,'users/'+user.uid),up).catch(()=>{});
 update(ref(db,'users/'+user.uid),{lastSeen:Date.now()}).catch(()=>{});enterApp();}}
 else if(!currentUser?.guest){currentUser=null;$('side-nav').classList.add('hidden');$('bl-panels').classList.add('hidden');showScreen('auth');}});
 setInterval(()=>{if(currentUser&&!isGuest()){update(ref(db,'users/'+currentUser.uid),{lastSeen:Date.now()}).catch(()=>{});runTransaction(ref(db,'users/'+currentUser.uid+'/playtime'),c=>(c||0)+60).catch(()=>{});currentUser.playtime=(currentUser.playtime||0)+60;checkAchievements();}},60000);
-// ===== ПРИВЯЗКИ КНОПОК =====
+// ===== ВСЕ ПРИВЯЗКИ КНОПОК =====
 function initBindings(){
 try{
 document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>showScreen(b.dataset.nav)));
+$('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
 on('auth-toggle',()=>{authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход':'Регистрация';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';});
 on('auth-submit',async()=>{const name=$('auth-name').value.trim(),pass=$('auth-pass').value;
 if(name.length<2){toast('Ник мин. 2','error');return;}if(pass.length<6){toast('Пароль мин. 6','error');return;}
-const email=name.toLowerCase().replace(/[^a-z0-9]/g,'')+'@shashki.app';
 try{if(authMode==='register'){const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));if(ns.exists()){toast('❌ Ник занят!','error');return;}
-const cred=await createUserWithEmailAndPassword(auth,email,pass);const uid=cred.user.uid;
+const loginEmail='u'+Date.now().toString(36)+Math.random().toString(36).slice(2,8)+'@shashki.app';
+const cred=await createUserWithEmailAndPassword(auth,loginEmail,pass);const uid=cred.user.uid;
 const ctr=await runTransaction(ref(db,'system/userCounter'),c=>c===null?1:c+1).catch(()=>null);
 const did=ctr&&ctr.snapshot.exists()?String(ctr.snapshot.val()).padStart(5,'0'):String(Math.floor(10000+Math.random()*89999));
-const profile={nick:name,tag:'',avatar:'',bio:'',clan:'',nickColor:'',profileGrad:null,displayId:did,role:'',xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',followersCount:0,followingCount:0,chatMsgs:0,elo:1000,maxElo:1000,botElo_easy:1000,botElo_normal:1000,botElo_hard:1000,botElo_impossible:1000,botWins_easy:0,botWins_normal:0,botWins_hard:0,botWins_impossible:0,wins:0,losses:0,winStreak:0,maxWinStreak:0,onlineGames:0,botGames:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0,playtime:0,lastSeen:Date.now(),lastNickChange:0,createdAt:Date.now(),deleted:false,banUntil:0};
+const profile={nick:name,tag:'',avatar:'',bio:'',clan:'',nickColor:'',profileGrad:null,displayId:did,loginEmail,role:'',xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',followersCount:0,followingCount:0,chatMsgs:0,elo:1000,maxElo:1000,botElo_easy:1000,botElo_normal:1000,botElo_hard:1000,botElo_impossible:1000,botWins_easy:0,botWins_normal:0,botWins_hard:0,botWins_impossible:0,wins:0,losses:0,winStreak:0,maxWinStreak:0,onlineGames:0,botGames:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0,playtime:0,lastSeen:Date.now(),lastNickChange:0,createdAt:Date.now(),deleted:false,banUntil:0};
 await set(ref(db,'users/'+uid),profile);await set(ref(db,'nicknames/'+name.toLowerCase()),uid);toast('🌿 Аккаунт создан!','success');}
-else{await signInWithEmailAndPassword(auth,email,pass);toast('Добро пожаловать!','success');}}
-catch(e){toast(e.code||'Ошибка','error');}});
+else{
+const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));
+let email=null;
+if(ns.exists()){const prof=await get(ref(db,'users/'+ns.val()));if(prof.exists()&&prof.val().loginEmail)email=prof.val().loginEmail;}
+if(!email)email=name.toLowerCase().replace(/[^a-z0-9]/g,'')+'@shashki.app';
+await signInWithEmailAndPassword(auth,email,pass);toast('Добро пожаловать!','success');}}
+catch(e){toast(e.code||'Ошибка входа','error');}});
 on('guest-btn',()=>{const n=parseInt(localStorage.getItem('guestNum')||'0')+1;localStorage.setItem('guestNum',String(n));currentUser={uid:'guest_'+Date.now(),nick:'Шашист'+String(n).padStart(2,'0'),guest:true,xp:0,elo:1000,chessElo:1000};enterApp();toast('👻 Гость: только боты');});
 on('nav-logout',()=>{closeNav();if(currentUser?.guest){location.reload();return;}leaveVoice();signOut(auth);});
 on('toggle-notif',()=>$('notif-panel').classList.toggle('hidden'));
@@ -1268,10 +1271,18 @@ on('save-music-url',()=>{const v=$('music-url').value.trim();if(v)localStorage.s
 on('save-mute-key',()=>{recMute=true;$('mute-key-input').value='Нажми клавишу...';});
 $('mute-key-input').addEventListener('keydown',e=>{if(!recMute)return;e.preventDefault();muteKeyCode=e.code;localStorage.setItem('muteKeyCode',muteKeyCode);$('mute-key-cur').textContent=muteKeyCode;$('mute-key-input').value='';recMute=false;});
 $('msg-privacy').addEventListener('change',e=>{if(!isGuest())update(ref(db,'users/'+currentUser.uid),{msgPrivacy:e.target.value});});
-on('nick-btn',async()=>{const u=currentUser;if(!u||u.guest)return;const nn=$('set-newnick').value.trim();if(nn.length<2){toast('Коротко','error');return;}const s=await get(ref(db,'nicknames/'+nn.toLowerCase()));if(s.exists()){toast('Занят','error');return;}await update(ref(db),{['users/'+u.uid+'/nick']:nn,['users/'+u.uid+'/lastNickChange']:Date.now(),['nicknames/'+u.nick.toLowerCase()]:null,['nicknames/'+nn.toLowerCase()]:u.uid});u.nick=nn;$('set-newnick').value='';toast('✔','success');});
+on('edit-nick-btn',async()=>{const u=currentUser;if(!u||u.guest)return;
+if(u.lastNickChange&&Date.now()-u.lastNickChange<432e5){toast('Смена ника раз в 12 ч','error');return;}
+const nn=$('edit-newnick').value.trim();if(nn.length<2){toast('Коротко','error');return;}
+if(nn.toLowerCase()===u.nick.toLowerCase()){toast('Это твой текущий ник','error');return;}
+const s=await get(ref(db,'nicknames/'+nn.toLowerCase()));if(s.exists()){toast('Ник занят','error');return;}
+await update(ref(db),{['users/'+u.uid+'/nick']:nn,['users/'+u.uid+'/lastNickChange']:Date.now(),['nicknames/'+u.nick.toLowerCase()]:null,['nicknames/'+nn.toLowerCase()]:u.uid});
+u.nick=nn;$('edit-newnick').value='';renderNickTimer();toast('✔ Ник изменён. Вход теперь по новому нику.','success');});
 on('save-grad',async()=>{if(isGuest())return;const g={c1:$('grad-c1').value,c2:$('grad-c2').value};await update(ref(db,'users/'+currentUser.uid),{profileGrad:g});currentUser.profileGrad=g;setFlag('profileGradFlag');toast('🎨 Градиент','success');renderMyProfile();});
 on('save-profile-btn',async()=>{if(isGuest())return;
-const a=$('edit-avatar-url').value.trim(),t=$('edit-tag').value.trim().slice(0,20),c=$('edit-clan').value.trim().slice(0,20),b=$('edit-about').value.trim().slice(0,160);
+const urlVal=$('edit-avatar-url').value.trim();
+const a=urlVal||editAvatarCur||'';
+const t=$('edit-tag').value.trim().slice(0,20),c=$('edit-clan').value.trim().slice(0,20),b=$('edit-about').value.trim().slice(0,160);
 const nc=isPremium(currentUser)?$('edit-nickcolor').value:'';
 const flags=currentUser.xpFlags||{};let bonus=0;const nf={...flags};
 if(a&&!flags.avatar){nf.avatar=1;bonus+=10;}if(t&&!flags.tag){nf.tag=1;bonus+=10;}if(c&&!flags.clan){nf.clan=1;bonus+=10;}if(b&&!flags.bio){nf.bio=1;bonus+=10;}
@@ -1279,7 +1290,7 @@ await update(ref(db,'users/'+currentUser.uid),{avatar:a,tag:t,clan:c,bio:b,nickC
 Object.assign(currentUser,{avatar:a,tag:t,clan:c,bio:b,nickColor:nc,xpFlags:nf});
 if(bonus)addXP(bonus,'заполнение профиля');setFlag('editedProfile');
 toast('Сохранено ✔','success');showScreen('profile-view');checkAchievements();});
-$('edit-avatar-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>$('edit-avatar-url').value=ev.target.result;r.readAsDataURL(f);});
+$('edit-avatar-file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>400*1024){toast('До 400KB','error');return;}const r=new FileReader();r.onload=ev=>{editAvatarCur=ev.target.result;$('edit-avatar-url').value='';setEditAvatarPreview();toast('📷 Аватар загружен (не забудь сохранить)');};r.readAsDataURL(f);});
 on('edit-draw-btn',()=>openDrawModal('avatar-field'));
 on('gametab-checkers',()=>{$('gametab-checkers').classList.add('on');$('gametab-chess').classList.remove('on');$('mode-checkers').classList.remove('hidden');$('mode-chess').classList.add('hidden');});
 on('gametab-chess',()=>{$('gametab-chess').classList.add('on');$('gametab-checkers').classList.remove('on');$('mode-chess').classList.remove('hidden');$('mode-checkers').classList.add('hidden');});
@@ -1312,7 +1323,7 @@ G.turn=d.turn;G.timers=d.timers||G.timers;G.chLast=d.lastMove||null;G.over=d.sta
 if(d.status==='finished'){$('turn-banner').textContent='🏁 Завершён';setTimeout(()=>{if(G&&G.spectator)leaveGame(true);},5000);}});});
 on('surrender-btn',async()=>{if(!G||G.over||G.spectator)return;if(!confirm('Сдаться?'))return;doSurrender();});
 on('leave-btn',()=>leaveGame(false));
-on('opp-card',()=>{if(G&&G.oppUid&&!isGuest())showProfileModal(G.oppUid);});
+on('opp-card',()=>{if(isGuest())return;if(G&&G.oppUid)showProfileModal(G.oppUid);else if(G&&G.mode==='bot')toast('🤖 У бота нет профиля');});
 on('me-card',()=>{if(!isGuest()&&(!G||!G.spectator))showProfileModal(currentUser.uid);});
 on('game-chat-send',sendGameChat);
 $('game-chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendGameChat();});
@@ -1351,13 +1362,18 @@ devLog('✅ Все кнопки привязаны','ok');
 function openNav(){$('side-nav').classList.add('open');$('nav-shade').classList.add('on');document.body.classList.add('nav-open');}
 function closeNav(){$('side-nav').classList.remove('open');$('nav-shade').classList.remove('on');document.body.classList.remove('nav-open');}
 let muteKeyCode=localStorage.getItem('muteKeyCode')||'PageUp',recMute=false;
+window.addEventListener('keydown',e=>{const k=e.key;
+if(k==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','i','j','c'].includes(k))||(e.ctrlKey&&['u','U'].includes(k))){e.preventDefault();toast('🚫 Отключено','error');}
+if((k==='m'||k==='M'||k==='ь')&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName))$('dev-console').classList.toggle('open');
+if(voice.room&&e.code===muteKeyCode&&!['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)){e.preventDefault();toggleMicMute();}});
+$('mute-key-cur').textContent=muteKeyCode;
 $('ranks-box').innerHTML=RANKS.map(r=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:'+r.c+';font-weight:bold">'+r.icon+' '+r.n+'</span><span>'+r.min+'+</span></div>').join('');
 $('levels-box').innerHTML=LEVELS.map((x,i)=>'<div style="display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding:4px 0"><span style="color:var(--gold);font-weight:bold">⭐ Уровень '+(i+1)+(i===10?' (MAX)':'')+'</span><span>'+x+' - '+((LEVELS[i+1]!==undefined)?(LEVELS[i+1]-1):'∞')+' XP</span></div>').join('');
 setUI(localStorage.getItem('uiMode')||'pc');
 applyTheme();
 initBindings();
 window.__APP_OK=true;
-devLog('✅ v1.3.1 full build loaded','ok');
+devLog('✅ v1.3.2 full build loaded','ok');
 </script>
 </body>
 </html>
