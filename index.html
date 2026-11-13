@@ -1379,7 +1379,7 @@ if(!t||isGuest())return;
 if(t.closest&&t.closest('#modal-content'))return;
 showProfileModal(t.dataset.uid);});
 devLog('✅ Все кнопки привязаны','ok');
-}catch(e){devLog('initBindings: '+e.message,'err');toast('Ошибка инициализации: '+e.message,'error');}
+}catch(e){devLog('initBindings: '+e.message,'err');toast('Ошибка инициализации: '+e.message,'error')
 }
 function openNav(){$('side-nav').classList.add('open');$('nav-shade').classList.add('on');document.body.classList.add('nav-open');}
 function closeNav(){$('side-nav').classList.remove('open');$('nav-shade').classList.remove('on');document.body.classList.remove('nav-open');}
