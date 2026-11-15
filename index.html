@@ -245,7 +245,7 @@ body.ui-mobile #dev-console{width:100%}
 <span class="decor" style="bottom:8px;right:60px;font-size:40px">🎃</span>
 <div id="top-banner">🎃 Хэллоуин-ивент! · ТГК <a href="https://t.me/nasvseh" target="_blank">@nasvseh</a></div>
 <header id="app-header">
-<div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки и шахматы онлайн</span><span class="ver">v1.3.3</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
+<div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки и шахматы онлайн</span><span class="ver">v1.3.4</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
 <div id="ui-switch"><button id="ui-pc" class="on">🖥️ ПК</button><button id="ui-mobile-btn">📱 Телефон</button></div>
 </header>
 <div id="nav-shade"></div>
@@ -271,12 +271,12 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen" id="screen-auth">
 <div class="panel auth-card">
 <div style="font-size:44px">🌿</div><h2 id="auth-title" style="font-size:22px;font-weight:700">Вход</h2>
-<div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.3.3 · создатель xxspk · кодил qwen &lt;3</div>
-<div class="field"><label>Никнейм</label><input id="auth-name" maxlength="20" placeholder="Твой ник"></div>
+<div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.3.4 · создатель xxspk · кодил qwen &lt;3</div>
+<div class="field"><label>Никнейм (или email для восстановления)</label><input id="auth-name" maxlength="60" placeholder="Твой ник или email"></div>
 <div class="field"><label>Пароль (мин. 6, можно с ником)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
 <button class="btn big" id="auth-submit">Войти</button>
 <div style="margin-top:10px"><button class="btn big secondary" id="guest-btn">👻 Играть без аккаунта</button></div>
-<div class="guest-note">💡 Зарегистрируйтесь — за гостя доступна только игра с ботом. Вход работает под любым твоим прошлым ником.</div>
+<div class="guest-note">💡 Зарегистрируйтесь — за гостя доступна только игра с ботом. Если после смены ника вход сломался — войди по email из Firebase Console → Authentication.</div>
 <div style="text-align:center;margin-top:10px"><button class="linkish" id="auth-toggle">Нет аккаунта? Зарегистрироваться</button></div>
 </div>
 </section>
@@ -309,15 +309,15 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen hidden" id="screen-updates">
 <div class="panel" style="max-width:680px;margin:0 auto">
 <h2 class="ptitle">🛠 Обновления и исправления</h2>
-<div class="upd-item"><b>v1.3.3 — текущая</b><ul>
-<li>🔑 Умный вход: перебирает все email аккаунта (loginEmail, текущий ник, старые ники), чинит привязку ника.</li>
-<li>🛡 Смена ника больше не может сломать вход.</li>
+<div class="upd-item"><b>v1.3.4 — текущая</b><ul>
+<li>🔑 Вход по email (восстановление доступа после смены ника): вставь email из Firebase Console → Authentication в поле ника.</li>
+<li>🛡 После любого успешного входа loginEmail пишется в профиль — вход по нику больше не ломается.</li>
 </ul></div>
+<div class="upd-item"><b>v1.3.4</b><ul><li>🔑 Умный вход: перебор email-кандидатов, починка привязки ника.</li></ul></div>
 <div class="upd-item"><b>v1.3.2</b><ul><li>🐞 Скобки шахмат, openModal, бот не ходит за игрока, аватар не слетает, бот «кипарк228».</li></ul></div>
 <div class="upd-item"><b>v1.3</b><ul><li>🗑 Лента удалена; вкладка «Обновления». 💬 ЛС как общий чат.</li></ul></div>
 <div class="upd-item"><b>v1.2.3</b><ul><li>♟ Шахматы: боты, онлайн, Elo, XP, достижения. 🎙 Войс.</li></ul></div>
-<div class="upd-item"><b>v1.2</b><ul><li>✨ XP, уровни, огонёк, история, пасхалка, сапёр, градиент, баны.</li></ul></div>
-<div class="upd-item"><b>v1.1 / v1.0</b><ul><li>🎃 Хэллоуин, меню, уведомления, рулетка. 🌿 База игры.</li></ul></div>
+<div class="upd-item"><b>v1.2 / v1.1 / v1.0</b><ul><li>✨ XP, уровни, пасхалка, сапёр, баны. 🎃 Хэллоуин, меню, рулетка. 🌿 База игры.</li></ul></div>
 </div>
 </section>
 <section class="screen hidden" id="screen-rating">
@@ -1242,7 +1242,7 @@ document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()
 $('modal-bg').addEventListener('click',e=>{if(e.target.id==='modal-bg')closeModal();});
 on('auth-toggle',()=>{authMode=authMode==='login'?'register':'login';$('auth-title').textContent=authMode==='login'?'Вход':'Регистрация';$('auth-submit').textContent=authMode==='login'?'Войти':'Зарегистрироваться';});
 on('auth-submit',async()=>{const name=$('auth-name').value.trim(),pass=$('auth-pass').value;
-if(name.length<2){toast('Ник мин. 2','error');return;}if(pass.length<6){toast('Пароль мин. 6','error');return;}
+if(name.length<2){toast('Ник мин. 2 символа','error');return;}if(pass.length<6){toast('Пароль мин. 6','error');return;}
 try{
 if(authMode==='register'){
 const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));if(ns.exists()){toast('❌ Ник занят!','error');return;}
@@ -1253,23 +1253,26 @@ const did=ctr&&ctr.snapshot.exists()?String(ctr.snapshot.val()).padStart(5,'0'):
 const profile={nick:name,tag:'',avatar:'',bio:'',clan:'',nickColor:'',profileGrad:null,displayId:did,loginEmail,oldNicks:[],role:'',xp:0,dailyStreak:0,lastDailyWinMSK:'',msgPrivacy:'everyone',followersCount:0,followingCount:0,chatMsgs:0,elo:1000,maxElo:1000,botElo_easy:1000,botElo_normal:1000,botElo_hard:1000,botElo_impossible:1000,botWins_easy:0,botWins_normal:0,botWins_hard:0,botWins_impossible:0,wins:0,losses:0,winStreak:0,maxWinStreak:0,onlineGames:0,botGames:0,chessElo:1000,chessMaxElo:1000,chessWins:0,chessLosses:0,chessWinStreak:0,chessMaxWinStreak:0,chessGames:0,chessOnlineGames:0,chessBotElo_easy:1000,chessBotElo_normal:1000,chessBotElo_hard:1000,chessBotElo_impossible:1000,chessBotWins_easy:0,chessBotWins_normal:0,chessBotWins_hard:0,chessBotWins_impossible:0,playtime:0,lastSeen:Date.now(),lastNickChange:0,createdAt:Date.now(),deleted:false,banUntil:0};
 await set(ref(db,'users/'+uid),profile);await set(ref(db,'nicknames/'+name.toLowerCase()),uid);toast('🌿 Аккаунт создан!','success');
 }else{
-let uid=null,profile=null;
-const ns=await get(ref(db,'nicknames/'+name.toLowerCase()));
+const raw=name.toLowerCase();
+let cands=[];let uid=null,profile=null;
+if(raw.includes('@')){cands=[raw];}
+else{
+const ns=await get(ref(db,'nicknames/'+raw));
 if(ns.exists()){uid=ns.val();const ps=await get(ref(db,'users/'+uid));if(ps.exists())profile=ps.val();}
 if(!profile){const all=await get(ref(db,'users'));
-for(const[u2,p]of Object.entries(all.val()||{})){if(p&&p.nick&&String(p.nick).toLowerCase()===name.toLowerCase()&&!p.deleted){uid=u2;profile=p;await set(ref(db,'nicknames/'+name.toLowerCase()),uid).catch(()=>{});break;}}}
+for(const[u2,p]of Object.entries(all.val()||{})){if(p&&p.nick&&String(p.nick).toLowerCase()===raw&&!p.deleted){uid=u2;profile=p;await set(ref(db,'nicknames/'+raw),uid).catch(()=>{});break;}}}
 if(!profile){toast('❌ Аккаунт с таким ником не найден','error');return;}
-const cands=[];
 if(profile.loginEmail)cands.push(profile.loginEmail);
-cands.push(derivedEmail(name));
+cands.push(derivedEmail(raw));
 if(profile.nick)cands.push(derivedEmail(profile.nick));
 (profile.oldNicks||[]).forEach(n2=>cands.push(derivedEmail(n2)));
+}
 let cred=null,lastErr=null;
 for(const em of[...new Set(cands)]){
 try{cred=await signInWithEmailAndPassword(auth,em,pass);break;}
 catch(e2){lastErr=e2;}}
 if(!cred){toast(lastErr&&(lastErr.code==='auth/wrong-password'||lastErr.code==='auth/invalid-credential')?'❌ Неверный пароль':'❌ Не удалось войти: '+(lastErr?lastErr.code:'?'),'error');return;}
-if(!profile.loginEmail){await update(ref(db,'users/'+uid),{loginEmail:cred.user.email}).catch(()=>{});}
+if(uid&&profile&&!profile.loginEmail){await update(ref(db,'users/'+uid),{loginEmail:cred.user.email}).catch(()=>{});}
 toast('Добро пожаловать!','success');
 }}
 catch(e){toast(e.code||'Ошибка входа','error');}});
@@ -1390,7 +1393,7 @@ setUI(localStorage.getItem('uiMode')||'pc');
 applyTheme();
 initBindings();
 window.__APP_OK=true;
-devLog('✅ v1.3.3 full build loaded','ok');
+devLog('✅ v1.3.4 full build loaded','ok');
 </script>
 </body>
 </html>
