@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
-<title>🌿 Шашки и шахматы онлайн v1.3.3</title>
+<title>🌿 Шашки и шахматы онлайн v1.3.5</title>
 <style>
 :root{--main:#ff7a1a;--bg:#0b0710;--bg2:#151021;--bg3:#1e1730;--card:#171126;--txt:#f3e9dc;--txt2:#b9a8c9;--gold:#ffd54f;--red:#ff5c5c;--green:#69db7c;--blue:#5ba8ff;--radius:14px}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -245,7 +245,7 @@ body.ui-mobile #dev-console{width:100%}
 <span class="decor" style="bottom:8px;right:60px;font-size:40px">🎃</span>
 <div id="top-banner">🎃 Хэллоуин-ивент! · ТГК <a href="https://t.me/nasvseh" target="_blank">@nasvseh</a></div>
 <header id="app-header">
-<div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки и шахматы онлайн</span><span class="ver">v1.3.4</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
+<div class="logo"><div class="logo-row"><span class="leaf">🌿</span><span>Шашки и шахматы онлайн</span><span class="ver">v1.3.5</span><span class="author" id="creator-link">создатель xxspk (@spkaxa)</span></div><div class="credit">кодил qwen &lt;3</div></div>
 <div id="ui-switch"><button id="ui-pc" class="on">🖥️ ПК</button><button id="ui-mobile-btn">📱 Телефон</button></div>
 </header>
 <div id="nav-shade"></div>
@@ -271,12 +271,12 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen" id="screen-auth">
 <div class="panel auth-card">
 <div style="font-size:44px">🌿</div><h2 id="auth-title" style="font-size:22px;font-weight:700">Вход</h2>
-<div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.3.4 · создатель xxspk · кодил qwen &lt;3</div>
-<div class="field"><label>Никнейм (или email для восстановления)</label><input id="auth-name" maxlength="60" placeholder="Твой ник или email"></div>
+<div style="color:var(--txt2);font-size:12px;margin-bottom:18px">v1.3.5 · создатель xxspk · кодил qwen &lt;3</div>
+<div class="field"><label>Никнейм или email</label><input id="auth-name" maxlength="60" placeholder="Ник или email@shashki.app"></div>
 <div class="field"><label>Пароль (мин. 6, можно с ником)</label><input id="auth-pass" type="password" placeholder="••••••"></div>
 <button class="btn big" id="auth-submit">Войти</button>
 <div style="margin-top:10px"><button class="btn big secondary" id="guest-btn">👻 Играть без аккаунта</button></div>
-<div class="guest-note">💡 Зарегистрируйтесь — за гостя доступна только игра с ботом. Если после смены ника вход сломался — войди по email из Firebase Console → Authentication.</div>
+<div class="guest-note">💡 За гостя доступна только игра с ботом. Забыл ник? Входи по email из Firebase Console → Authentication.</div>
 <div style="text-align:center;margin-top:10px"><button class="linkish" id="auth-toggle">Нет аккаунта? Зарегистрироваться</button></div>
 </div>
 </section>
@@ -309,15 +309,16 @@ body.ui-mobile #dev-console{width:100%}
 <section class="screen hidden" id="screen-updates">
 <div class="panel" style="max-width:680px;margin:0 auto">
 <h2 class="ptitle">🛠 Обновления и исправления</h2>
-<div class="upd-item"><b>v1.3.4 — текущая</b><ul>
-<li>🔑 Вход по email (восстановление доступа после смены ника): вставь email из Firebase Console → Authentication в поле ника.</li>
-<li>🛡 После любого успешного входа loginEmail пишется в профиль — вход по нику больше не ломается.</li>
+<div class="upd-item"><b>v1.3.5 — текущая</b><ul>
+<li>🔑 Вход по нику ИЛИ по email; после входа loginEmail запоминается — смена ника больше не ломает вход.</li>
+<li>🐞 Восстановлены недостающие функции (setUI, openModal, renderSettings) — кнопки «Войти» снова живые.</li>
+<li>♟ Починен генератор ходов шахмат и очередь бота (бот не ходит за игрока).</li>
+<li>🤖 Бот зовётся «кипарк228». 🖼 Аватар не слетает. ✏️ Смена ника в редакторе профиля.</li>
 </ul></div>
-<div class="upd-item"><b>v1.3.4</b><ul><li>🔑 Умный вход: перебор email-кандидатов, починка привязки ника.</li></ul></div>
-<div class="upd-item"><b>v1.3.2</b><ul><li>🐞 Скобки шахмат, openModal, бот не ходит за игрока, аватар не слетает, бот «кипарк228».</li></ul></div>
 <div class="upd-item"><b>v1.3</b><ul><li>🗑 Лента удалена; вкладка «Обновления». 💬 ЛС как общий чат.</li></ul></div>
 <div class="upd-item"><b>v1.2.3</b><ul><li>♟ Шахматы: боты, онлайн, Elo, XP, достижения. 🎙 Войс.</li></ul></div>
-<div class="upd-item"><b>v1.2 / v1.1 / v1.0</b><ul><li>✨ XP, уровни, пасхалка, сапёр, баны. 🎃 Хэллоуин, меню, рулетка. 🌿 База игры.</li></ul></div>
+<div class="upd-item"><b>v1.2</b><ul><li>✨ XP, уровни, огонёк, история, пасхалка, сапёр, градиент, баны.</li></ul></div>
+<div class="upd-item"><b>v1.1 / v1.0</b><ul><li>🎃 Хэллоуин, меню, рулетка. 🌿 База игры.</li></ul></div>
 </div>
 </section>
 <section class="screen hidden" id="screen-rating">
@@ -1393,7 +1394,7 @@ setUI(localStorage.getItem('uiMode')||'pc');
 applyTheme();
 initBindings();
 window.__APP_OK=true;
-devLog('✅ v1.3.4 full build loaded','ok');
+devLog('✅ v1.3.5 full build loaded','ok');
 </script>
 </body>
 </html>
